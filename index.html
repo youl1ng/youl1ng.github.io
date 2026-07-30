@@ -25,6 +25,7 @@
   }
   a { color: #5ee6c5; }
   a:hover { color: #f2b950; }
+  button, [data-winbtn] { -webkit-user-select: none; user-select: none; }
   * { scrollbar-width: thin; scrollbar-color: #3a3d4d #1f2029; }
   *::-webkit-scrollbar { width: 12px; height: 12px; }
   *::-webkit-scrollbar-track { background: #1f2029; }
@@ -163,11 +164,21 @@
               </sc-for>
             </ul>
           </sc-if>
+          <sc-if value="{{ canvasHasGallery }}">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px;">
+              <sc-for list="{{ canvasGallery }}" as="g" hint-placeholder-count="6">
+                <img src="{{ g }}" alt="BURSA design" style="width:100%;aspect-ratio:1;object-fit:cover;border:2px solid #3a3d4d;cursor:pointer;display:block;transition:transform .1s,border-color .1s;" style-hover="border-color:#5ee6c5;transform:scale(1.05);"></img>
+              </sc-for>
+            </div>
+          </sc-if>
           <sc-if value="{{ kindIsResume }}" hint-placeholder-val="{{ true }}">
             <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:4px;">
               <image-slot id="resume-page" shape="rect" fit="contain" src="assets/resume-page1.png" placeholder="Drop resume page image" style="width:100%;aspect-ratio:686/886;"></image-slot>
               <a href="{{ resumeUrl }}" target="_blank" rel="noopener" style="position:sticky;bottom:8px;align-self:flex-start;font-size:11px;color:#5ee6c5;text-decoration:none;background:#14141c;border:1px solid #3a3d4d;padding:6px 10px;z-index:5;">open full pdf &#8599;</a>
             </div>
+          </sc-if>
+          <sc-if value="{{ kindIsPixelArt }}" hint-placeholder-val="{{ false }}">
+            <img src="assets/pixel-art.png" alt="Pixel art sprites and tile sheets" style="width:100%;image-rendering:pixelated;border:2px solid #3a3d4d;margin-top:4px;display:block;"></img>
           </sc-if>
           <sc-if value="{{ kindIsContact }}" hint-placeholder-val="{{ true }}">
             <div style="margin-top:4px;">
@@ -409,6 +420,22 @@ class Component extends DCLogic {
         "Event branding: Designed cohesive visual identities for BURSA events, from flyers to social posts, so each event feels distinct but recognizably BURSA",
         "Social media graphics: Created graphics for the org's Instagram, where visual consistency and quick legibility matter more than anything else",
         "Turnout: Helped drive event attendance through design that people actually notice in a crowded feed",
+      ], images: [
+        "assets/bursa/lunar-bites.jpg",
+        "assets/bursa/morning-munchies.jpg",
+        "assets/bursa/trip-to-myanmar.jpg",
+        "assets/bursa/coconut-jelly.jpg",
+        "assets/bursa/representatives.jpg",
+        "assets/bursa/eboard.jpg",
+        "assets/bursa/school-night.jpg",
+        "assets/bursa/tea-house.jpg",
+        "assets/bursa/tearamisu.jpg",
+        "assets/bursa/cabinet-spring26.jpg",
+        "assets/bursa/thingyan.jpg",
+        "assets/bursa/reps-wanted.jpg",
+        "assets/bursa/clay-n-play.jpg",
+        "assets/bursa/logo.png",
+        "assets/bursa/crest.png",
       ] },
     ],
     hobbies: [
@@ -1099,9 +1126,9 @@ class Component extends DCLogic {
     const titlebarStyle = (id, collapsed) => {
       const active = this.state.activeWindow === id;
       if (collapsed) {
-        return "flex:1;background:" + (active ? accent : "#262837") + ";border-bottom:none;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;padding:10px 0;cursor:" + (isDesktop ? "grab" : "default") + ";position:relative;";
+        return "flex:1;background:" + (active ? accent : "#262837") + ";border-bottom:none;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;padding:10px 0;cursor:" + (isDesktop ? "grab" : "default") + ";position:relative;user-select:none;-webkit-user-select:none;";
       }
-      return "height:30px;flex:none;background:" + (active ? accent : "#262837") + ";border-bottom:2px solid #3a3d4d;display:flex;align-items:center;gap:8px;padding:0 8px;cursor:" + (isDesktop ? "grab" : "default") + ";position:relative;";
+      return "height:30px;flex:none;background:" + (active ? accent : "#262837") + ";border-bottom:2px solid #3a3d4d;display:flex;align-items:center;gap:8px;padding:0 8px;cursor:" + (isDesktop ? "grab" : "default") + ";position:relative;user-select:none;-webkit-user-select:none;";
     };
     const titleTextStyle = (id) => {
       const active = this.state.activeWindow === id;
@@ -1128,8 +1155,9 @@ class Component extends DCLogic {
     let canvasTitle = "About Me", canvasBlurb = this.data.about.blurb, canvasMeta = "", canvasTags = [];
     const aboutSplit = kind === "about" ? this.data.about.blurb.split(this.data.about.name) : null;
     let canvasHighlights = [];
+    let canvasGallery = [];
     if (kind === "project" && project) { canvasTitle = project.name; canvasBlurb = project.blurb; canvasTags = project.tags; canvasHighlights = project.highlights || []; }
-    if (kind === "experience" && exp) { canvasTitle = exp.role + " \u2014 " + exp.org; canvasBlurb = exp.blurb; canvasTags = [exp.duration]; canvasHighlights = exp.highlights || []; }
+    if (kind === "experience" && exp) { canvasTitle = exp.role + " \u2014 " + exp.org; canvasBlurb = exp.blurb; canvasTags = [exp.duration]; canvasHighlights = exp.highlights || []; canvasGallery = exp.images || []; }
     if (kind === "hobby" && hobby) { canvasTitle = hobby.org ? hobby.role + " \u2014 " + hobby.org : hobby.role; canvasBlurb = hobby.blurb; canvasTags = hobby.tags || []; }
     if (kind === "resume") { canvasTitle = "RESUME"; canvasBlurb = "A quick look, or open the full PDF."; }
     if (kind === "contact") { canvasTitle = "GET IN TOUCH"; canvasBlurb = "Drop a note, or email me directly."; }
@@ -1222,7 +1250,7 @@ class Component extends DCLogic {
         const rot = p.spin * rotT * 14;
         return { style: "position:absolute;left:" + p.gx + "px;top:" + p.gy + "px;width:30px;height:30px;background:" + p.color + ";opacity:" + opacity + ";transform:translateY(" + fallPx + "px) rotate(" + rot + "deg);" };
       }),
-      landingStyle: "position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background-color:#14141c;background-image:linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);background-size:32px 32px;z-index:1000;transition:opacity .4s ease, transform .4s ease;" + (this.state.workspaceOpen ? "opacity:0;transform:scale(1.04);pointer-events:none;" : "opacity:1;transform:scale(1);"),
+      landingStyle: "position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background-color:#14141c;background-image:linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);background-size:32px 32px;z-index:1000;transition:opacity .4s ease, transform .4s ease;user-select:none;-webkit-user-select:none;" + (this.state.workspaceOpen ? "opacity:0;transform:scale(1.04);pointer-events:none;" : "opacity:1;transform:scale(1);"),
       onLandingBgClick: this.onLandingBgClick,
       starsView: this.state.bgEffect === "bgeffect3" ? this.state.stars.map((s) => {
         const w = s.size * 0.5, h = s.size;
@@ -1516,6 +1544,8 @@ class Component extends DCLogic {
       canvasBlurb,
       canvasHighlights,
       canvasHasHighlights: canvasHighlights.length > 0,
+      canvasGallery,
+      canvasHasGallery: canvasGallery.length > 0,
       kindIsAboutSplit: !!aboutSplit && aboutSplit.length === 2,
       showGenericBlurb: !(aboutSplit && aboutSplit.length === 2),
       aboutBefore: aboutSplit ? aboutSplit[0] : "",
@@ -1531,6 +1561,7 @@ class Component extends DCLogic {
       kindIsResume: kind === "resume",
       kindIsContact: kind === "contact",
       kindIsAbout: kind === "about",
+      kindIsPixelArt: kind === "hobby" && !!hobby && hobby.id === "pixelart",
       canvasDrawCellsView: this.state.canvasDrawCells.map((val, idx) => ({
         style: "background:" + (val || "transparent") + ";",
         onDown: (e) => this.startCanvasDraw(idx, e),
