@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com"></link>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""></link>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet"></link>
+<script src="./image-slot.js"></script>
+<style>
+  html, body { margin: 0; padding: 0; }
+  @keyframes march { from { background-position-x: 0; } to { background-position-x: 12px; } }
+  @keyframes waveLetter { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+  @keyframes glowBreathe { 0%, 100% { transform: scale(0.94); } 50% { transform: scale(1.06); } }
+  @keyframes starTwinkle { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.95; } }
+  @keyframes canvasRevealA { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0% 0); } }
+  @keyframes canvasRevealB { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0% 0); } }
+  @media (prefers-reduced-motion: reduce) {
+    [data-canvas-card] { animation: none !important; clip-path: none !important; }
+  }
+  a { color: #5ee6c5; }
+  a:hover { color: #f2b950; }
+  * { scrollbar-width: thin; scrollbar-color: #3a3d4d #1f2029; }
+  *::-webkit-scrollbar { width: 12px; height: 12px; }
+  *::-webkit-scrollbar-track { background: #1f2029; }
+  *::-webkit-scrollbar-thumb { background: #3a3d4d; border: 2px solid #1f2029; }
+  *::-webkit-scrollbar-thumb:hover { background: #5ee6c5; }
+  *::-webkit-scrollbar-corner { background: #1f2029; }
+</style>
+</helmet>
+<div style="{{ rootStyle }}">
+  <div style="{{ landingStyle }}" onClick="{{ onLandingBgClick }}">
+    <div style="position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden;">
+      <sc-for list="{{ landingTrailView }}" as="p" hint-placeholder-count="6">
+        <span style="{{ p.style }}"></span>
+      </sc-for>
+      <sc-for list="{{ glowTrailView }}" as="tr" hint-placeholder-count="0">
+        <span style="{{ tr.style }}"></span>
+      </sc-for>
+      <sc-for list="{{ glowView }}" as="g" hint-placeholder-count="0">
+        <span style="{{ g.style }}"></span>
+      </sc-for>
+      <sc-for list="{{ starsView }}" as="s" hint-placeholder-count="0">
+        <div style="{{ s.wrapStyle }}" onClick="{{ s.onClick }}" onMouseEnter="{{ s.onMouseEnter }}" onMouseLeave="{{ s.onMouseLeave }}"></div>
+      </sc-for>
+      <sc-for list="{{ starSplatterView }}" as="sp" hint-placeholder-count="0">
+        <span style="{{ sp.style }}"></span>
+      </sc-for>
+      <sc-for list="{{ starLinesView }}" as="ln" hint-placeholder-count="0">
+        <span style="{{ ln.style }}"></span>
+      </sc-for>
+      <sc-for list="{{ starBurstsView }}" as="b" hint-placeholder-count="0">
+        <span style="{{ b.style }}"></span>
+      </sc-for>
+    </div>
+    <div style="position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden;">
+      <sc-for list="{{ titleLinesView }}" as="l" hint-placeholder-count="0">
+        <span style="{{ l.style }}"></span>
+      </sc-for>
+      <sc-for list="{{ titleParticlesView }}" as="p" hint-placeholder-count="0">
+        <span style="{{ p.style }}"></span>
+      </sc-for>
+    </div>
+    <div style="text-align:center;padding:24px;position:relative;z-index:2;">
+      <p style="font-size:12px;letter-spacing:.2em;color:#8b8d9c;text-transform:uppercase;margin:0 0 16px;">portfolio.pxl</p>
+      <h1 style="margin:0 0 20px;line-height:1.4;">
+        <div style="{{ titleWrapStyle }}" onMouseEnter="{{ onTitleEnter }}" onMouseLeave="{{ onTitleLeave }}" onClick="{{ onTitleClick }}">
+          <sc-for list="{{ titleLetters }}" as="l" hint-placeholder-count="7">
+            <span style="{{ l.style }}">{{ l.ch }}</span>
+          </sc-for>
+        </div>
+      </h1>
+      <p style="font-size:14px;color:#8b8d9c;margin:0 0 36px;">engineer who designs</p>
+      <button type="button" onClick="{{ startNewFile }}" style="font-family:'Press Start 2P',monospace;font-size:13px;color:#14141c;background:#f2b950;border:none;padding:16px 28px;cursor:pointer;box-shadow:inset -4px -4px 0 rgba(0,0,0,.3), inset 4px 4px 0 rgba(255,255,255,.35);transition:transform .1s;" style-hover="transform:scale(1.05);background:#f5c66b;">&#43; NEW FILE</button>
+    </div>
+  </div>
+
+  <div style="{{ workspaceStyle }}">
+    <div style="{{ toolbarStyle }}">
+      <button type="button" title="About" onClick="{{ openAbout }}" style="{{ toolBtnStyle }}" style-hover="background:#2f3244;border-color:#5ee6c5;transform:scale(1.08);">
+        <img src="assets/icon-about-t.png" alt="About" style="width:26px;height:26px;image-rendering:pixelated;"></img>
+        <span>ABT.</span>
+      </button>
+      <button type="button" title="Projects" onClick="{{ openProjects }}" style="{{ toolBtnStyle }}" style-hover="background:#2f3244;border-color:#5ee6c5;transform:scale(1.08);">
+        <img src="assets/icon-projects-t.png" alt="Projects" style="width:26px;height:26px;image-rendering:pixelated;"></img>
+        <span>PROJ</span>
+      </button>
+      <button type="button" title="Resume" onClick="{{ openResume }}" style="{{ toolBtnStyle }}" style-hover="background:#2f3244;border-color:#5ee6c5;transform:scale(1.08);">
+        <img src="assets/icon-resume-t.png" alt="Resume" style="width:26px;height:26px;image-rendering:pixelated;"></img>
+        <span>RES.</span>
+      </button>
+      <button type="button" title="Contact" onClick="{{ openContact }}" style="{{ toolBtnStyle }}" style-hover="background:#2f3244;border-color:#5ee6c5;transform:scale(1.08);">
+        <img src="assets/icon-contact-t.png" alt="Contact" style="width:26px;height:26px;image-rendering:pixelated;"></img>
+        <span>CNTC</span>
+      </button>
+      <button type="button" title="Return to landing" onClick="{{ goToLanding }}" style="{{ toolBtnStyle }}" style-hover="background:#2f3244;border-color:#5ee6c5;transform:scale(1.08);">
+        <span style="font-size:20px;line-height:1;color:#8b8d9c;">&#8592;</span>
+        <span>HOME</span>
+      </button>
+    </div>
+
+    <sc-if value="{{ showDockHint }}">
+      <div style="{{ dockHintStyle }}"></div>
+    </sc-if>
+    <sc-if value="{{ showDockHintFrames }}">
+      <div style="{{ dockHintFramesStyle }}"></div>
+    </sc-if>
+    <sc-if value="{{ showDockHintSidebar }}">
+      <div style="{{ dockHintSidebarStyle }}"></div>
+    </sc-if>
+    <sc-if value="{{ showSplitter }}">
+      <div onMouseDown="{{ onSplitterDown }}" style="{{ splitterStyle }}"></div>
+    </sc-if>
+    <sc-if value="{{ showSidebarDivider }}">
+      <div style="{{ sidebarDividerStyle }}"></div>
+    </sc-if>
+
+    <div style="{{ canvasWinStyle }}" onMouseDown="{{ onCanvasFocus }}">
+      <div style="{{ canvasTitlebarStyle }}" onMouseDown="{{ onCanvasTitlebarDown }}">
+        <sc-if value="{{ canvasActive }}">
+          <div style="{{ marqueeStyleBase }}"></div>
+        </sc-if>
+        <span data-winbtn="" onClick="{{ onCanvasClose }}" title="Close" style="width:12px;height:12px;border:1px solid rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;background:#f2665a;font-size:13px;line-height:1;font-weight:900;color:#14141c;font-family:monospace;" style-hover="filter:brightness(1.3);transform:scale(1.15);">&times;</span>
+        <span data-winbtn="" onClick="{{ onCanvasMinimize }}" title="Minimize" style="width:12px;height:12px;border:1px solid rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;background:#f2b950;font-size:15px;line-height:1;font-weight:900;color:#14141c;font-family:monospace;" style-hover="filter:brightness(1.3);transform:scale(1.15);">&#8211;</span>
+        <span data-winbtn="" onClick="{{ onCanvasMaximize }}" title="Maximize" style="width:12px;height:12px;border:1px solid rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;background:#4caf6e;font-size:11px;line-height:1;font-weight:900;color:#14141c;font-family:monospace;" style-hover="filter:brightness(1.3);transform:scale(1.15);">&#9633;</span>
+        <span style="{{ canvasTitleTextStyle }}">CANVAS &middot; featured</span>
+      </div>
+      <sc-if value="{{ canvasContentVisible }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;min-height:0;overflow:hidden;position:relative;background-image:conic-gradient(#1f2029 90deg, #262837 90deg 180deg, #1f2029 180deg 270deg, #262837 270deg);background-size:20px 20px;" onContextMenu="{{ canvasNoContext }}">
+        <div style="position:absolute;inset:0;display:grid;grid-template-columns:repeat(48,1fr);grid-template-rows:repeat(30,1fr);z-index:1;">
+          <sc-for list="{{ canvasDrawCellsView }}" as="cell" hint-placeholder-count="1440">
+            <span style="{{ cell.style }}" onMouseDown="{{ cell.onDown }}" onMouseEnter="{{ cell.onEnter }}"></span>
+          </sc-for>
+        </div>
+        <div style="{{ canvasWrapperStyle }}">
+        <div data-canvas-card="" style="{{ canvasCardStyle }}">
+          <p style="font-family:'Press Start 2P',monospace;font-size:12px;line-height:1.6;margin:0 0 12px;color:#5ee6c5;">{{ canvasTitle }}</p>
+          <sc-if value="{{ canvasHasTags }}">
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+              <sc-for list="{{ canvasTags }}" as="t" hint-placeholder-count="2">
+                <span style="font-size:10px;background:#262837;border:1px solid #3a3d4d;padding:3px 8px;color:#8b8d9c;">{{ t }}</span>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ kindIsAboutSplit }}" hint-placeholder-val="{{ false }}">
+            <p style="font-size:13px;line-height:1.7;color:#e8e6e3;margin:0 0 10px;">{{ aboutBefore }}<strong style="color:#5ee6c5;">{{ aboutName }}</strong>{{ aboutAfter }}</p>
+          </sc-if>
+          <sc-if value="{{ showGenericBlurb }}" hint-placeholder-val="{{ true }}">
+            <p style="font-size:13px;line-height:1.7;color:#e8e6e3;margin:0 0 10px;">{{ canvasBlurb }}</p>
+          </sc-if>
+          <sc-if value="{{ canvasHasMeta }}">
+            <p style="font-size:11px;color:#8b8d9c;margin:0 0 10px;">{{ canvasMeta }}</p>
+          </sc-if>
+          <sc-if value="{{ canvasHasHighlights }}">
+            <ul style="margin:0 0 10px;padding-left:16px;display:flex;flex-direction:column;gap:6px;">
+              <sc-for list="{{ canvasHighlights }}" as="h" hint-placeholder-count="4">
+                <li style="font-size:12px;line-height:1.6;color:#e8e6e3;">{{ h }}</li>
+              </sc-for>
+            </ul>
+          </sc-if>
+          <sc-if value="{{ kindIsResume }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:4px;">
+              <image-slot id="resume-page" shape="rect" fit="contain" src="assets/resume-page1.png" placeholder="Drop resume page image" style="width:100%;aspect-ratio:686/886;"></image-slot>
+              <a href="{{ resumeUrl }}" target="_blank" rel="noopener" style="position:sticky;bottom:8px;align-self:flex-start;font-size:11px;color:#5ee6c5;text-decoration:none;background:#14141c;border:1px solid #3a3d4d;padding:6px 10px;z-index:5;">open full pdf &#8599;</a>
+            </div>
+          </sc-if>
+          <sc-if value="{{ kindIsContact }}" hint-placeholder-val="{{ true }}">
+            <div style="margin-top:4px;">
+              <p style="font-size:12px;color:#8b8d9c;margin:0 0 10px;">or email directly: <a href="{{ mailtoHref }}" style="color:#5ee6c5;">{{ contactEmail }}</a></p>
+              <sc-if value="{{ contactSubmitted }}">
+                <p style="font-size:12px;color:#5ee6c5;">{{ contactConfirmMsg }}</p>
+              </sc-if>
+              <sc-if value="{{ contactNotSubmitted }}" hint-placeholder-val="{{ true }}">
+                <form onSubmit="{{ onContactSubmit }}" style="display:flex;flex-direction:column;gap:6px;">
+                  <input type="text" required="" placeholder="name" value="{{ contactNameVal }}" onChange="{{ onContactNameChange }}" style="background:#1f2029;border:2px solid #3a3d4d;color:#e8e6e3;padding:6px 8px;font-family:inherit;font-size:12px;"></input>
+                  <input type="email" required="" placeholder="email" value="{{ contactEmailVal }}" onChange="{{ onContactEmailChange }}" style="background:#1f2029;border:2px solid #3a3d4d;color:#e8e6e3;padding:6px 8px;font-family:inherit;font-size:12px;"></input>
+                  <textarea required="" placeholder="message" rows="2" value="{{ contactMessageVal }}" onChange="{{ onContactMessageChange }}" style="background:#1f2029;border:2px solid #3a3d4d;color:#e8e6e3;padding:6px 8px;font-family:inherit;font-size:12px;resize:vertical;"></textarea>
+                  <button type="submit" style="align-self:flex-start;margin-top:4px;background:#f2b950;color:#14141c;border:none;padding:8px 16px;font-family:'Press Start 2P',monospace;font-size:10px;cursor:pointer;transition:transform .1s;" style-hover="transform:scale(1.05);background:#f5c66b;">SEND</button>
+                </form>
+              </sc-if>
+            </div>
+          </sc-if>
+        </div>
+        </div>
+        <div style="position:absolute;top:8px;right:8px;z-index:3;display:flex;gap:6px;">
+          <button type="button" onClick="{{ toggleCanvasEraser }}" style="{{ canvasEraserBtnStyle }}">ERS</button>
+          <button type="button" onClick="{{ clearCanvasDraw }}" style="font-family:'Press Start 2P',monospace;font-size:8px;color:#14141c;background:#8b8d9c;border:none;padding:5px 8px;cursor:pointer;box-shadow:inset -2px -2px 0 rgba(0,0,0,.3), inset 2px 2px 0 rgba(255,255,255,.25);">CLEAR</button>
+        </div>
+      </div>
+      </sc-if>
+      <sc-if value="{{ canvasResizeHandleVisible }}">
+        <span onMouseDown="{{ onCanvasResizeDown }}" style="position:absolute;right:0;bottom:0;width:14px;height:14px;cursor:nwse-resize;background-image:repeating-linear-gradient(135deg, #4c5066 0 2px, transparent 2px 4px);"></span>
+      </sc-if>
+    </div>
+
+    <div style="{{ layersWinStyle }}" onMouseDown="{{ onLayersFocusDock }}">
+      <div style="{{ layersTitlebarStyle }}" onMouseDown="{{ onLayersTitlebarDown }}" onClick="{{ onLayersTitlebarClick }}">
+        <sc-if value="{{ layersActive }}">
+          <div style="{{ marqueeStyleBase }}"></div>
+        </sc-if>
+        <span data-winbtn="" onClick="{{ onLayersClose }}" title="Close" style="width:12px;height:12px;border:1px solid rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;background:#f2665a;font-size:13px;line-height:1;font-weight:900;color:#14141c;font-family:monospace;" style-hover="filter:brightness(1.3);transform:scale(1.15);">&times;</span>
+        <span data-winbtn="" onClick="{{ onLayersMinimize }}" title="Minimize" style="width:12px;height:12px;border:1px solid rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;background:#f2b950;font-size:15px;line-height:1;font-weight:900;color:#14141c;font-family:monospace;" style-hover="filter:brightness(1.3);transform:scale(1.15);">&#8211;</span>
+        <span data-winbtn="" onClick="{{ onLayersMaximize }}" title="Maximize" style="width:12px;height:12px;border:1px solid rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;background:#4caf6e;font-size:11px;line-height:1;font-weight:900;color:#14141c;font-family:monospace;" style-hover="filter:brightness(1.3);transform:scale(1.15);">&#9633;</span>
+        <sc-if value="{{ layersTitleTextVisible }}" hint-placeholder-val="{{ true }}">
+        <span style="{{ layersTitleTextStyle }}">LAYERS &middot; projects</span>
+        </sc-if>
+        <sc-if value="{{ layersCollapsedFlag }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:1px;">
+            <sc-for list="{{ layersTitleLetters }}" as="l" hint-placeholder-count="6">
+              <span style="{{ layersLetterStyle }}">{{ l.ch }}</span>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <sc-if value="{{ layersContentVisible }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;overflow:auto;padding:12px;display:flex;flex-direction:column;">
+        <sc-for list="{{ layerRows }}" as="row" hint-placeholder-count="3">
+          <div style="{{ row.rowStyle }}" onClick="{{ row.onName }}" onMouseEnter="{{ row.onEnter }}" onMouseLeave="{{ row.onLeave }}">
+            <sc-if value="{{ row.showUnreadBar }}">
+              <span style="{{ row.unreadBarStyle }}"></span>
+            </sc-if>
+            <div style="{{ row.topRowStyle }}">
+              <span style="{{ row.labelStyle }}">LAYER</span>
+              <button type="button" onClick="{{ row.onEye }}" aria-label="Toggle layer visibility" style="{{ row.eyeBtnStyle }}" style-hover="filter:brightness(1.3);transform:scale(1.1);">{{ row.eyeChar }}</button>
+            </div>
+            <div style="{{ row.bodyRowStyle }}">
+              <span style="{{ row.iconStyle }}">{{ row.icon }}</span>
+              <div style="min-width:0;">
+                <div style="{{ row.nameStyle }}">{{ row.name }}</div>
+                <div style="{{ row.shortStyle }}">{{ row.short }}</div>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+      <sc-if value="{{ layersResizeHandleVisible }}">
+        <span onMouseDown="{{ onLayersResizeDown }}" style="position:absolute;right:0;bottom:0;width:14px;height:14px;cursor:nwse-resize;background-image:repeating-linear-gradient(135deg, #4c5066 0 2px, transparent 2px 4px);"></span>
+      </sc-if>
+    </div>
+
+    <div style="{{ paletteWinStyle }}" onMouseDown="{{ onPaletteFocusDock }}">
+      <div style="{{ paletteTitlebarStyle }}" onMouseDown="{{ onPaletteTitlebarDown }}" onClick="{{ onPaletteTitlebarClick }}">
+        <sc-if value="{{ paletteActive }}">
+          <div style="{{ marqueeStyleBase }}"></div>
+        </sc-if>
+        <span data-winbtn="" onClick="{{ onPaletteClose }}" title="Close" style="width:12px;height:12px;border:1px solid rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;background:#f2665a;font-size:13px;line-height:1;font-weight:900;color:#14141c;font-family:monospace;" style-hover="filter:brightness(1.3);transform:scale(1.15);">&times;</span>
+        <span data-winbtn="" onClick="{{ onPaletteMinimize }}" title="Minimize" style="width:12px;height:12px;border:1px solid rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;background:#f2b950;font-size:15px;line-height:1;font-weight:900;color:#14141c;font-family:monospace;" style-hover="filter:brightness(1.3);transform:scale(1.15);">&#8211;</span>
+        <span data-winbtn="" onClick="{{ onPaletteMaximize }}" title="Maximize" style="width:12px;height:12px;border:1px solid rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;background:#4caf6e;font-size:11px;line-height:1;font-weight:900;color:#14141c;font-family:monospace;" style-hover="filter:brightness(1.3);transform:scale(1.15);">&#9633;</span>
+        <sc-if value="{{ paletteTitleTextVisible }}" hint-placeholder-val="{{ true }}">
+        <span style="{{ paletteTitleTextStyle }}">PALETTE &middot; skills</span>
+        </sc-if>
+        <sc-if value="{{ paletteCollapsedFlag }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:1px;">
+            <sc-for list="{{ paletteTitleLetters }}" as="l" hint-placeholder-count="7">
+              <span style="{{ paletteLetterStyle }}">{{ l.ch }}</span>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <sc-if value="{{ paletteContentVisible }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;overflow:auto;padding:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+        <sc-for list="{{ paletteRows }}" as="sw" hint-placeholder-count="6">
+          <button type="button" onClick="{{ sw.onClick }}" style="{{ sw.wrapStyle }}" style-hover="transform:scale(1.08);background:#262837;">
+            <span style="{{ sw.fillStyle }}"></span>
+            <span style="{{ sw.labelStyle }}">{{ sw.name }}</span>
+          </button>
+        </sc-for>
+      </div>
+      </sc-if>
+      <sc-if value="{{ paletteResizeHandleVisible }}">
+        <span onMouseDown="{{ onPaletteResizeDown }}" style="position:absolute;right:0;bottom:0;width:14px;height:14px;cursor:nwse-resize;background-image:repeating-linear-gradient(135deg, #4c5066 0 2px, transparent 2px 4px);"></span>
+      </sc-if>
+    </div>
+
+    <div style="{{ framesWinStyle }}" onMouseDown="{{ onFramesFocusDock }}">
+      <div style="{{ framesTitlebarStyle }}" onMouseDown="{{ onFramesTitlebarDown }}">
+        <sc-if value="{{ framesActive }}">
+          <div style="{{ marqueeStyleBase }}"></div>
+        </sc-if>
+        <span data-winbtn="" onClick="{{ onFramesClose }}" title="Close" style="width:12px;height:12px;border:1px solid rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;background:#f2665a;font-size:13px;line-height:1;font-weight:900;color:#14141c;font-family:monospace;" style-hover="filter:brightness(1.3);transform:scale(1.15);">&times;</span>
+        <span data-winbtn="" onClick="{{ onFramesMinimize }}" title="Minimize" style="width:12px;height:12px;border:1px solid rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;background:#f2b950;font-size:15px;line-height:1;font-weight:900;color:#14141c;font-family:monospace;" style-hover="filter:brightness(1.3);transform:scale(1.15);">&#8211;</span>
+        <span data-winbtn="" onClick="{{ onFramesMaximize }}" title="Maximize" style="width:12px;height:12px;border:1px solid rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;background:#4caf6e;font-size:11px;line-height:1;font-weight:900;color:#14141c;font-family:monospace;" style-hover="filter:brightness(1.3);transform:scale(1.15);">&#9633;</span>
+        <span style="{{ framesTitleTextStyle }}">TIMELINE &middot; experience</span>
+      </div>
+      <sc-if value="{{ framesContentVisible }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;padding:8px 14px 0;gap:0;">
+        <div onClick="{{ onTimelineTabExp }}" style="{{ timelineTabExpStyle }}">EXPERIENCE</div>
+        <div onClick="{{ onTimelineTabHob }}" style="{{ timelineTabHobStyle }}">HOBBIES</div>
+      </div>
+      <div style="flex:1;overflow:auto;padding:14px 16px;display:flex;align-items:flex-start;">
+        <sc-if value="{{ timelineTabExperience }}" hint-placeholder-val="{{ true }}">
+        <div style="position:relative;width:100%;min-width:560px;display:flex;">
+          <div style="position:absolute;left:76px;right:76px;top:7px;height:3px;background:#3a3d4d;z-index:1;"></div>
+          <sc-for list="{{ frameRows }}" as="fr" hint-placeholder-count="3">
+            <div style="flex:1;min-width:160px;display:flex;flex-direction:column;align-items:center;gap:0;">
+              <span style="{{ fr.nodeStyle }}" onClick="{{ fr.onClick }}" onMouseEnter="{{ fr.onEnter }}" onMouseLeave="{{ fr.onLeave }}"></span>
+              <span style="{{ fr.tickStyle }}"></span>
+              <div style="{{ fr.cardStyle }}" onClick="{{ fr.onClick }}" onMouseEnter="{{ fr.onEnter }}" onMouseLeave="{{ fr.onLeave }}">
+                <span style="{{ fr.roleStyle }}">{{ fr.role }}</span>
+                <span style="{{ fr.orgStyle }}">{{ fr.org }}</span>
+                <span style="{{ fr.durationStyle }}">{{ fr.duration }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
+        <sc-if value="{{ timelineTabHobbies }}" hint-placeholder-val="{{ false }}">
+        <div style="position:relative;width:100%;min-width:400px;display:flex;">
+          <div style="position:absolute;left:76px;right:76px;top:7px;height:3px;background:#3a3d4d;z-index:1;"></div>
+          <sc-for list="{{ hobbyRows }}" as="fr" hint-placeholder-count="2">
+            <div style="flex:1;min-width:160px;display:flex;flex-direction:column;align-items:center;gap:0;">
+              <span style="{{ fr.nodeStyle }}" onClick="{{ fr.onClick }}" onMouseEnter="{{ fr.onEnter }}" onMouseLeave="{{ fr.onLeave }}"></span>
+              <span style="{{ fr.tickStyle }}"></span>
+              <div style="{{ fr.cardStyle }}" onClick="{{ fr.onClick }}" onMouseEnter="{{ fr.onEnter }}" onMouseLeave="{{ fr.onLeave }}">
+                <span style="{{ fr.roleStyle }}">{{ fr.role }}</span>
+                <span style="{{ fr.orgStyle }}">{{ fr.org }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
+      </div>
+      </sc-if>
+      <sc-if value="{{ framesResizeHandleVisible }}">
+        <span onMouseDown="{{ onFramesResizeDown }}" style="position:absolute;right:0;bottom:0;width:14px;height:14px;cursor:nwse-resize;background-image:repeating-linear-gradient(135deg, #4c5066 0 2px, transparent 2px 4px);"></span>
+      </sc-if>
+    </div>
+
+    <div style="{{ statusBarStyle }}">
+      <span>{{ coord }}</span>
+      <button type="button" onClick="{{ resetLayout }}" style="color:#8b8d9c;background:none;border:none;font-family:inherit;font-size:11px;cursor:pointer;" style-hover="color:#5ee6c5;">reset layout</button>
+      <span style="display:flex;gap:14px;">
+        <a href="{{ githubUrl }}" target="_blank" rel="noopener" style="color:#8b8d9c;text-decoration:none;">github</a>
+        <a href="{{ linkedinUrl }}" target="_blank" rel="noopener" style="color:#8b8d9c;text-decoration:none;">linkedin</a>
+        <a href="{{ mailtoHref }}" style="color:#8b8d9c;text-decoration:none;">mail</a>
+      </span>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;: {&quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#5ee6c5&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;#5ee6c5&quot;, &quot;#f2b950&quot;, &quot;#f2665a&quot;]}, &quot;animatedMarquee&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;}}">
+class Component extends DCLogic {
+  data = {
+    about: {
+      name: "Owen Oo",
+      blurb: "Hi, I'm Owen Oo \u2014 a CS student at Stony Brook who never quite picked a lane between building and designing, so I do both. I write full-stack code and I care way too much about how it looks and feels while I'm at it. Off-screen, I run my school's badminton club and help lead our Burmese student association.",
+    },
+    contact: { email: "bonemyatpaing.oo@stonybrook.edu" },
+    resumeUrl: "assets/Owen-Oo-Resume.pdf",
+    githubUrl: "https://github.com/youl1ng",
+    linkedinUrl: "https://www.linkedin.com/in/bone-myat-paing-oo-8b2b28293/",
+    skills: [
+      { name: "React", tag: "react", hex: "#5ee6c5" },
+      { name: "JavaScript", tag: "javascript", hex: "#e8d44d" },
+      { name: "Node.js", tag: "node", hex: "#7ed957" },
+      { name: "Express", tag: "express", hex: "#c9cdd3" },
+      { name: "MongoDB", tag: "mongodb", hex: "#4caf6e" },
+      { name: "Git", tag: "git", hex: "#f28ecb" },
+      { name: "Docker", tag: "docker", hex: "#4dabf7" },
+      { name: "Figma", tag: "figma", hex: "#f2665a" },
+      { name: "Java", tag: "java", hex: "#f2b950" },
+      { name: "Python", tag: "python", hex: "#7fa8f2" },
+      { name: "C#", tag: "csharp", hex: "#a78bfa" },
+      { name: "C", tag: "c", hex: "#9aa4b2" },
+      { name: "HTML", tag: "html", hex: "#f2795a" },
+      { name: "CSS", tag: "css", hex: "#6fc6f2" },
+      { name: "VS Code", tag: "vscode", hex: "#3f7fe0" },
+      { name: "IntelliJ", tag: "intellij", hex: "#e0568a" },
+      { name: "Unity", tag: "unity", hex: "#3fae8f" },
+      { name: "Godot", tag: "godot", hex: "#5b9bd5" },
+      { name: "OpenAI API", tag: "openai", hex: "#10a37f" },
+      { name: "Gemini API", tag: "gemini", hex: "#8e6ff2" },
+    ],
+    projects: [
+      { id: "phreddit", name: "Phreddit", short: "full-stack social platform (MERN)", icon: "PH", blurb: "Phreddit is a Reddit-style social platform. I built it with a partner over one semester, across three versions. The first version used vanilla JavaScript, no framework, to get the data model right: communities, posts, nested comments, sorting. The second version moved to a React SPA. The third became a full MERN app with a real client-server split. I led the frontend across all three versions and worked on the backend too.", tags: ["react", "javascript", "node", "express", "mongodb", "git"], highlights: [
+        "Frontend: Built the component architecture, reusable UI elements, and prop-threading through nested components",
+        "Bug fix: Found a stale-state bug where comment replies rendered flat until refresh. The cause was a timing race between a React context update and a data fetch",
+        "Backend: Wrote Mongoose schemas, RESTful CRUD routes, session-based auth with bcrypt, and cascading deletes",
+        "Workflow: Built with a partner using feature branches and pull requests",
+      ] },
+      { id: "signage", name: "Xibo Digital Signage Directory", short: "dockerized CMS \u2014 CS department", icon: "XB", blurb: "This started as a real problem, not a spec. The CS department's lobby had physical posters for a directory. I got asked to replace them with something live and remotely manageable. I set up a self-hosted Xibo CMS in Docker, paired with a Windows Player driving the lobby display. I built this on Ubuntu first, with a Linux Xibo player. The Linux player lagged too far behind the CMS version to render layouts correctly. I rebuilt the machine on Windows and moved to Docker Desktop with WSL2. That's the version running now.", tags: ["docker", "xibo cms", "windows", "tailscale", "systems"], highlights: [
+        "Deployment: Self-hosted Xibo CMS and Windows Player, running on one mini-PC",
+        "Migration: Diagnosed a version mismatch between the Linux player and the CMS. Rebuilt the deployment on Windows to fix it",
+        "Remote access: Set up Tailscale so the CMS can be managed from a desk, without exposing public ports",
+        "Content system: Built a DataSet-driven, CSV-updatable layout to replace a static webpage embed",
+      ] },
+      { id: "homeaid", name: "homeAid", short: "UI/UX & product design (hackathon)", icon: "HA", accentColor: "#a78bfa", blurb: "homeAid is a Tinder-style concept for matching aging homeowners with freelance repair workers \u2014 swipe to match, then negotiate the job. I owned design end-to-end, solo, under real hackathon time pressure, thinking through how the product works and how it feels at the same time, not one after the other.", tags: ["figma/wireframing", "miro sidekick", "ui/ux"], highlights: [
+        "Designed 18 screens across two user types (homeowners, workers) with distinct flows and shared visual language",
+        "Built a budget-negotiation interaction pattern integrated directly into the swipe mechanic",
+        "Created Pebble, the brand mascot, and a consistent visual identity system across the app",
+        "Used AI-assisted prototyping (Miro Sidekick) to iterate quickly on both UX flows and UI assets under hackathon time constraints",
+      ] },
+    ],
+    experience: [
+      { id: "it", role: "System Staff Student Assistant", org: "Stony Brook CS Dept", blurb: "I'm a student assistant for the system staff crew in the CS department, since June 2026. Most of the job is diagnosing what's actually broken before fixing it, whether it's a machine that won't boot, a printer that won't connect, a copier throwing a cryptic error, and then documenting the fix so the next person doesn't have to start from zero.", duration: "June 2026 \u2013 Present", highlights: [
+        "Reimaging: Reimage lab machines across Windows, Linux, and macOS using FOG PXE deployment and Ventoy bootable USB, including working around older hardware and boot configurations that don't cooperate with standard imaging",
+        "Troubleshooting: Diagnose and fix BIOS/UEFI boot failures, and resolve connectivity issues on lab printers and network copiers",
+        "Documentation: Write technical documentation for deployment and troubleshooting procedures, so recurring issues have a repeatable fix instead of getting solved from scratch each time",
+        "Digital signage: Deployed and maintain the department's Xibo digital signage system (see Xibo project for the full build)",
+      ] },
+      { id: "bursa", role: "Graphic Designer", org: "BURSA (Burmese Student Association)", blurb: "I've designed event branding, flyers, and social media graphics for BURSA since 2025 \u2014 a cultural student organization with 600+ Instagram followers. The job is part visual design, part knowing what actually gets someone to stop scrolling and show up to an event.", duration: "2025 \u2013 2026", highlights: [
+        "Event branding: Designed cohesive visual identities for BURSA events, from flyers to social posts, so each event feels distinct but recognizably BURSA",
+        "Social media graphics: Created graphics for the org's Instagram, where visual consistency and quick legibility matter more than anything else",
+        "Turnout: Helped drive event attendance through design that people actually notice in a crowded feed",
+      ] },
+    ],
+    hobbies: [
+      { id: "pixelart", role: "Pixel Art", org: "Hobby", blurb: "Drawing and animating pixel sprites in tools like Aseprite \u2014 part of what inspired this site's UI.", duration: "ongoing" },
+      { id: "badminton", role: "Badminton", org: "President, SBU Badminton Club", blurb: "I run Stony Brook's badminton club as president, and I compete in collegiate tournaments against schools from across the country. It's the part of my week that has nothing to do with a screen, which is exactly why I keep doing it.", duration: "ongoing", tags: ["sports", "leadership"] },
+    ],
+  };
+
+  state = {
+    workspaceOpen: false,
+    landingTrail: [],
+    isDesktop: true,
+    windows: {
+      canvas: { x: 100, y: 60, w: 460, h: 400, z: 20, hidden: false, minimized: false, maximized: false },
+      layers: { x: 1180, y: 56, w: 320, h: 340, z: 15, hidden: false, minimized: false, maximized: false },
+      palette: { x: 1180, y: 410, w: 320, h: 240, z: 14, hidden: false, minimized: false, maximized: false },
+      frames: { x: 100, y: 480, w: 640, h: 300, z: 13, hidden: false, minimized: false, maximized: false },
+    },
+    activeWindow: "canvas",
+    canvasDocked: true,
+    framesDocked: true,
+    layersDocked: true,
+    paletteDocked: true,
+    frameDockHeight: 220,
+    canvasView: { kind: "about" },
+    hiddenLayers: {},
+    readLayers: {},
+    skillFilter: null,
+    contact: { name: "", email: "", message: "", submitted: false },
+    timelineTab: "experience",
+    titleHovered: false,
+    titleTiltAngle: 0,
+    titleClickFX: null,
+    bgEffect: "bgeffect1",
+    glow: null,
+    glowTrail: [],
+    ripple: null,
+    stars: [],
+    starBursts: [],
+    poppingStars: [],
+    hoveredStarId: null,
+    hoveredTilt: 0,
+    canvasDrawCells: new Array(1440).fill(null),
+    canvasDrawMode: null,
+    canvasEraseActive: false,
+    drag: null,
+    resizeDrag: null,
+    mouseCoord: { x: 0, y: 0 },
+  };
+
+  zCounter = 20;
+  maxRestore = {};
+  lastViewSig = null;
+  revealParity = 0;
+
+  getDefaultWindows() {
+    const vw = (typeof window !== "undefined" ? window.innerWidth : 1440);
+    const vh = (typeof window !== "undefined" ? window.innerHeight : 900);
+    const stageLeft = 76, stageRight = 12, margin = 12, gap = 16;
+    const contentW = Math.min(452, Math.max(200, vw - stageLeft - stageRight - 40));
+    const contentLeft = stageLeft + Math.max(8, (vw - stageLeft - stageRight - contentW) / 2);
+    const contentRight = contentLeft + contentW;
+    const availRight = vw - contentRight - margin;
+    const winW = Math.max(180, Math.min(320, availRight - gap));
+    const x = vw - winW - margin;
+
+    const topY = 56, bottomMargin = 40;
+    const availH = Math.max(200, vh - topY - bottomMargin);
+    const layersH = Math.min(340, Math.max(200, Math.round(availH * 0.55)));
+    let paletteY = topY + layersH + 12;
+    let paletteH = Math.min(240, Math.max(160, vh - bottomMargin - paletteY));
+    if (paletteY + paletteH > vh - bottomMargin) paletteH = Math.max(140, vh - bottomMargin - paletteY);
+
+    return {
+      canvas: { x: 100, y: 60, w: 460, h: 400, z: 20, hidden: false, minimized: false, maximized: false },
+      layers: { x, y: topY, w: winW, h: layersH, z: 15, hidden: false, minimized: false, maximized: false },
+      palette: { x, y: paletteY, w: winW, h: paletteH, z: 14, hidden: false, minimized: false, maximized: false },
+      frames: { x: 100, y: 480, w: 640, h: 300, z: 13, hidden: false, minimized: false, maximized: false },
+    };
+  }
+
+  componentDidMount() {
+    this._mq = window.matchMedia("(min-width: 769px)");
+    this._mqHandler = (e) => this.setState({ isDesktop: e.matches });
+    this.setState({ isDesktop: this._mq.matches, frameDockHeight: Math.round(window.innerHeight * 0.26), windows: this.getDefaultWindows() });
+    if (this._mq.addEventListener) this._mq.addEventListener("change", this._mqHandler);
+    else this._mq.addListener(this._mqHandler);
+
+    this._prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    this._landingColorIdx = 0;
+    this._landingRAF = null;
+    this._titleColors = ["#5ee6c5", "#f2b950", "#f2665a"];
+    this._titleVariantIdx = -1;
+    this._titleFXRAF = null;
+    this._glowLastGx = null;
+    this._glowLastGy = null;
+    this._rippleRAF = null;
+    this._glowTrailRAF = null;
+    this._starIdCounter = 0;
+    this._starTimeouts = [];
+    this._starBurstRAF = null;
+    this._starsAnimRAF = null;
+    this.setState({ stars: this.genStars(14) });
+    this.scheduleStarSpawn();
+    this.scheduleStarDespawn();
+    this._lagX = null;
+    this._lagY = null;
+    this._lastGx = null;
+    this._lastGy = null;
+    this._onLandingMove = (e) => {
+      if (this.state.workspaceOpen || this._prefersReducedMotion) return;
+      if (this.state.bgEffect === "bgeffect2") {
+        this.updateGlow(e.clientX, e.clientY);
+        return;
+      }
+      if (this.state.bgEffect !== "bgeffect1") return;
+      this._mouseTargetX = e.clientX;
+      this._mouseTargetY = e.clientY;
+      if (this._lagX === null) { this._lagX = e.clientX; this._lagY = e.clientY; }
+      if (!this._landingRAF) this._landingRAF = requestAnimationFrame(this.tickLandingTrail);
+    };
+    window.addEventListener("mousemove", this._onLandingMove);
+
+    this._onMove = (e) => {
+      const { drag, resizeDrag, pendingUndock, isDesktop } = this.state;
+      if (pendingUndock) {
+        const dx = e.clientX - pendingUndock.sx, dy = e.clientY - pendingUndock.sy;
+        if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
+          const id = pendingUndock.id;
+          const offsets = { canvas: [40, 15], frames: [260, 15], layers: [150, 15], palette: [150, 15] };
+          const sizes = { canvas: [460, 400], frames: [640, 280], layers: [300, 320], palette: [300, 240] };
+          const [ox, oy] = offsets[id];
+          const [w0, h0] = sizes[id];
+          const nx = Math.max(0, e.clientX - ox);
+          const ny = Math.max(32, e.clientY - oy);
+          this.zCounter += 1;
+          const z = this.zCounter;
+          this.setState((s) => ({
+            [id + "Docked"]: false,
+            windows: { ...s.windows, [id]: { x: nx, y: ny, w: w0, h: h0, z, hidden: false } },
+            activeWindow: id,
+            pendingUndock: null,
+            drag: { id, sx: e.clientX, sy: e.clientY, ox: nx, oy: ny },
+          }));
+        }
+        return;
+      }
+      if (drag) {
+        const dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
+        this.setState((s) => ({ windows: { ...s.windows, [drag.id]: { ...s.windows[drag.id], x: Math.max(0, drag.ox + dx), y: Math.max(32, drag.oy + dy) } } }));
+      }
+      if (resizeDrag) {
+        const dx = e.clientX - resizeDrag.sx, dy = e.clientY - resizeDrag.sy;
+        this.setState((s) => ({ windows: { ...s.windows, [resizeDrag.id]: { ...s.windows[resizeDrag.id], w: Math.max(240, resizeDrag.sw + dx), h: Math.max(160, resizeDrag.sh + dy) } } }));
+      }
+      if (this.state.splitterDrag) {
+        const h = Math.max(120, Math.min(window.innerHeight - 260, window.innerHeight - 40 - e.clientY));
+        this.setState({ frameDockHeight: h });
+      }
+      if (isDesktop) this.setState({ mouseCoord: { x: e.clientX, y: e.clientY } });
+    };
+    this._onUp = () => {
+      if (this.state.canvasDrawMode) this.setState({ canvasDrawMode: null });
+      if (this.state.drag && this.state.drag.id === "canvas" && !this.state.canvasDocked) {
+        const win = this.state.windows.canvas;
+        if (win.y < 60) {
+          this.setState({ canvasDocked: true, drag: null, resizeDrag: null });
+          return;
+        }
+      }
+      if (this.state.drag && this.state.drag.id === "frames" && !this.state.framesDocked) {
+        const win = this.state.windows.frames;
+        const bottomEdge = win.y + win.h;
+        if (window.innerHeight - bottomEdge < 60) {
+          this.setState({ framesDocked: true, drag: null, resizeDrag: null });
+          return;
+        }
+      }
+      if (this.state.drag && (this.state.drag.id === "layers" || this.state.drag.id === "palette") && !this.state[this.state.drag.id + "Docked"]) {
+        const id = this.state.drag.id;
+        const win = this.state.windows[id];
+        const sidebarLeft = window.innerWidth * 0.75;
+        if (win.x + win.w / 2 > sidebarLeft - 40) {
+          this.setState({ [id + "Docked"]: true, drag: null, resizeDrag: null });
+          return;
+        }
+      }
+      if (this.state.splitterDrag) this.setState({ splitterDrag: false });
+      if (this.state.pendingUndock) this.setState({ pendingUndock: null });
+      if (this.state.drag || this.state.resizeDrag) this.setState({ drag: null, resizeDrag: null });
+    };
+    window.addEventListener("mousemove", this._onMove);
+    window.addEventListener("mouseup", this._onUp);
+  }
+
+  tickLandingTrail = (now) => {
+    const distToTarget = Math.hypot(this._mouseTargetX - this._lagX, this._mouseTargetY - this._lagY);
+    const factor = Math.min(0.6, 0.1 + distToTarget * 0.004);
+    this._lagX += (this._mouseTargetX - this._lagX) * factor;
+    this._lagY += (this._mouseTargetY - this._lagY) * factor;
+    const gx = Math.floor(this._lagX / 32) * 32, gy = Math.floor(this._lagY / 32) * 32;
+    let spawned = false;
+    if (gx !== this._lastGx || gy !== this._lastGy) {
+      this._lastGx = gx; this._lastGy = gy;
+      this._landingColorIdx += 1;
+      const color = ["#5ee6c5", "#f2b950", "#f2665a"][this._landingColorIdx % 3];
+      const spin = Math.random() < 0.5 ? -1 : 1;
+      this.state.landingTrail.push({ gx, gy, color, born: now, spin });
+      while (this.state.landingTrail.length > 14) this.state.landingTrail.shift();
+      spawned = true;
+    }
+    const dist = Math.hypot(this._mouseTargetX - this._lagX, this._mouseTargetY - this._lagY);
+    const filtered = this.state.landingTrail.filter((p) => now - p.born < 900);
+    const stillActive = filtered.length > 0 || dist > 0.5;
+    this.setState({ landingTrail: filtered }, () => {
+      this._landingRAF = stillActive ? requestAnimationFrame(this.tickLandingTrail) : null;
+    });
+  };
+
+  componentWillUnmount() {
+    window.removeEventListener("mousemove", this._onMove);
+    window.removeEventListener("mouseup", this._onUp);
+    window.removeEventListener("mousemove", this._onLandingMove);
+    if (this._landingRAF) cancelAnimationFrame(this._landingRAF);
+    if (this._titleFXRAF) cancelAnimationFrame(this._titleFXRAF);
+    if (this._rippleRAF) cancelAnimationFrame(this._rippleRAF);
+    if (this._glowTrailRAF) cancelAnimationFrame(this._glowTrailRAF);
+    if (this._starBurstRAF) cancelAnimationFrame(this._starBurstRAF);
+    if (this._starsAnimRAF) cancelAnimationFrame(this._starsAnimRAF);
+    if (this._starSpawnTimer) clearTimeout(this._starSpawnTimer);
+    if (this._starDespawnTimer) clearTimeout(this._starDespawnTimer);
+    this._starTimeouts.forEach((t) => clearTimeout(t));
+    if (this._mq) {
+      if (this._mq.removeEventListener) this._mq.removeEventListener("change", this._mqHandler);
+      else this._mq.removeListener(this._mqHandler);
+    }
+  }
+
+  bringToFront(id) {
+    this.zCounter += 1;
+    const z = this.zCounter;
+    this.setState((s) => ({ windows: { ...s.windows, [id]: { ...s.windows[id], z } }, activeWindow: id }));
+  }
+
+  startDrag(id, e) {
+    if (!this.state.isDesktop) return;
+    if (e.target.closest && e.target.closest("[data-winbtn]")) return;
+    if (this.state[id + "Docked"]) {
+      this.setState({ pendingUndock: { id, sx: e.clientX, sy: e.clientY }, activeWindow: id });
+      return;
+    }
+    const win = this.state.windows[id];
+    this.bringToFront(id);
+    this.setState({ drag: { id, sx: e.clientX, sy: e.clientY, ox: win.x, oy: win.y } });
+  }
+
+  startResize(id, e) {
+    e.stopPropagation();
+    if (!this.state.isDesktop) return;
+    const win = this.state.windows[id];
+    this.bringToFront(id);
+    this.setState({ resizeDrag: { id, sx: e.clientX, sy: e.clientY, sw: win.w, sh: win.h } });
+  }
+
+  closeWindow(id, e) {
+    e.stopPropagation();
+    this.setState((s) => ({ windows: { ...s.windows, [id]: { ...s.windows[id], hidden: true } } }));
+  }
+
+  resetLayout = () => {
+    this.zCounter = 20;
+    this.setState({ windows: this.getDefaultWindows(), activeWindow: "canvas", canvasDocked: true, framesDocked: true, layersDocked: true, paletteDocked: true, frameDockHeight: Math.round(window.innerHeight * 0.26) });
+  };
+
+  toggleMinimize(id, e) {
+    e.stopPropagation();
+    this.setState((s) => ({ windows: { ...s.windows, [id]: { ...s.windows[id], minimized: !s.windows[id].minimized, maximized: false } }, activeWindow: id }));
+  }
+
+  toggleMaximize(id, e) {
+    e.stopPropagation();
+    const win = this.state.windows[id];
+    if (win.maximized) {
+      const r = this.maxRestore[id];
+      this.zCounter += 1;
+      const z = this.zCounter;
+      this.setState((s) => ({
+        [id + "Docked"]: r ? r.docked : s[id + "Docked"],
+        windows: { ...s.windows, [id]: { x: r ? r.x : win.x, y: r ? r.y : win.y, w: r ? r.w : win.w, h: r ? r.h : win.h, z, hidden: false, minimized: false, maximized: false } },
+        activeWindow: id,
+      }));
+    } else {
+      this.maxRestore[id] = { docked: !!this.state[id + "Docked"], x: win.x, y: win.y, w: win.w, h: win.h };
+      const fx = 76, fy = 12;
+      const fw = Math.max(300, window.innerWidth - 88);
+      const fh = Math.max(200, window.innerHeight - 52);
+      this.zCounter += 1;
+      const z = this.zCounter;
+      this.setState((s) => ({
+        [id + "Docked"]: false,
+        windows: { ...s.windows, [id]: { x: fx, y: fy, w: fw, h: fh, z, hidden: false, minimized: false, maximized: true } },
+        activeWindow: id,
+      }));
+    }
+  }
+
+  startSplitterDrag = (e) => {
+    e.stopPropagation();
+    if (!this.state.isDesktop || !this.state.canvasDocked || !this.state.framesDocked) return;
+    this.setState({ splitterDrag: true });
+  };
+
+  toggleLayerHidden(id, e) {
+    e.stopPropagation();
+    this.setState((s) => ({ hiddenLayers: { ...s.hiddenLayers, [id]: !s.hiddenLayers[id] } }));
+  }
+
+  selectProject(id) {
+    this.setState((s) => ({ canvasView: { kind: "project", id }, readLayers: { ...s.readLayers, [id]: true } }));
+    this.bringToFront("canvas");
+  }
+
+  selectExperience(id) {
+    this.setState({ canvasView: { kind: "experience", id } });
+    this.bringToFront("canvas");
+  }
+
+  selectHobby(id) {
+    this.setState({ canvasView: { kind: "hobby", id } });
+    this.bringToFront("canvas");
+  }
+
+  toggleSkillFilter(tag) {
+    this.setState((s) => ({ skillFilter: s.skillFilter === tag ? null : tag }));
+  }
+
+  setTimelineTab = (tab) => this.setState({ timelineTab: tab });
+
+  getDrawColor() {
+    const accent = this.props.accentColor || "#5ee6c5";
+    if (this.state.skillFilter) {
+      const s = this.data.skills.find((sk) => sk.tag === this.state.skillFilter);
+      if (s) return s.hex;
+    }
+    return accent;
+  }
+
+  paintCanvasCell(idx, mode) {
+    this.setState((s) => {
+      const cells = s.canvasDrawCells.slice();
+      cells[idx] = mode === "erase" ? null : this.getDrawColor();
+      return { canvasDrawCells: cells };
+    });
+  }
+
+  startCanvasDraw(idx, e) {
+    e.preventDefault();
+    const mode = (e.button === 2 || this.state.canvasEraseActive) ? "erase" : "paint";
+    this.setState({ canvasDrawMode: mode });
+    this.paintCanvasCell(idx, mode);
+  }
+
+  continueCanvasDraw(idx) {
+    if (!this.state.canvasDrawMode) return;
+    this.paintCanvasCell(idx, this.state.canvasDrawMode);
+  }
+
+  clearCanvasDraw = () => this.setState({ canvasDrawCells: new Array(1440).fill(null) });
+
+  toggleCanvasEraser = () => this.setState((s) => ({ canvasEraseActive: !s.canvasEraseActive }));
+
+  canvasNoContext = (e) => e.preventDefault();
+
+  onTitleEnter = () => {
+    const angle = (Math.random() - 0.5) * 16;
+    this.setState({ titleHovered: true, titleTiltAngle: angle });
+  };
+
+  onTitleLeave = () => this.setState({ titleHovered: false });
+
+  updateGlow = (x, y) => {
+    const gx = Math.floor(x / 32) * 32, gy = Math.floor(y / 32) * 32;
+    if (gx === this._glowLastGx && gy === this._glowLastGy) return;
+    let trail = this.state.glowTrail;
+    if (this.state.glow) {
+      trail = [...trail, { ...this.state.glow, born: performance.now() }];
+      while (trail.length > 14) trail.shift();
+    }
+    this._glowLastGx = gx; this._glowLastGy = gy;
+    const colors = this._titleColors;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    this.setState({ glow: { gx, gy, color }, glowTrail: trail });
+    if (!this._glowTrailRAF) this._glowTrailRAF = requestAnimationFrame(this.tickGlowTrail);
+  };
+
+  tickGlowTrail = (now) => {
+    const filtered = this.state.glowTrail.filter((p) => now - p.born < 900);
+    this.setState({ glowTrail: filtered }, () => {
+      this._glowTrailRAF = filtered.length > 0 ? requestAnimationFrame(this.tickGlowTrail) : null;
+    });
+  };
+
+  onLandingBgClick = (e) => {
+    if (this.state.bgEffect !== "bgeffect2" || this._prefersReducedMotion || !this.state.glow) return;
+    const gx = Math.floor(e.clientX / 32) * 32, gy = Math.floor(e.clientY / 32) * 32;
+    const colorOffset = Math.floor(Math.random() * 3);
+    this.setState({ ripple: { gx, gy, born: performance.now(), colorOffset } });
+    if (!this._rippleRAF) this._rippleRAF = requestAnimationFrame(this.tickRipple);
+  };
+
+  pickStarZone(list, zonesX, zonesY, vw, vh) {
+    const counts = new Array(zonesX * zonesY).fill(0);
+    list.forEach((s) => {
+      const zx = Math.min(zonesX - 1, Math.max(0, Math.floor((s.x / vw) * zonesX)));
+      const zy = Math.min(zonesY - 1, Math.max(0, Math.floor((s.y / vh) * zonesY)));
+      counts[zy * zonesX + zx] += 1;
+    });
+    const minCount = Math.min(...counts);
+    const candidates = [];
+    counts.forEach((c, i) => { if (c === minCount) candidates.push(i); });
+    return candidates[Math.floor(Math.random() * candidates.length)];
+  }
+
+  pickStarPosition(list, vw, vh) {
+    const zonesX = 4, zonesY = 3;
+    const zoneIdx = this.pickStarZone(list, zonesX, zonesY, vw, vh);
+    const zx = zoneIdx % zonesX, zy = Math.floor(zoneIdx / zonesX);
+    const zoneW = vw / zonesX, zoneH = vh / zonesY;
+    const pad = 0.18;
+    const x = Math.max(0, Math.min(vw, zx * zoneW + (Math.random() * (1 + 2 * pad) - pad) * zoneW));
+    const y = Math.max(0, Math.min(vh, zy * zoneH + (Math.random() * (1 + 2 * pad) - pad) * zoneH));
+    return { x, y };
+  }
+
+  pickStarTier(list) {
+    const largeCount = list.filter((s) => s.tier === "large").length;
+    const smallCount = list.filter((s) => s.tier === "small").length;
+    const r = Math.random();
+    if (largeCount < 2 && r < 0.15) return "large";
+    if (smallCount < 2 && r < 0.35) return "small";
+    return "medium";
+  }
+
+  makeStar(vw, vh, existingStars) {
+    this._starIdCounter += 1;
+    const list = existingStars || this.state.stars || [];
+    const tier = this.pickStarTier(list);
+    const size = tier === "large" ? 42 + Math.random() * 14 : tier === "small" ? 14 + Math.random() * 6 : 24 + Math.random() * 12;
+    const pos = this.pickStarPosition(list, vw, vh);
+    return {
+      id: this._starIdCounter,
+      x: pos.x,
+      y: pos.y,
+      size,
+      tier,
+      color: this._titleColors[Math.floor(Math.random() * 3)],
+      twDelay: Math.random() * 4,
+      twDur: 2.6 + Math.random() * 1.8,
+      bornAt: performance.now(),
+    };
+  }
+
+  genStars(n) {
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const stars = [];
+    for (let i = 0; i < n; i++) stars.push(this.makeStar(vw, vh, stars));
+    return stars;
+  }
+
+  maybeStartStarsAnimTicker = () => {
+    if (this._prefersReducedMotion || this._starsAnimRAF) return;
+    this._starsAnimRAF = requestAnimationFrame(this.tickStarsAnim);
+  };
+
+  tickStarsAnim = (now) => {
+    const stillGrowing = this.state.stars.some((s) => now - s.bornAt < 400) || this.state.poppingStars.some((p) => now - p.born < 150);
+    this.forceUpdate();
+    this._starsAnimRAF = stillGrowing ? requestAnimationFrame(this.tickStarsAnim) : null;
+  };
+
+  scheduleStarSpawn = () => {
+    const delay = 4000 + Math.random() * 5000;
+    this._starSpawnTimer = setTimeout(() => {
+      if (this.state.bgEffect === "bgeffect3" && this.state.stars.length < 18) {
+        this.setState((s) => ({ stars: [...s.stars, this.makeStar(window.innerWidth, window.innerHeight)] }));
+        this.maybeStartStarsAnimTicker();
+      }
+      this.scheduleStarSpawn();
+    }, delay);
+  };
+
+  scheduleStarDespawn = () => {
+    const delay = 5000 + Math.random() * 6000;
+    this._starDespawnTimer = setTimeout(() => {
+      if (this.state.bgEffect === "bgeffect3" && this.state.stars.length > 9) {
+        const now = performance.now();
+        let candidates = this.state.stars.filter((s) => now - s.bornAt > 1500);
+        const roll = Math.random();
+        const count = roll < 0.55 ? 1 : roll < 0.85 ? 2 : 3;
+        for (let i = 0; i < count && candidates.length > 0 && this.state.stars.length > 9; i++) {
+          const pick = candidates.splice(Math.floor(Math.random() * candidates.length), 1)[0];
+          this.explodeStar(pick);
+        }
+      }
+      this.scheduleStarDespawn();
+    }, delay);
+  };
+
+  explodeStar(star) {
+    if (this._prefersReducedMotion) {
+      this.setState((s) => ({ stars: s.stars.filter((st) => st.id !== star.id) }));
+      const t = setTimeout(() => {
+        this.setState((s) => ({ stars: [...s.stars, this.makeStar(window.innerWidth, window.innerHeight)] }));
+      }, 300);
+      this._starTimeouts.push(t);
+      return;
+    }
+    this.setState((s) => ({ poppingStars: [...s.poppingStars, { id: star.id, born: performance.now() }] }));
+    this.maybeStartStarsAnimTicker();
+    const colors = this._titleColors;
+    const particles = [];
+    for (let i = 0; i < 10; i++) {
+      particles.push({ angle: Math.random() * Math.PI * 2, dist: 45 + Math.random() * 90, size: 4 + Math.random() * 6, spin: Math.random() < 0.5 ? -1 : 1, color: colors[i % colors.length] });
+    }
+    const lineCount = 6;
+    const lines = [];
+    for (let i = 0; i < lineCount; i++) {
+      const length = 18 + Math.random() * 48;
+      lines.push({ angle: (360 / lineCount) * i + (Math.random() - 0.5) * 20, length, thickness: 3, color: colors[i % colors.length] });
+    }
+    const gx = Math.floor(star.x / 32) * 32, gy = Math.floor(star.y / 32) * 32;
+    const colorOffset = Math.floor(Math.random() * 3);
+    this.setState((s) => ({ starBursts: [...s.starBursts, { id: star.id, x: star.x, y: star.y, gx, gy, colorOffset, born: performance.now(), particles, lines, color: star.color }] }));
+    if (!this._starBurstRAF) this._starBurstRAF = requestAnimationFrame(this.tickStarBursts);
+    const t0 = setTimeout(() => {
+      this.setState((s) => ({ stars: s.stars.filter((st) => st.id !== star.id), poppingStars: s.poppingStars.filter((p) => p.id !== star.id) }));
+      const t1 = setTimeout(() => {
+        this.setState((s) => ({ stars: [...s.stars, this.makeStar(window.innerWidth, window.innerHeight)] }));
+        this.maybeStartStarsAnimTicker();
+      }, 750);
+      this._starTimeouts.push(t1);
+    }, 90);
+    this._starTimeouts.push(t0);
+  }
+
+  onStarClick = (star, e) => {
+    e.stopPropagation();
+    this.explodeStar(star);
+  };
+
+  tickStarBursts = (now) => {
+    const active = this.state.starBursts.filter((b) => now - b.born < 850);
+    this.setState({ starBursts: active }, () => {
+      this._starBurstRAF = active.length > 0 ? requestAnimationFrame(this.tickStarBursts) : null;
+    });
+  };
+
+  tickRipple = (now) => {
+    if (!this.state.ripple) { this._rippleRAF = null; return; }
+    if (now - this.state.ripple.born > 700) {
+      this.setState({ ripple: null });
+      this._rippleRAF = null;
+      return;
+    }
+    this.forceUpdate();
+    this._rippleRAF = requestAnimationFrame(this.tickRipple);
+  };
+
+  onTitleClick = (e) => {
+    e.stopPropagation();
+    if (this._prefersReducedMotion) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    this._titleVariantIdx = (this._titleVariantIdx + 1) % 3;
+    const colors = this._titleColors;
+    const particles = [];
+    for (let i = 0; i < 10; i++) {
+      particles.push({ angle: Math.random() * Math.PI * 2, dist: 55 + Math.random() * 85, size: 4 + Math.random() * 5, color: colors[i % colors.length] });
+    }
+    const lineCount = 6;
+    const lines = [];
+    for (let i = 0; i < lineCount; i++) {
+      lines.push({ angle: (360 / lineCount) * i + (Math.random() - 0.5) * 14, length: 50 + Math.random() * 45, color: colors[i % colors.length] });
+    }
+    const bgOrder = ["bgeffect1", "bgeffect2", "bgeffect3"];
+    const nextBg = bgOrder[(bgOrder.indexOf(this.state.bgEffect) + 1) % bgOrder.length];
+    if (this._landingRAF) { cancelAnimationFrame(this._landingRAF); this._landingRAF = null; }
+    if (this._rippleRAF) { cancelAnimationFrame(this._rippleRAF); this._rippleRAF = null; }
+    if (this._glowTrailRAF) { cancelAnimationFrame(this._glowTrailRAF); this._glowTrailRAF = null; }
+    if (this._starBurstRAF) { cancelAnimationFrame(this._starBurstRAF); this._starBurstRAF = null; }
+    this._lastGx = null; this._lastGy = null;
+    this._glowLastGx = null; this._glowLastGy = null;
+    this.setState({ titleClickFX: { cx, cy, born: performance.now(), variant: this._titleVariantIdx, particles, lines }, bgEffect: nextBg, landingTrail: [], glow: null, glowTrail: [], ripple: null, starBursts: [], hoveredStarId: null, poppingStars: [] });
+    if (!this._titleFXRAF) this._titleFXRAF = requestAnimationFrame(this.tickTitleFX);
+  };
+
+  tickTitleFX = (now) => {
+    if (!this.state.titleClickFX) { this._titleFXRAF = null; return; }
+    if (now - this.state.titleClickFX.born > 750) {
+      this.setState({ titleClickFX: null });
+      this._titleFXRAF = null;
+      return;
+    }
+    this.forceUpdate();
+    this._titleFXRAF = requestAnimationFrame(this.tickTitleFX);
+  };
+
+  getTitleClickStyle(now) {
+    const anim = this.state.titleClickFX;
+    if (!anim) return null;
+    const age = now - anim.born;
+    const t = Math.min(1, age / 700);
+    const ease = 1 - Math.pow(1 - t, 3);
+    const color = this._titleColors[anim.variant % this._titleColors.length];
+    let scale = 1, rotate = 0, translateX = 0, filter = "";
+    if (anim.variant === 0) {
+      if (t < 0.15) scale = 1 + (t / 0.15) * 0.6;
+      else if (t < 0.4) scale = 1.6 - ((t - 0.15) / 0.25) * 0.8;
+      else if (t < 0.7) scale = 0.8 + ((t - 0.4) / 0.3) * 0.35;
+      else scale = 1.15 - ((t - 0.7) / 0.3) * 0.15;
+      rotate = Math.sin(t * Math.PI * 3) * 8 * (1 - t);
+      filter = "drop-shadow(0 0 " + (18 * (1 - t)) + "px " + color + ")";
+    } else if (anim.variant === 1) {
+      translateX = Math.sin(age * 0.08) * 10 * (1 - t);
+      scale = 1 + 0.2 * (1 - t);
+      rotate = Math.sin(age * 0.05) * 4 * (1 - t);
+      filter = "brightness(" + (1 + Math.sin(age * 0.1) * 0.5 * (1 - t)) + ") drop-shadow(" + (Math.sin(age * 0.2) * 4) + "px 0 " + color + ")";
+    } else {
+      rotate = 360 * ease;
+      scale = 1 + Math.sin(t * Math.PI) * 0.4;
+      filter = "drop-shadow(0 0 " + (22 * (1 - t)) + "px " + color + ")";
+    }
+    return { transform: "translateX(" + translateX + "px) scale(" + scale + ") rotate(" + rotate + "deg)", filter };
+  }
+
+  openProjectsTool = () => {
+    this.bringToFront("layers");
+    const visible = this.data.projects.find((p) => !this.state.hiddenLayers[p.id]) || this.data.projects[0];
+    if (visible) this.setState({ canvasView: { kind: "project", id: visible.id } });
+    this.bringToFront("canvas");
+  };
+
+  openAboutTool = () => {
+    this.setState({ canvasView: { kind: "about" } });
+    this.bringToFront("canvas");
+  };
+
+  openResumeTool = () => {
+    this.setState({ canvasView: { kind: "resume" } });
+    this.bringToFront("canvas");
+  };
+
+  openContactTool = () => {
+    this.setState({ canvasView: { kind: "contact" } });
+    this.bringToFront("canvas");
+  };
+
+  startNewFile = () => {
+    this.setState({ workspaceOpen: true });
+  };
+
+  goToLanding = () => {
+    this.setState({ workspaceOpen: false });
+  };
+
+  onContactNameChange = (e) => { const v = e.target.value; this.setState((s) => ({ contact: { ...s.contact, name: v } })); };
+  onContactEmailChange = (e) => { const v = e.target.value; this.setState((s) => ({ contact: { ...s.contact, email: v } })); };
+  onContactMessageChange = (e) => { const v = e.target.value; this.setState((s) => ({ contact: { ...s.contact, message: v } })); };
+  onContactSubmit = (e) => {
+    e.preventDefault();
+    this.setState((s) => ({ contact: { ...s.contact, submitted: true } }));
+  };
+
+  renderVals() {
+    const accent = this.props.accentColor || "#5ee6c5";
+    const marqueeOn = this.props.animatedMarquee !== false;
+    const isDesktop = this.state.isDesktop;
+    const w = this.state.windows;
+
+    const baseWinStyle = (win) => {
+      if (!isDesktop) {
+        return "position:static;width:100%;height:auto;margin:0 0 16px;box-shadow:none;display:" + (win.hidden ? "none" : "flex") + ";flex-direction:column;background:#1f2029;border:2px solid #3a3d4d;min-width:0;min-height:0;";
+      }
+      return "position:absolute;left:" + win.x + "px;top:" + win.y + "px;width:" + win.w + "px;height:" + win.h + "px;z-index:" + win.z + ";display:" + (win.hidden ? "none" : "flex") + ";flex-direction:column;background:#1f2029;border:2px solid #3a3d4d;box-shadow:6px 6px 0 rgba(0,0,0,.45);min-width:240px;min-height:160px;";
+    };
+
+    const titlebarStyle = (id, collapsed) => {
+      const active = this.state.activeWindow === id;
+      if (collapsed) {
+        return "flex:1;background:" + (active ? accent : "#262837") + ";border-bottom:none;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;padding:10px 0;cursor:" + (isDesktop ? "grab" : "default") + ";position:relative;";
+      }
+      return "height:30px;flex:none;background:" + (active ? accent : "#262837") + ";border-bottom:2px solid #3a3d4d;display:flex;align-items:center;gap:8px;padding:0 8px;cursor:" + (isDesktop ? "grab" : "default") + ";position:relative;";
+    };
+    const titleTextStyle = (id) => {
+      const active = this.state.activeWindow === id;
+      return "font-size:11px;letter-spacing:.05em;margin-left:2px;white-space:nowrap;color:" + (active ? "#14141c" : "#8b8d9c") + ";";
+    };
+    const letterStyle = (id) => {
+      const active = this.state.activeWindow === id;
+      return "font-size:10px;line-height:1.3;font-weight:700;color:" + (active ? "#14141c" : "#8b8d9c") + ";";
+    };
+
+    const kind = this.state.canvasView.kind;
+    const layersCollapsed = isDesktop && this.state.layersDocked && w.layers.minimized;
+    const paletteCollapsed = isDesktop && this.state.paletteDocked && w.palette.minimized;
+    const sidebarBothCollapsed = layersCollapsed && paletteCollapsed;
+    const layersReservesSpace = isDesktop && this.state.layersDocked && !w.layers.hidden && !w.layers.minimized;
+    const paletteReservesSpace = isDesktop && this.state.paletteDocked && !w.palette.hidden && !w.palette.minimized;
+    const sidebarFullyFree = !layersReservesSpace && !paletteReservesSpace;
+    const anyStripVisible = (isDesktop && this.state.layersDocked && !w.layers.hidden && w.layers.minimized) || (isDesktop && this.state.paletteDocked && !w.palette.hidden && w.palette.minimized);
+    const sidebarRightGap = !sidebarFullyFree ? "calc(25% + 6px)" : (anyStripVisible ? "64px" : "12px");
+    const project = this.data.projects.find((p) => kind === "project" && p.id === this.state.canvasView.id);
+    const exp = this.data.experience.find((x) => kind === "experience" && x.id === this.state.canvasView.id);
+    const hobby = this.data.hobbies.find((x) => kind === "hobby" && x.id === this.state.canvasView.id);
+
+    let canvasTitle = "About Me", canvasBlurb = this.data.about.blurb, canvasMeta = "", canvasTags = [];
+    const aboutSplit = kind === "about" ? this.data.about.blurb.split(this.data.about.name) : null;
+    let canvasHighlights = [];
+    if (kind === "project" && project) { canvasTitle = project.name; canvasBlurb = project.blurb; canvasTags = project.tags; canvasHighlights = project.highlights || []; }
+    if (kind === "experience" && exp) { canvasTitle = exp.role + " \u2014 " + exp.org; canvasBlurb = exp.blurb; canvasTags = [exp.duration]; canvasHighlights = exp.highlights || []; }
+    if (kind === "hobby" && hobby) { canvasTitle = hobby.org ? hobby.role + " \u2014 " + hobby.org : hobby.role; canvasBlurb = hobby.blurb; canvasTags = hobby.tags || []; }
+    if (kind === "resume") { canvasTitle = "RESUME"; canvasBlurb = "A quick look, or open the full PDF."; }
+    if (kind === "contact") { canvasTitle = "GET IN TOUCH"; canvasBlurb = "Drop a note, or email me directly."; }
+
+    const layerRows = this.data.projects.map((p) => {
+      const hidden = !!this.state.hiddenLayers[p.id];
+      const selected = kind === "project" && this.state.canvasView.id === p.id;
+      const rowAccent = p.accentColor || (this.data.skills.find((s) => s.tag === p.tags[0]) || {}).hex || accent;
+      const dimmed = this.state.skillFilter && !p.tags.includes(this.state.skillFilter);
+      const filterLit = this.state.skillFilter && p.tags.includes(this.state.skillFilter);
+      const hoveredRow = this.state.hoveredLayerId === p.id;
+      const unread = !this.state.readLayers[p.id];
+      const filterAccentHex = this.state.skillFilter ? ((this.data.skills.find((s) => s.tag === this.state.skillFilter) || {}).hex || rowAccent) : rowAccent;
+      const borderAccent = filterLit && !selected ? filterAccentHex : rowAccent;
+      const lit = selected || filterLit;
+      return {
+        id: p.id,
+        name: p.name,
+        short: p.short,
+        icon: p.icon,
+        eyeChar: hidden ? "" : "\u25A0",
+        rowStyle: (() => {
+          const edgeColor = lit ? borderAccent : hoveredRow ? rowAccent : "#3a3d4d";
+          return "position:relative;display:flex;flex-direction:column;gap:6px;padding:8px 8px 8px 12px;margin-bottom:8px;border:2px solid " + edgeColor + ";background:" + (lit ? "#262837" : "#1f2029") + ";cursor:pointer;box-shadow:" + (filterLit && !selected ? "0 0 0 1px " + borderAccent : "none") + ";opacity:" + (dimmed ? ".45" : hidden ? ".5" : "1") + ";transition:transform .1s,filter .1s,border-color .1s;" + (hoveredRow ? "filter:brightness(1.15);transform:scale(1.01);" : "");
+        })(),
+        showUnreadBar: unread,
+        unreadBarStyle: "position:absolute;left:0;top:0;bottom:0;width:4px;background:" + rowAccent + ";",
+        topRowStyle: "display:flex;align-items:center;justify-content:space-between;",
+        labelStyle: "font-size:8px;letter-spacing:.08em;color:#8b8d9c;",
+        eyeBtnStyle: "width:14px;height:14px;flex:none;border:2px solid " + rowAccent + ";background:" + (hidden ? "transparent" : rowAccent) + ";color:#14141c;font-size:8px;line-height:10px;text-align:center;cursor:pointer;padding:0;",
+        bodyRowStyle: "display:flex;gap:8px;align-items:flex-start;",
+        iconStyle: "width:26px;height:26px;flex:none;display:flex;align-items:center;justify-content:center;background:" + rowAccent + ";color:#14141c;font-family:'Press Start 2P',monospace;font-size:8px;",
+        nameStyle: "font-size:12px;line-height:1.3;" + (hidden ? "text-decoration:line-through;color:#8b8d9c;" : "color:#e8e6e3;"),
+        shortStyle: "font-size:10px;color:#8b8d9c;margin-top:2px;",
+        onEye: (e) => this.toggleLayerHidden(p.id, e),
+        onName: () => this.selectProject(p.id),
+        onEnter: () => this.setState({ hoveredLayerId: p.id }),
+        onLeave: () => this.setState((s) => (s.hoveredLayerId === p.id ? { hoveredLayerId: null } : null)),
+      };
+    });
+
+    const paletteRows = this.data.skills.map((s) => {
+      const pressed = this.state.skillFilter === s.tag;
+      return {
+        name: s.name,
+        wrapStyle: "background:" + (pressed ? "#2f3244" : "none") + ";border:2px solid " + (pressed ? s.hex : "transparent") + ";display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:4px;transition:transform .1s;transform:" + (pressed ? "scale(1.08)" : "scale(1)") + ";",
+        fillStyle: "width:100%;aspect-ratio:1;border:" + (pressed ? "3px solid #e8e6e3" : "2px solid #3a3d4d") + ";background:" + s.hex + ";display:block;box-shadow:" + (pressed ? "0 0 0 3px " + s.hex : "none") + ";",
+        labelStyle: "font-size:10px;" + (pressed ? "color:" + s.hex + ";font-weight:700;" : "color:#8b8d9c;"),
+        onClick: () => this.toggleSkillFilter(s.tag),
+      };
+    });
+
+    const frameAccents = ["#5ee6c5", "#f2b950", "#f2665a"];
+    const hoveredFrameId = this.state.hoveredFrameId;
+    const buildTimelineRows = (list, kindName, selectFn) => list.map((x, i) => {
+      const rowAccent = frameAccents[i % frameAccents.length];
+      const selected = kind === kindName && this.state.canvasView.id === x.id;
+      const hovered = hoveredFrameId === x.id;
+      const lit = selected || hovered;
+      return {
+        role: x.role,
+        org: x.org,
+        duration: x.duration,
+        onClick: () => selectFn(x.id),
+        onEnter: () => this.setState({ hoveredFrameId: x.id }),
+        onLeave: () => this.setState((s) => (s.hoveredFrameId === x.id ? { hoveredFrameId: null } : null)),
+        nodeStyle: "width:14px;height:14px;flex:none;background:" + (lit ? rowAccent : "#1f2029") + ";border:2px solid " + rowAccent + ";z-index:2;cursor:pointer;",
+        tickStyle: "width:2px;height:12px;background:" + rowAccent + ";flex:none;",
+        cardStyle: "border:2px solid " + (lit ? rowAccent : "#3a3d4d") + ";background:" + (lit ? "#262837" : "#1f2029") + ";padding:6px 8px;min-width:150px;max-width:190px;text-align:center;cursor:pointer;",
+        roleStyle: "font-size:11px;line-height:1.3;color:#e8e6e3;display:block;margin-bottom:2px;",
+        orgStyle: "font-size:10px;line-height:1.3;color:" + rowAccent + ";display:block;margin-bottom:2px;",
+        durationStyle: "font-size:9px;line-height:1.3;color:#8b8d9c;display:block;letter-spacing:.05em;",
+      };
+    });
+
+    const frameRows = buildTimelineRows(this.data.experience, "experience", (id) => this.selectExperience(id));
+    const hobbyRows = buildTimelineRows(this.data.hobbies, "hobby", (id) => this.selectHobby(id));
+
+    const mc = this.state.mouseCoord;
+    const coord = "X:" + String(Math.round(mc.x)).padStart(4, "0") + " Y:" + String(Math.round(mc.y)).padStart(4, "0");
+
+    return {
+      workspaceOpen: this.state.workspaceOpen,
+      landingTrailView: this.state.landingTrail.map((p) => {
+        const age = performance.now() - p.born;
+        const t = Math.min(1, age / 900);
+        const opacity = Math.max(0, 0.6 - t * 0.6);
+        const fallPx = 160 * t * t;
+        const rotT = Math.max(0, (t - 0.35) / 0.65);
+        const rot = p.spin * rotT * 14;
+        return { style: "position:absolute;left:" + p.gx + "px;top:" + p.gy + "px;width:30px;height:30px;background:" + p.color + ";opacity:" + opacity + ";transform:translateY(" + fallPx + "px) rotate(" + rot + "deg);" };
+      }),
+      landingStyle: "position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background-color:#14141c;background-image:linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);background-size:32px 32px;z-index:1000;transition:opacity .4s ease, transform .4s ease;" + (this.state.workspaceOpen ? "opacity:0;transform:scale(1.04);pointer-events:none;" : "opacity:1;transform:scale(1);"),
+      onLandingBgClick: this.onLandingBgClick,
+      starsView: this.state.bgEffect === "bgeffect3" ? this.state.stars.map((s) => {
+        const w = s.size * 0.5, h = s.size;
+        const clip = "polygon(50% 0%, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0% 50%, 38% 38%)";
+        const age = performance.now() - s.bornAt;
+        const spawnT = this._prefersReducedMotion ? 1 : Math.min(1, age / 380);
+        const spawnEase = 1 - Math.pow(1 - spawnT, 2);
+        const hovered = this.state.hoveredStarId === s.id;
+        const popping = this.state.poppingStars.find((p) => p.id === s.id);
+        let scale = spawnEase * (hovered ? 1.55 : 1);
+        let rotate = hovered ? this.state.hoveredTilt : 0;
+        let glow = hovered ? ("filter:brightness(2.1) drop-shadow(0 0 6px " + s.color + ") drop-shadow(0 0 16px " + s.color + ");") : "filter:none;";
+        if (popping) {
+          const pAge = performance.now() - popping.born;
+          const pt = Math.min(1, pAge / 90);
+          scale = pt < 0.4 ? 1 + (pt / 0.4) * 0.55 : 1.55 - ((pt - 0.4) / 0.6) * 0.75;
+          glow = "filter:brightness(2.1);";
+        }
+        const anim = (!this._prefersReducedMotion && spawnT >= 1 && !popping) ? ("animation:starTwinkle " + s.twDur.toFixed(2) + "s ease-in-out infinite;animation-delay:" + s.twDelay.toFixed(2) + "s;") : "";
+        return {
+          wrapStyle: "position:fixed;left:" + s.x.toFixed(1) + "px;top:" + s.y.toFixed(1) + "px;width:" + w.toFixed(1) + "px;height:" + h.toFixed(1) + "px;background:" + s.color + ";clip-path:" + clip + ";pointer-events:auto;cursor:pointer;transform:translate(-50%,-50%) scale(" + scale.toFixed(2) + ") rotate(" + rotate.toFixed(1) + "deg);opacity:" + spawnEase.toFixed(2) + ";transition:filter .2s ease, transform .2s ease;" + glow + anim,
+          onClick: (e) => this.onStarClick(s, e),
+          onMouseEnter: () => this.setState({ hoveredStarId: s.id, hoveredTilt: (Math.random() - 0.5) * 50 }),
+          onMouseLeave: () => this.setState((st) => (st.hoveredStarId === s.id ? { hoveredStarId: null } : null)),
+        };
+      }) : [],
+      starSplatterView: this.state.bgEffect === "bgeffect3" ? this.state.starBursts.flatMap((b) => {
+        const age = performance.now() - b.born;
+        const dur = 480;
+        if (age > dur) return [];
+        const t = age / dur;
+        const colors = this._titleColors;
+        const R = 2.7;
+        const rippleRadius = t * 3.3;
+        const cells = [];
+        for (let di = -R; di <= R; di++) {
+          for (let dj = -R; dj <= R; dj++) {
+            const dist = Math.hypot(di, dj);
+            if (dist > R + 0.3) continue;
+            const band = Math.abs(rippleRadius - dist);
+            if (band > 1.6) continue;
+            const wave = Math.max(0, 1 - band / 1.6);
+            const fade = Math.max(0, 1 - t);
+            const opacity = wave * fade * 0.95;
+            if (opacity <= 0.02) continue;
+            const color = colors[(Math.floor(dist) + b.colorOffset) % 3];
+            const scale = 1 + wave * 0.45;
+            const cx = b.gx + di * 32, cy = b.gy + dj * 32;
+            cells.push({ style: "position:fixed;left:" + cx + "px;top:" + cy + "px;width:30px;height:30px;border-radius:6px;background:" + color + ";opacity:" + opacity.toFixed(2) + ";transform:scale(" + scale.toFixed(2) + ");" });
+          }
+        }
+        return cells;
+      }) : [],
+      starLinesView: this.state.bgEffect === "bgeffect3" ? this.state.starBursts.flatMap((b) => {
+        const age = performance.now() - b.born;
+        if (age > 450 || !b.lines) return [];
+        const lt = Math.min(1, age / 450);
+        const grow = Math.min(1, lt / 0.3);
+        const fade = lt < 0.3 ? 1 : Math.max(0, 1 - (lt - 0.3) / 0.7);
+        return b.lines.map((l) => {
+          const len = l.length * grow;
+          const th = l.thickness || 3;
+          return { style: "position:fixed;left:" + b.x.toFixed(1) + "px;top:" + (b.y - th / 2).toFixed(1) + "px;width:" + len.toFixed(1) + "px;height:" + th.toFixed(1) + "px;background:" + l.color + ";opacity:" + fade.toFixed(2) + ";transform-origin:0 50%;transform:rotate(" + l.angle.toFixed(1) + "deg) translateX(14px);" };
+        });
+      }) : [],
+      starBurstsView: this.state.bgEffect === "bgeffect3" ? this.state.starBursts.flatMap((b) => {
+        const age = performance.now() - b.born;
+        const t = Math.min(1, age / 850);
+        const ease = 1 - Math.pow(1 - t, 3);
+        return b.particles.map((p) => {
+          const x = b.x + Math.cos(p.angle) * p.dist * ease;
+          const y = b.y + Math.sin(p.angle) * p.dist * ease;
+          const opacity = Math.max(0, 1 - t);
+          const scale = Math.max(0.1, 1.5 - t * 1.3);
+          const rot = (p.angle * 180 / Math.PI) + t * 220 * p.spin;
+          return { style: "position:fixed;left:" + x.toFixed(1) + "px;top:" + y.toFixed(1) + "px;width:" + p.size.toFixed(1) + "px;height:" + p.size.toFixed(1) + "px;border-radius:50%;background:" + p.color + ";opacity:" + opacity.toFixed(2) + ";transform:translate(-50%,-50%) scale(" + scale.toFixed(2) + ") rotate(" + rot.toFixed(1) + "deg);" };
+        });
+      }) : [],
+      glowTrailView: this.state.bgEffect === "bgeffect2" && !this._prefersReducedMotion ? (() => {
+        const cells = [];
+        this.state.glowTrail.forEach((p) => {
+          const age = performance.now() - p.born;
+          const t = Math.min(1, age / 900);
+          const baseOpacity = Math.max(0, 0.6 - t * 0.6);
+          if (baseOpacity <= 0.01) return;
+          const radiusCells = Math.max(0, 2.1 * Math.pow(1 - t, 2.6));
+          const R = Math.ceil(radiusCells);
+          const scale = 1 - t * 0.3;
+          for (let di = -R; di <= R; di++) {
+            for (let dj = -R; dj <= R; dj++) {
+              const dist = Math.hypot(di, dj);
+              if (dist > radiusCells + 0.35) continue;
+              const falloff = radiusCells < 0.1 ? 1 : Math.max(0, 1 - dist / (radiusCells + 0.6));
+              const opacity = baseOpacity * falloff;
+              if (opacity <= 0.02) continue;
+              const cx = p.gx + di * 32, cy = p.gy + dj * 32;
+              cells.push({ style: "position:absolute;left:" + cx + "px;top:" + cy + "px;width:30px;height:30px;border-radius:50%;background:" + p.color + ";opacity:" + opacity.toFixed(2) + ";transform:scale(" + scale.toFixed(2) + ");filter:blur(4px);" });
+            }
+          }
+        });
+        return cells;
+      })() : [],
+      glowView: (() => {
+        if (this.state.bgEffect !== "bgeffect2" || !this.state.glow || this._prefersReducedMotion) return [];
+        const g = this.state.glow;
+        const colors = this._titleColors;
+        const ripple = this.state.ripple;
+        const now = performance.now();
+        const rippleAge = ripple ? now - ripple.born : null;
+        const R = 4;
+        const rippleMaxR = 7.5;
+        const rippleRadius = ripple ? (rippleAge / 700) * rippleMaxR : null;
+        const cells = [];
+        for (let di = -R; di <= R; di++) {
+          for (let dj = -R; dj <= R; dj++) {
+            const dist = Math.hypot(di, dj);
+            if (dist > R + 0.3) continue;
+            let opacity, color, scale = 1, anim = "", isRipple = false;
+            if (ripple && rippleAge < 700) {
+              const band = Math.abs(rippleRadius - dist);
+              if (band < 1.4) {
+                const wave = Math.max(0, 1 - band / 1.4);
+                const fade = Math.max(0, 1 - rippleAge / 700);
+                opacity = wave * fade * 0.85;
+                color = colors[(Math.floor(dist) + ripple.colorOffset) % 3];
+                scale = 1 + wave * 0.35;
+                isRipple = true;
+              } else {
+                opacity = Math.max(0, 1 - dist / R) * 0.12;
+                color = g.color;
+              }
+            } else {
+              opacity = Math.max(0, 1 - dist / R) * 0.5;
+              color = g.color;
+              anim = "animation:glowBreathe 1.8s ease-in-out infinite;animation-delay:" + (dist * 0.08).toFixed(2) + "s;";
+            }
+            if (opacity <= 0.01) continue;
+            const cx = g.gx + di * 32, cy = g.gy + dj * 32;
+            const style = isRipple
+              ? "position:absolute;left:" + cx + "px;top:" + cy + "px;width:30px;height:30px;border-radius:6px;background:" + color + ";opacity:" + opacity.toFixed(2) + ";transform:scale(" + scale.toFixed(2) + ");filter:blur(1px);" + anim
+              : "position:absolute;left:" + cx + "px;top:" + cy + "px;width:30px;height:30px;border-radius:6px;background:" + color + ";opacity:" + opacity.toFixed(2) + ";transform:scale(" + scale.toFixed(2) + ");" + anim;
+            cells.push({ style });
+          }
+        }
+        return cells;
+      })(),
+      startNewFile: this.startNewFile,
+      goToLanding: this.goToLanding,
+      titleLetters: "OWEN OO".split("").map((ch, idx) => ({
+        ch: ch === " " ? "\u00A0" : ch,
+        style: "font-family:'Press Start 2P',monospace;font-size:clamp(28px,6vw,48px);color:#5ee6c5;text-shadow:4px 4px 0 #f2665a;display:inline-block;white-space:pre;animation:waveLetter 1.8s steps(12) infinite;animation-delay:" + (idx * 0.06) + "s;" + (ch === " " ? "width:0.5em;" : ""),
+      })),
+      titleWrapStyle: (() => {
+        const clickFX = this.getTitleClickStyle(performance.now());
+        const transform = clickFX ? clickFX.transform : (this.state.titleHovered ? "scale(1.18) rotate(" + this.state.titleTiltAngle + "deg)" : "scale(1) rotate(0deg)");
+        return "display:inline-flex;transition:" + (clickFX ? "none" : "transform .15s ease") + ";cursor:pointer;transform:" + transform + ";" + (clickFX && clickFX.filter ? "filter:" + clickFX.filter + ";" : "");
+      })(),
+      onTitleEnter: this.onTitleEnter,
+      onTitleLeave: this.onTitleLeave,
+      onTitleClick: this.onTitleClick,
+      titleParticlesView: this.state.titleClickFX ? this.state.titleClickFX.particles.map((p) => {
+        const anim = this.state.titleClickFX;
+        const age = performance.now() - anim.born;
+        const pt = Math.min(1, age / 650);
+        const ease = 1 - Math.pow(1 - pt, 2);
+        const x = anim.cx + Math.cos(p.angle) * p.dist * ease;
+        const y = anim.cy + Math.sin(p.angle) * p.dist * ease + 30 * pt * pt;
+        const opacity = Math.max(0, 1 - pt);
+        const scale = Math.max(0.2, 1 - pt * 0.5);
+        return { style: "position:fixed;left:" + x + "px;top:" + y + "px;width:" + p.size + "px;height:" + p.size + "px;background:" + p.color + ";opacity:" + opacity + ";transform:translate(-50%,-50%) scale(" + scale + ") rotate(" + (pt * 180) + "deg);" };
+      }) : [],
+      titleLinesView: this.state.titleClickFX ? this.state.titleClickFX.lines.map((l) => {
+        const anim = this.state.titleClickFX;
+        const age = performance.now() - anim.born;
+        const lt = Math.min(1, age / 500);
+        const grow = Math.min(1, lt / 0.3);
+        const fade = lt < 0.3 ? 1 : Math.max(0, 1 - (lt - 0.3) / 0.7);
+        const len = l.length * grow;
+        return { style: "position:fixed;left:" + anim.cx + "px;top:" + (anim.cy - 1.5) + "px;width:" + len + "px;height:3px;background:" + l.color + ";opacity:" + fade + ";transform-origin:0 50%;transform:rotate(" + l.angle + "deg) translateX(34px);" };
+      }) : [],
+
+      rootStyle: "min-height:100vh;background:#14141c;font-family:'JetBrains Mono',monospace;color:#e8e6e3;position:relative;" + (isDesktop ? "height:100vh;overflow:hidden;" : "height:auto;overflow:visible;"),
+      workspaceStyle: isDesktop
+        ? "position:relative;width:100%;height:100vh;background-image:linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);background-size:32px 32px;"
+        : "position:relative;width:100%;height:auto;min-height:100vh;background:#14141c;padding-bottom:60px;",
+
+      toolbarStyle: isDesktop
+        ? "position:absolute;left:0;top:0;bottom:28px;width:64px;background:#1f2029;border-right:2px solid #3a3d4d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:900;"
+        : "position:relative;width:100%;height:auto;background:#1f2029;border-bottom:2px solid #3a3d4d;display:flex;flex-direction:row;justify-content:center;flex-wrap:wrap;padding:10px;gap:10px;z-index:900;",
+      toolBtnStyle: "width:52px;height:52px;background:#262837;border:2px solid #3a3d4d;color:#8b8d9c;font-size:8px;letter-spacing:.05em;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-family:'JetBrains Mono',monospace;transition:transform .1s;",
+      openProjects: this.openProjectsTool,
+      openAbout: this.openAboutTool,
+      openResume: this.openResumeTool,
+      openContact: this.openContactTool,
+
+      canvasWinStyle: ((!isDesktop || !this.state.canvasDocked)
+        ? baseWinStyle(w.canvas)
+        : "position:absolute;left:76px;top:12px;right:" + sidebarRightGap + ";bottom:" + (this.state.framesDocked ? (this.state.frameDockHeight + 52) + "px" : "40px") + ";z-index:1;display:" + (w.canvas.hidden ? "none" : "flex") + ";flex-direction:column;background:#1f2029;border:2px solid #3a3d4d;box-shadow:none;min-width:240px;min-height:160px;") + (w.canvas.minimized ? "min-height:0;min-width:0;height:30px;overflow:hidden;" : ""),
+      layersWinStyle: ((!isDesktop || !this.state.layersDocked)
+        ? baseWinStyle(w.layers)
+        : "position:absolute;left:calc(75% + 6px);right:12px;top:12px;height:" + (Math.round((window.innerHeight - 12 - 40) / 2) - 6) + "px;z-index:2;display:" + (w.layers.hidden ? "none" : "flex") + ";flex-direction:column;background:#1f2029;border:2px solid #3a3d4d;box-shadow:none;min-width:200px;min-height:120px;") + (layersCollapsed ? "min-height:0;min-width:0;left:auto;width:40px;overflow:hidden;" : (w.layers.minimized ? "min-height:0;min-width:0;height:30px;overflow:hidden;" : "")),
+      paletteWinStyle: ((!isDesktop || !this.state.paletteDocked)
+        ? baseWinStyle(w.palette)
+        : "position:absolute;left:calc(75% + 6px);right:12px;top:" + (12 + Math.round((window.innerHeight - 12 - 40) / 2) + 12) + "px;bottom:40px;z-index:2;display:" + (w.palette.hidden ? "none" : "flex") + ";flex-direction:column;background:#1f2029;border:2px solid #3a3d4d;box-shadow:none;min-width:200px;min-height:120px;") + (paletteCollapsed ? "min-height:0;min-width:0;left:auto;width:40px;overflow:hidden;" : (w.palette.minimized ? "min-height:0;min-width:0;height:30px;overflow:hidden;" : "")),
+      framesWinStyle: ((!isDesktop || !this.state.framesDocked)
+        ? baseWinStyle(w.frames)
+        : "position:absolute;left:76px;right:" + sidebarRightGap + ";bottom:40px;height:" + this.state.frameDockHeight + "px;z-index:2;display:" + (w.frames.hidden ? "none" : "flex") + ";flex-direction:column;background:#1f2029;border:2px solid #3a3d4d;box-shadow:none;min-width:240px;min-height:160px;") + (w.frames.minimized ? "min-height:0;min-width:0;height:30px;overflow:hidden;" : ""),
+      showSidebarDivider: false,
+      sidebarDividerStyle: "position:absolute;right:25%;top:12px;bottom:40px;width:2px;background:#3a3d4d;z-index:1;pointer-events:none;",
+      showSplitter: isDesktop && this.state.canvasDocked && this.state.framesDocked && !w.canvas.minimized && !w.frames.minimized,
+      splitterStyle: "position:absolute;left:76px;right:" + sidebarRightGap + ";bottom:" + (this.state.frameDockHeight + 40) + "px;height:12px;margin-bottom:-6px;z-index:3;cursor:row-resize;background:transparent;",
+      onSplitterDown: this.startSplitterDrag,
+
+      canvasContentVisible: !w.canvas.minimized,
+      layersContentVisible: !w.layers.minimized,
+      paletteContentVisible: !w.palette.minimized,
+      framesContentVisible: !w.frames.minimized,
+      layersTitleTextVisible: !layersCollapsed,
+      paletteTitleTextVisible: !paletteCollapsed,
+      layersCollapsedFlag: layersCollapsed,
+      paletteCollapsedFlag: paletteCollapsed,
+      onLayersTitlebarClick: layersCollapsed ? ((e) => this.toggleMinimize("layers", e)) : (() => {}),
+      onPaletteTitlebarClick: paletteCollapsed ? ((e) => this.toggleMinimize("palette", e)) : (() => {}),
+
+      onCanvasMinimize: (e) => this.toggleMinimize("canvas", e),
+      onLayersMinimize: (e) => this.toggleMinimize("layers", e),
+      onPaletteMinimize: (e) => this.toggleMinimize("palette", e),
+      onFramesMinimize: (e) => this.toggleMinimize("frames", e),
+      onCanvasMaximize: (e) => this.toggleMaximize("canvas", e),
+      onLayersMaximize: (e) => this.toggleMaximize("layers", e),
+      onPaletteMaximize: (e) => this.toggleMaximize("palette", e),
+      onFramesMaximize: (e) => this.toggleMaximize("frames", e),
+
+
+      canvasTitlebarStyle: titlebarStyle("canvas"),
+      layersTitlebarStyle: titlebarStyle("layers", layersCollapsed),
+      paletteTitlebarStyle: titlebarStyle("palette", paletteCollapsed),
+      framesTitlebarStyle: titlebarStyle("frames"),
+
+      canvasTitleTextStyle: titleTextStyle("canvas"),
+      layersTitleTextStyle: titleTextStyle("layers"),
+      paletteTitleTextStyle: titleTextStyle("palette"),
+      framesTitleTextStyle: titleTextStyle("frames"),
+      layersLetterStyle: letterStyle("layers"),
+      paletteLetterStyle: letterStyle("palette"),
+      layersTitleLetters: "LAYERS".split("").map((ch) => ({ ch })),
+      paletteTitleLetters: "PALETTE".split("").map((ch) => ({ ch })),
+
+      canvasActive: this.state.activeWindow === "canvas",
+      layersActive: this.state.activeWindow === "layers",
+      paletteActive: this.state.activeWindow === "palette",
+      framesActive: this.state.activeWindow === "frames",
+      marqueeStyleBase: "position:absolute;left:0;right:0;top:-2px;height:2px;background-image:repeating-linear-gradient(90deg, " + accent + " 0 6px, transparent 6px 12px);animation:" + (marqueeOn ? "march .6s steps(2) infinite" : "none") + ";",
+
+      onCanvasTitlebarDown: (e) => this.startDrag("canvas", e),
+      onLayersTitlebarDown: (e) => this.startDrag("layers", e),
+      onPaletteTitlebarDown: (e) => this.startDrag("palette", e),
+      onFramesTitlebarDown: (e) => this.startDrag("frames", e),
+
+      onCanvasResizeDown: (e) => this.startResize("canvas", e),
+      onLayersResizeDown: (e) => this.startResize("layers", e),
+      onPaletteResizeDown: (e) => this.startResize("palette", e),
+      onFramesResizeDown: (e) => this.startResize("frames", e),
+
+      onCanvasFocus: () => { if (!this.state.canvasDocked) this.bringToFront("canvas"); else this.setState({ activeWindow: "canvas" }); },
+      onFramesFocusDock: () => { if (!this.state.framesDocked) this.bringToFront("frames"); else this.setState({ activeWindow: "frames" }); },
+      onLayersFocusDock: () => { if (!this.state.layersDocked) this.bringToFront("layers"); else this.setState({ activeWindow: "layers" }); },
+      onPaletteFocusDock: () => { if (!this.state.paletteDocked) this.bringToFront("palette"); else this.setState({ activeWindow: "palette" }); },
+      onLayersFocus: () => this.bringToFront("layers"),
+      onPaletteFocus: () => this.bringToFront("palette"),
+      onFramesFocus: () => this.bringToFront("frames"),
+
+      onCanvasClose: (e) => this.closeWindow("canvas", e),
+      onLayersClose: (e) => this.closeWindow("layers", e),
+      onPaletteClose: (e) => this.closeWindow("palette", e),
+      onFramesClose: (e) => this.closeWindow("frames", e),
+
+      showResizeHandle: isDesktop,
+      canvasResizeHandleVisible: isDesktop && !this.state.canvasDocked && !w.canvas.minimized,
+      showDockHint: isDesktop && !!(this.state.drag && this.state.drag.id === "canvas") && !this.state.canvasDocked && w.canvas.y < 140,
+      dockHintStyle: "position:absolute;left:76px;top:12px;right:12px;height:60px;z-index:2;pointer-events:none;border:2px dashed " + (w.canvas.y < 60 ? accent : "#4c5066") + ";background:" + (w.canvas.y < 60 ? "rgba(94,230,197,0.12)" : "rgba(255,255,255,0.04)") + ";",
+      framesResizeHandleVisible: isDesktop && !this.state.framesDocked && !w.frames.minimized,
+      layersResizeHandleVisible: isDesktop && !this.state.layersDocked && !w.layers.minimized,
+      paletteResizeHandleVisible: isDesktop && !this.state.paletteDocked && !w.palette.minimized,
+      showDockHintFrames: isDesktop && !!(this.state.drag && this.state.drag.id === "frames") && !this.state.framesDocked && (window.innerHeight - (w.frames.y + w.frames.h)) < 140,
+      dockHintFramesStyle: "position:absolute;left:76px;right:calc(25% + 12px);bottom:40px;height:60px;z-index:2;pointer-events:none;border:2px dashed " + ((window.innerHeight - (w.frames.y + w.frames.h)) < 60 ? accent : "#4c5066") + ";background:" + ((window.innerHeight - (w.frames.y + w.frames.h)) < 60 ? "rgba(94,230,197,0.12)" : "rgba(255,255,255,0.04)") + ";",
+      showDockHintSidebar: isDesktop && !!(this.state.drag && (this.state.drag.id === "layers" || this.state.drag.id === "palette")) && !this.state[this.state.drag.id + "Docked"] && (w[this.state.drag.id].x + w[this.state.drag.id].w / 2) > (window.innerWidth * 0.75 - 160),
+      dockHintSidebarStyle: "position:absolute;right:12px;top:12px;bottom:40px;width:25%;z-index:2;pointer-events:none;border:2px dashed " + ((this.state.drag && w[this.state.drag.id] && (w[this.state.drag.id].x + w[this.state.drag.id].w / 2) > (window.innerWidth * 0.75 - 40)) ? accent : "#4c5066") + ";background:" + ((this.state.drag && w[this.state.drag.id] && (w[this.state.drag.id].x + w[this.state.drag.id].w / 2) > (window.innerWidth * 0.75 - 40)) ? "rgba(94,230,197,0.12)" : "rgba(255,255,255,0.04)") + ";",
+
+      canvasTitle,
+      canvasBlurb,
+      canvasHighlights,
+      canvasHasHighlights: canvasHighlights.length > 0,
+      kindIsAboutSplit: !!aboutSplit && aboutSplit.length === 2,
+      showGenericBlurb: !(aboutSplit && aboutSplit.length === 2),
+      aboutBefore: aboutSplit ? aboutSplit[0] : "",
+      aboutName: this.data.about.name,
+      aboutAfter: aboutSplit ? aboutSplit[1] : "",
+      canvasMeta,
+      canvasHasMeta: !!canvasMeta,
+      canvasTags,
+      canvasHasTags: canvasTags.length > 0,
+
+      kindIsProject: kind === "project",
+      kindIsProjectWithImage: kind === "project" && project && project.id !== "signage",
+      kindIsResume: kind === "resume",
+      kindIsContact: kind === "contact",
+      kindIsAbout: kind === "about",
+      canvasDrawCellsView: this.state.canvasDrawCells.map((val, idx) => ({
+        style: "background:" + (val || "transparent") + ";",
+        onDown: (e) => this.startCanvasDraw(idx, e),
+        onEnter: () => this.continueCanvasDraw(idx),
+      })),
+      clearCanvasDraw: this.clearCanvasDraw,
+      canvasNoContext: this.canvasNoContext,
+      toggleCanvasEraser: this.toggleCanvasEraser,
+      canvasEraserBtnStyle: "font-family:'Press Start 2P',monospace;font-size:8px;color:" + (this.state.canvasEraseActive ? "#14141c" : "#8b8d9c") + ";background:" + (this.state.canvasEraseActive ? "#f2665a" : "#262837") + ";border:2px solid #3a3d4d;padding:5px 8px;cursor:pointer;box-shadow:inset -2px -2px 0 rgba(0,0,0,.3), inset 2px 2px 0 rgba(255,255,255,.2);",
+      canvasWrapperStyle: (kind === "project" || kind === "resume")
+        ? "position:relative;z-index:2;height:100%;overflow:auto;padding:16px;box-sizing:border-box;display:flex;flex-direction:column;pointer-events:none;"
+        : "position:relative;z-index:2;height:100%;overflow:auto;padding:16px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;pointer-events:none;",
+      canvasCardStyle: (() => {
+        const sig = kind + ":" + (this.state.canvasView.id || "");
+        if (sig !== this.lastViewSig) { this.lastViewSig = sig; this.revealParity = this.revealParity ? 0 : 1; }
+        const animName = this.revealParity ? "canvasRevealB" : "canvasRevealA";
+        const maxW = kind === "resume" ? "75%" : kind === "project" ? "560px" : "420px";
+        return "pointer-events:auto;box-sizing:border-box;margin:auto;background:#14141c;border:2px solid #3a3d4d;padding:16px;max-width:" + maxW + ";width:100%;animation:" + animName + " .4s steps(10) both;";
+      })(),
+
+      canvasProjectSlotId: project ? "proj-" + project.id : "proj-none",
+
+      resumeUrl: this.data.resumeUrl,
+
+      contactEmail: this.data.contact.email,
+      mailtoHref: "mailto:" + this.data.contact.email,
+      contactSubmitted: this.state.contact.submitted,
+      contactNotSubmitted: !this.state.contact.submitted,
+      contactNameVal: this.state.contact.name,
+      contactEmailVal: this.state.contact.email,
+      contactConfirmMsg: this.state.contact.email ? "message captured, thanks! I will follow up at " + this.state.contact.email + "." : "message captured, thanks! I will follow up soon.",
+      contactMessageVal: this.state.contact.message,
+      onContactNameChange: this.onContactNameChange,
+      onContactEmailChange: this.onContactEmailChange,
+      onContactMessageChange: this.onContactMessageChange,
+      onContactSubmit: this.onContactSubmit,
+
+      layerRows,
+      paletteRows,
+      frameRows,
+      hobbyRows,
+      timelineTabExperience: this.state.timelineTab === "experience",
+      timelineTabHobbies: this.state.timelineTab === "hobbies",
+      timelineTabExpStyle: "flex:1;padding:6px 4px;font-size:9px;letter-spacing:.05em;text-align:center;cursor:pointer;border:2px solid #3a3d4d;background:" + (this.state.timelineTab === "experience" ? accent : "#1f2029") + ";color:" + (this.state.timelineTab === "experience" ? "#14141c" : "#8b8d9c") + ";",
+      timelineTabHobStyle: "flex:1;padding:6px 4px;font-size:9px;letter-spacing:.05em;text-align:center;cursor:pointer;border:2px solid #3a3d4d;border-left:none;background:" + (this.state.timelineTab === "hobbies" ? accent : "#1f2029") + ";color:" + (this.state.timelineTab === "hobbies" ? "#14141c" : "#8b8d9c") + ";",
+      onTimelineTabExp: () => this.setTimelineTab("experience"),
+      onTimelineTabHob: () => this.setTimelineTab("hobbies"),
+
+      coord,
+      resetLayout: this.resetLayout,
+      githubUrl: this.data.githubUrl,
+      linkedinUrl: this.data.linkedinUrl,
+
+      statusBarStyle: isDesktop
+        ? "position:absolute;left:0;right:0;bottom:0;height:28px;background:#1f2029;border-top:2px solid #3a3d4d;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:11px;color:#8b8d9c;z-index:900;"
+        : "position:fixed;left:0;right:0;bottom:0;height:28px;background:#1f2029;border-top:2px solid #3a3d4d;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:11px;color:#8b8d9c;z-index:900;",
+    };
+  }
+}
+</script>
+</body>
+</html>
