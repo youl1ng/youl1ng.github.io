@@ -30,8 +30,10 @@
   @keyframes starTwinkle { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.95; } }
   @keyframes canvasRevealA { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0% 0); } }
   @keyframes canvasRevealB { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0% 0); } }
+  @keyframes lightboxIn { from { opacity: 0; } to { opacity: 1; } }
   @media (prefers-reduced-motion: reduce) {
     [data-canvas-card] { animation: none !important; clip-path: none !important; }
+    [data-lightbox] { animation: none !important; }
   }
   a { color: #5ee6c5; }
   a:hover { color: #f2b950; }
@@ -179,7 +181,7 @@
           <sc-if value="{{ canvasHasGallery }}">
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px;">
               <sc-for list="{{ canvasGallery }}" as="g" hint-placeholder-count="6">
-                <img src="{{ g.src }}" alt="{{ g.alt }}" style="width:100%;aspect-ratio:1;object-fit:cover;border:2px solid #3a3d4d;cursor:pointer;display:block;transition:transform .1s,border-color .1s;" style-hover="border-color:#5ee6c5;transform:scale(1.05);"></img>
+                <img src="{{ g.src }}" alt="{{ g.alt }}" onClick="{{ g.onClick }}" draggable="false" style="width:100%;aspect-ratio:1;object-fit:cover;border:2px solid #3a3d4d;cursor:pointer;display:block;transition:transform .1s,border-color .1s;-webkit-user-drag:none;user-select:none;" style-hover="border-color:#5ee6c5;transform:scale(1.05);"></img>
               </sc-for>
             </div>
           </sc-if>
@@ -190,7 +192,7 @@
             </div>
           </sc-if>
           <sc-if value="{{ kindIsPixelArt }}" hint-placeholder-val="{{ false }}">
-            <img src="assets/pixel-art.png" alt="Pixel art sprites and tile sheets" style="width:100%;image-rendering:pixelated;border:2px solid #3a3d4d;margin-top:4px;display:block;"></img>
+            <img src="assets/pixel-art.png" alt="Pixel art sprites and tile sheets" onClick="{{ onPixelArtClick }}" draggable="false" style="width:100%;image-rendering:pixelated;border:2px solid #3a3d4d;margin-top:4px;display:block;cursor:pointer;transition:border-color .1s;-webkit-user-drag:none;user-select:none;" style-hover="border-color:#5ee6c5;"></img>
           </sc-if>
           <sc-if value="{{ kindIsContact }}" hint-placeholder-val="{{ true }}">
             <div style="margin-top:4px;">
@@ -214,6 +216,21 @@
           <button type="button" onClick="{{ toggleCanvasEraser }}" style="{{ canvasEraserBtnStyle }}">ERS</button>
           <button type="button" onClick="{{ clearCanvasDraw }}" style="font-family:'Press Start 2P',monospace;font-size:8px;color:#14141c;background:#8b8d9c;border:none;padding:5px 8px;cursor:pointer;box-shadow:inset -2px -2px 0 rgba(0,0,0,.3), inset 2px 2px 0 rgba(255,255,255,.25);">CLEAR</button>
         </div>
+        <sc-if value="{{ lightboxOpen }}">
+          <div data-lightbox="" onClick="{{ closeLightbox }}" style="position:absolute;inset:0;z-index:10;background-color:rgba(10,10,14,.78);background-image:conic-gradient(rgba(255,255,255,.05) 90deg, transparent 90deg 180deg, rgba(255,255,255,.05) 180deg 270deg, transparent 270deg);background-size:16px 16px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:36px;box-sizing:border-box;animation:lightboxIn .18s steps(6) both;">
+            <span onClick="{{ closeLightbox }}" title="Close" style="position:absolute;top:10px;right:10px;width:24px;height:24px;border:1px solid rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;background:#f2665a;font-size:15px;line-height:1;font-weight:900;color:#14141c;font-family:monospace;z-index:2;" style-hover="filter:brightness(1.3);transform:scale(1.15);">&times;</span>
+            <div style="{{ lightboxImgWrapStyle }}">
+              <sc-if value="{{ lightboxHasArrows }}">
+                <button type="button" onClick="{{ lightboxPrev }}" aria-label="Previous image" style="position:absolute;left:-42px;top:50%;transform:translateY(-50%);width:34px;height:34px;border:2px solid #3a3d4d;background:#1f2029;color:#e8e6e3;font-size:16px;line-height:1;cursor:pointer;z-index:2;flex:none;transition:border-color .1s,background .1s;" style-hover="background:#262837;border-color:#5ee6c5;">&#8249;</button>
+                <button type="button" onClick="{{ lightboxNext }}" aria-label="Next image" style="position:absolute;right:-42px;top:50%;transform:translateY(-50%);width:34px;height:34px;border:2px solid #3a3d4d;background:#1f2029;color:#e8e6e3;font-size:16px;line-height:1;cursor:pointer;z-index:2;flex:none;transition:border-color .1s,background .1s;" style-hover="background:#262837;border-color:#5ee6c5;">&#8250;</button>
+              </sc-if>
+              <img src="{{ lightboxSrc }}" alt="{{ lightboxAlt }}" onClick="{{ lightboxStop }}" draggable="false" style="max-width:100%;max-height:100%;box-sizing:border-box;object-fit:contain;display:block;-webkit-user-drag:none;user-select:none;"></img>
+            </div>
+            <sc-if value="{{ lightboxHasArrows }}">
+              <span style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);font-size:11px;color:#8b8d9c;background:#14141c;border:1px solid #3a3d4d;padding:3px 8px;">{{ lightboxCounter }}</span>
+            </sc-if>
+          </div>
+        </sc-if>
       </div>
       </sc-if>
       <sc-if value="{{ canvasResizeHandleVisible }}">
@@ -496,6 +513,7 @@ class Component extends DCLogic {
     drag: null,
     resizeDrag: null,
     mouseCoord: { x: 0, y: 0 },
+    lightbox: null,
   };
 
   zCounter = 20;
@@ -641,6 +659,14 @@ class Component extends DCLogic {
     };
     window.addEventListener("mousemove", this._onMove);
     window.addEventListener("mouseup", this._onUp);
+
+    this._onKeyDown = (e) => {
+      if (!this.state.lightbox) return;
+      if (e.key === "Escape") this.closeLightbox();
+      else if (e.key === "ArrowLeft") this.lightboxPrev(e);
+      else if (e.key === "ArrowRight") this.lightboxNext(e);
+    };
+    window.addEventListener("keydown", this._onKeyDown);
   }
 
   tickLandingTrail = (now) => {
@@ -671,6 +697,7 @@ class Component extends DCLogic {
     window.removeEventListener("mousemove", this._onMove);
     window.removeEventListener("mouseup", this._onUp);
     window.removeEventListener("mousemove", this._onLandingMove);
+    window.removeEventListener("keydown", this._onKeyDown);
     if (this._landingRAF) cancelAnimationFrame(this._landingRAF);
     if (this._titleFXRAF) cancelAnimationFrame(this._titleFXRAF);
     if (this._rippleRAF) cancelAnimationFrame(this._rippleRAF);
@@ -766,17 +793,17 @@ class Component extends DCLogic {
   }
 
   selectProject(id) {
-    this.setState((s) => ({ canvasView: { kind: "project", id }, readLayers: { ...s.readLayers, [id]: true } }));
+    this.setState((s) => ({ canvasView: { kind: "project", id }, readLayers: { ...s.readLayers, [id]: true }, lightbox: null }));
     this.bringToFront("canvas");
   }
 
   selectExperience(id) {
-    this.setState({ canvasView: { kind: "experience", id } });
+    this.setState({ canvasView: { kind: "experience", id }, lightbox: null });
     this.bringToFront("canvas");
   }
 
   selectHobby(id) {
-    this.setState({ canvasView: { kind: "hobby", id } });
+    this.setState({ canvasView: { kind: "hobby", id }, lightbox: null });
     this.bringToFront("canvas");
   }
 
@@ -820,6 +847,22 @@ class Component extends DCLogic {
   toggleCanvasEraser = () => this.setState((s) => ({ canvasEraseActive: !s.canvasEraseActive }));
 
   canvasNoContext = (e) => e.preventDefault();
+
+  openLightbox = (group, index) => this.setState({ lightbox: { group, index } });
+
+  closeLightbox = () => this.setState({ lightbox: null });
+
+  lightboxPrev = (e) => {
+    if (e) e.stopPropagation();
+    this.setState((s) => s.lightbox ? { lightbox: { ...s.lightbox, index: (s.lightbox.index - 1 + s.lightbox.group.length) % s.lightbox.group.length } } : s);
+  };
+
+  lightboxNext = (e) => {
+    if (e) e.stopPropagation();
+    this.setState((s) => s.lightbox ? { lightbox: { ...s.lightbox, index: (s.lightbox.index + 1) % s.lightbox.group.length } } : s);
+  };
+
+  lightboxStop = (e) => e.stopPropagation();
 
   onTitleEnter = () => {
     const angle = (Math.random() - 0.5) * 16;
@@ -1087,22 +1130,22 @@ class Component extends DCLogic {
   openProjectsTool = () => {
     this.bringToFront("layers");
     const visible = this.data.projects.find((p) => !this.state.hiddenLayers[p.id]) || this.data.projects[0];
-    if (visible) this.setState({ canvasView: { kind: "project", id: visible.id } });
+    if (visible) this.setState({ canvasView: { kind: "project", id: visible.id }, lightbox: null });
     this.bringToFront("canvas");
   };
 
   openAboutTool = () => {
-    this.setState({ canvasView: { kind: "about" } });
+    this.setState({ canvasView: { kind: "about" }, lightbox: null });
     this.bringToFront("canvas");
   };
 
   openResumeTool = () => {
-    this.setState({ canvasView: { kind: "resume" } });
+    this.setState({ canvasView: { kind: "resume" }, lightbox: null });
     this.bringToFront("canvas");
   };
 
   openContactTool = () => {
-    this.setState({ canvasView: { kind: "contact" } });
+    this.setState({ canvasView: { kind: "contact" }, lightbox: null });
     this.bringToFront("canvas");
   };
 
@@ -1168,8 +1211,13 @@ class Component extends DCLogic {
     const aboutSplit = kind === "about" ? this.data.about.blurb.split(this.data.about.name) : null;
     let canvasHighlights = [];
     let canvasGallery = [];
+    const lb = this.state.lightbox;
     if (kind === "project" && project) { canvasTitle = project.name; canvasBlurb = project.blurb; canvasTags = project.tags; canvasHighlights = project.highlights || []; }
-    if (kind === "experience" && exp) { canvasTitle = exp.role + " \u2014 " + exp.org; canvasBlurb = exp.blurb; canvasTags = [exp.duration]; canvasHighlights = exp.highlights || []; canvasGallery = exp.images || []; }
+    if (kind === "experience" && exp) {
+      canvasTitle = exp.role + " \u2014 " + exp.org; canvasBlurb = exp.blurb; canvasTags = [exp.duration]; canvasHighlights = exp.highlights || [];
+      const expImages = exp.images || [];
+      canvasGallery = expImages.map((img, i) => ({ ...img, onClick: () => this.openLightbox(expImages, i) }));
+    }
     if (kind === "hobby" && hobby) { canvasTitle = hobby.org ? hobby.role + " \u2014 " + hobby.org : hobby.role; canvasBlurb = hobby.blurb; canvasTags = hobby.tags || []; }
     if (kind === "resume") { canvasTitle = "RESUME"; canvasBlurb = "A quick look, or open the full PDF."; }
     if (kind === "contact") { canvasTitle = "GET IN TOUCH"; canvasBlurb = "Drop a note, or email me directly."; }
@@ -1557,6 +1605,17 @@ class Component extends DCLogic {
       canvasHighlights,
       canvasHasHighlights: canvasHighlights.length > 0,
       canvasGallery,
+      lightboxOpen: !!lb,
+      lightboxSrc: lb ? lb.group[lb.index].src : "",
+      lightboxAlt: lb ? lb.group[lb.index].alt : "",
+      lightboxHasArrows: !!lb && lb.group.length > 1,
+      lightboxCounter: lb ? (lb.index + 1) + " / " + lb.group.length : "",
+      lightboxImgWrapStyle: "position:relative;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;align-self:stretch;max-height:100%;border:2px solid #3a3d4d;background:rgba(20,20,28,.3);padding:8px;box-shadow:0 8px 24px rgba(0,0,0,.5);" + (lb && lb.group.length > 1 ? "width:calc(100% - 310px);" : "max-width:100%;"),
+      closeLightbox: this.closeLightbox,
+      lightboxPrev: this.lightboxPrev,
+      lightboxNext: this.lightboxNext,
+      lightboxStop: this.lightboxStop,
+      onPixelArtClick: () => this.openLightbox([{ src: "assets/pixel-art.png", alt: "Pixel art sprites and tile sheets" }], 0),
       canvasHasGallery: canvasGallery.length > 0,
       kindIsAboutSplit: !!aboutSplit && aboutSplit.length === 2,
       showGenericBlurb: !(aboutSplit && aboutSplit.length === 2),
