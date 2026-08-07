@@ -3,6 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Owen Oo — engineer who designs</title>
+<meta name="description" content="Owen Oo's portfolio: projects, experience, and skills, presented as a pixel-art desktop.">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="shortcut icon" href="assets/favicon.ico">
+<meta property="og:title" content="Owen Oo — engineer who designs">
+<meta property="og:description" content="Projects, experience, and skills, presented as a pixel-art desktop.">
+<meta property="og:image" content="assets/pixel-art.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -26,6 +36,8 @@
   a { color: #5ee6c5; }
   a:hover { color: #f2b950; }
   button, [data-winbtn] { -webkit-user-select: none; user-select: none; }
+  :focus-visible { outline: 2px solid #5ee6c5; outline-offset: 2px; }
+  input:invalid:not(:placeholder-shown), textarea:invalid:not(:placeholder-shown) { border-color: #f2665a !important; }
   * { scrollbar-width: thin; scrollbar-color: #3a3d4d #1f2029; }
   *::-webkit-scrollbar { width: 12px; height: 12px; }
   *::-webkit-scrollbar-track { background: #1f2029; }
@@ -167,7 +179,7 @@
           <sc-if value="{{ canvasHasGallery }}">
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:4px;">
               <sc-for list="{{ canvasGallery }}" as="g" hint-placeholder-count="6">
-                <img src="{{ g }}" alt="BURSA design" style="width:100%;aspect-ratio:1;object-fit:cover;border:2px solid #3a3d4d;cursor:pointer;display:block;transition:transform .1s,border-color .1s;" style-hover="border-color:#5ee6c5;transform:scale(1.05);"></img>
+                <img src="{{ g.src }}" alt="{{ g.alt }}" style="width:100%;aspect-ratio:1;object-fit:cover;border:2px solid #3a3d4d;cursor:pointer;display:block;transition:transform .1s,border-color .1s;" style-hover="border-color:#5ee6c5;transform:scale(1.05);"></img>
               </sc-for>
             </div>
           </sc-if>
@@ -421,21 +433,21 @@ class Component extends DCLogic {
         "Social media graphics: Created graphics for the org's Instagram, where visual consistency and quick legibility matter more than anything else",
         "Turnout: Helped drive event attendance through design that people actually notice in a crowded feed",
       ], images: [
-        "assets/bursa/lunar-bites.jpg",
-        "assets/bursa/morning-munchies.jpg",
-        "assets/bursa/trip-to-myanmar.jpg",
-        "assets/bursa/coconut-jelly.jpg",
-        "assets/bursa/representatives.jpg",
-        "assets/bursa/eboard.jpg",
-        "assets/bursa/school-night.jpg",
-        "assets/bursa/tea-house.jpg",
-        "assets/bursa/tearamisu.jpg",
-        "assets/bursa/cabinet-spring26.jpg",
-        "assets/bursa/thingyan.jpg",
-        "assets/bursa/reps-wanted.jpg",
-        "assets/bursa/clay-n-play.jpg",
-        "assets/bursa/logo.png",
-        "assets/bursa/crest.png",
+        { src: "assets/bursa/lunar-bites.jpg", alt: "BURSA Lunar New Year ‘Lunar Bites’ event flyer" },
+        { src: "assets/bursa/morning-munchies.jpg", alt: "BURSA ‘Morning Munchies’ event flyer" },
+        { src: "assets/bursa/trip-to-myanmar.jpg", alt: "BURSA ‘Trip to Myanmar’ event flyer" },
+        { src: "assets/bursa/coconut-jelly.jpg", alt: "BURSA coconut jelly cooking event flyer" },
+        { src: "assets/bursa/representatives.jpg", alt: "BURSA class representatives graphic" },
+        { src: "assets/bursa/eboard.jpg", alt: "BURSA executive board graphic" },
+        { src: "assets/bursa/school-night.jpg", alt: "BURSA ‘School Night’ event flyer" },
+        { src: "assets/bursa/tea-house.jpg", alt: "BURSA ‘Tea House’ event flyer" },
+        { src: "assets/bursa/tearamisu.jpg", alt: "BURSA ‘Tearamisu’ dessert event flyer" },
+        { src: "assets/bursa/cabinet-spring26.jpg", alt: "BURSA Spring 2026 cabinet announcement graphic" },
+        { src: "assets/bursa/thingyan.jpg", alt: "BURSA Thingyan water festival event flyer" },
+        { src: "assets/bursa/reps-wanted.jpg", alt: "BURSA ‘Representatives Wanted’ recruitment graphic" },
+        { src: "assets/bursa/clay-n-play.jpg", alt: "BURSA ‘Clay n’ Play’ craft event flyer" },
+        { src: "assets/bursa/logo.png", alt: "BURSA logo" },
+        { src: "assets/bursa/crest.png", alt: "BURSA crest emblem" },
       ] },
     ],
     hobbies: [
