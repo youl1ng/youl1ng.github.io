@@ -6,7 +6,7 @@
 <title>Owen Oo</title>
 <meta name="description" content="Owen Oo's portfolio: projects, experience, and skills, presented as a pixel-art desktop.">
 <link rel="icon" href="data:,">
-<meta property="og:title" content="Owen Oo — engineer who designs">
+<meta property="og:title" content="Owen Oo \u2014 engineer who designs">
 <meta property="og:description" content="Projects, experience, and skills, presented as a pixel-art desktop.">
 <meta property="og:image" content="assets/pixel-art.png">
 <meta property="og:type" content="website">
@@ -185,7 +185,7 @@
           </sc-if>
           <sc-if value="{{ kindIsResume }}" hint-placeholder-val="{{ true }}">
             <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:4px;">
-              <image-slot id="resume-page" shape="rect" fit="contain" src="assets/resume-page1.png" placeholder="Drop resume page image" style="width:100%;aspect-ratio:686/886;"></image-slot>
+              <image-slot id="resume-page" shape="rect" fit="contain" src="assets/resume-page1.png" placeholder="Drop resume page image" style="width:100%;aspect-ratio:1371/1775;"></image-slot>
               <a href="{{ resumeUrl }}" target="_blank" rel="noopener" style="position:sticky;bottom:8px;align-self:flex-start;font-size:11px;color:#5ee6c5;text-decoration:none;background:#14141c;border:1px solid #3a3d4d;padding:6px 10px;z-index:5;">open full pdf &#8599;</a>
             </div>
           </sc-if>
@@ -396,6 +396,8 @@ class Component extends DCLogic {
     linkedinUrl: "https://www.linkedin.com/in/bone-myat-paing-oo-8b2b28293/",
     skills: [
       { name: "React", tag: "react", hex: "#5ee6c5" },
+      { name: "Next.js", tag: "next.js", hex: "#e8e6e3" },
+      { name: "TypeScript", tag: "typescript", hex: "#3d8fd6" },
       { name: "JavaScript", tag: "javascript", hex: "#e8d44d" },
       { name: "Node.js", tag: "node", hex: "#7ed957" },
       { name: "Express", tag: "express", hex: "#c9cdd3" },
@@ -403,6 +405,7 @@ class Component extends DCLogic {
       { name: "Git", tag: "git", hex: "#f28ecb" },
       { name: "Docker", tag: "docker", hex: "#4dabf7" },
       { name: "Figma", tag: "figma", hex: "#f2665a" },
+      { name: "Framer Motion", tag: "framer motion", hex: "#4a63f2" },
       { name: "Java", tag: "java", hex: "#f2b950" },
       { name: "Python", tag: "python", hex: "#7fa8f2" },
       { name: "C#", tag: "csharp", hex: "#a78bfa" },
@@ -410,6 +413,7 @@ class Component extends DCLogic {
       { name: "HTML", tag: "html", hex: "#f2795a" },
       { name: "CSS", tag: "css", hex: "#6fc6f2" },
       { name: "VS Code", tag: "vscode", hex: "#3f7fe0" },
+      { name: "Android Studio", tag: "android studio", hex: "#3ddc84" },
       { name: "IntelliJ", tag: "intellij", hex: "#e0568a" },
       { name: "Unity", tag: "unity", hex: "#3fae8f" },
       { name: "Godot", tag: "godot", hex: "#5b9bd5" },
@@ -417,6 +421,20 @@ class Component extends DCLogic {
       { name: "Gemini API", tag: "gemini", hex: "#8e6ff2" },
     ],
     projects: [
+      { id: "datpone", name: "DatPone", short: "browser photobooth \u2014 next.js + webrtc", icon: "DP", accentColor: "#d97148", blurb: "DatPone is a browser photobooth built for a real event, not a demo. You pick a template, shoot a strip on a laptop webcam \u2014 or on your phone, which pairs over WebRTC and becomes the booth's lens \u2014 and walk away with it as a PNG, an animated GIF, a QR code, or a printed sheet. Every session makes two things: the still, and a \u201Clive strip\u201D that animates the seconds before the shutter and lands on the photo you were posing for. I designed the identity and built the whole app.", tags: ["typescript", "next.js", "react", "framer motion", "webrtc", "figma"], highlights: [
+        "Live strip: Every session yields a still and a GIF of the run-up to the shutter. Both come out of the same canvas renderer at four different scales, so artwork and geometry can't drift between the screen, the print, and the animation",
+        "Phone as camera: Hand-rolled WebRTC signaling over long polling, with short-lived TURN credentials minted server-side so no static relay password ever ships to the browser",
+        "Gesture shutter: An OK hand sign held for half a second arms the countdown, tracked with MediaPipe and normalized against palm length so it reads across a room. If the model can't load, the booth falls back to a plain timer",
+        "Kiosk mode: An unattended event booth \u2014 one operator setup, one gesture per strip, and a server-side print queue that fills a sheet before anything reaches paper",
+        "Design system: A custom palette, a three-typeface pairing, and a squircle generator shared between CSS clip-path and the canvas renderer, so a corner on screen is the same curve as the corner in the downloaded PNG",
+      ], images: [
+        { src: "assets/datpone/02-login.png", alt: "DatPone account card with the booth wordmark and colour bars" },
+        { src: "assets/datpone/06-config-template.png", alt: "Session setup: choosing between the five strip templates" },
+        { src: "assets/datpone/10-review-artwork.png", alt: "Review screen on the Debut artwork template" },
+        { src: "assets/datpone/11-save.png", alt: "Save screen: the still strip beside the animated live strip" },
+        { src: "assets/datpone/17-kiosk-paired.png", alt: "Kiosk setup with a phone paired as the booth camera" },
+        { src: "assets/datpone/21-kiosk-attract-strip.png", alt: "Kiosk attract screen holding a finished strip, its QR code, and the print sheet counter" },
+      ] },
       { id: "phreddit", name: "Phreddit", short: "full-stack social platform (MERN)", icon: "PH", blurb: "Phreddit is a Reddit-style social platform. I built it with a partner over one semester, across three versions. The first version used vanilla JavaScript, no framework, to get the data model right: communities, posts, nested comments, sorting. The second version moved to a React SPA. The third became a full MERN app with a real client-server split. I led the frontend across all three versions and worked on the backend too.", tags: ["react", "javascript", "node", "express", "mongodb", "git"], highlights: [
         "Frontend: Built the component architecture, reusable UI elements, and prop-threading through nested components",
         "Bug fix: Found a stale-state bug where comment replies rendered flat until refresh. The cause was a timing race between a React context update and a data fetch",
@@ -437,16 +455,23 @@ class Component extends DCLogic {
       ] },
     ],
     experience: [
+      { id: "moca", role: "Undergraduate Researcher, UX Engineering", org: "MOCA Lab, Stony Brook", blurb: "MOCA Lab builds a home health monitoring platform for older adults \u2014 in-home sensing across radar, video, and wearables, recorded overnight in people's actual houses. I work on the app side: a smartwatch tool that asks participants to label their own daily activities. The hard part isn't the sensing, it's the asking. Every prompt spends someone's attention, and the people the study is built around have the least of it to spare, so the real design problem is balancing data quality against burden.", duration: "Aug 2026 \u2013 Present", highlights: [
+        "Timestamp accuracy: Evaluating how the existing Android app captures activity start and end times through virtual button presses, and documenting where that method loses accuracy",
+        "Input modalities: Specifying alternatives \u2014 speech, physical buttons, and confirm-don't-recall prompts that replace free time entry with a single yes/no",
+        "Research grounding: Reviewing prior smartwatch and experience-sampling deployments with older adults, so each design decision answers a documented failure mode rather than a guess",
+        "Design spec: Authoring the interface spec for v1 of the labeling flow, ahead of user trials with older adults in the Stony Brook community",
+      ] },
       { id: "it", role: "System Staff Student Assistant", org: "Stony Brook CS Dept", blurb: "I'm a student assistant for the system staff crew in the CS department, since June 2026. Most of the job is diagnosing what's actually broken before fixing it, whether it's a machine that won't boot, a printer that won't connect, a copier throwing a cryptic error, and then documenting the fix so the next person doesn't have to start from zero.", duration: "June 2026 \u2013 Present", highlights: [
         "Reimaging: Reimage lab machines across Windows, Linux, and macOS using FOG PXE deployment and Ventoy bootable USB, including working around older hardware and boot configurations that don't cooperate with standard imaging",
         "Troubleshooting: Diagnose and fix BIOS/UEFI boot failures, and resolve connectivity issues on lab printers and network copiers",
         "Documentation: Write technical documentation for deployment and troubleshooting procedures, so recurring issues have a repeatable fix instead of getting solved from scratch each time",
         "Digital signage: Deployed and maintain the department's Xibo digital signage system (see Xibo project for the full build)",
       ] },
-      { id: "bursa", role: "Graphic Designer", org: "BURSA (Burmese Student Association)", blurb: "I've designed event branding, flyers, and social media graphics for BURSA since 2025 \u2014 a cultural student organization with 600+ Instagram followers. The job is part visual design, part knowing what actually gets someone to stop scrolling and show up to an event.", duration: "2025 \u2013 2026", highlights: [
+      { id: "bursa", role: "Vice President & Graphic Designer", org: "BURSA (Burmese Student Association)", blurb: "I'm vice president of BURSA and the person who designs for it \u2014 a cultural student organization with 600+ Instagram followers. Since 2025 I've directed its visual identity: event branding, flyers, social graphics. The job is part visual design, part knowing what actually gets someone to stop scrolling and show up to an event.", duration: "2025 \u2013 2026", highlights: [
         "Event branding: Designed cohesive visual identities for BURSA events, from flyers to social posts, so each event feels distinct but recognizably BURSA",
         "Social media graphics: Created graphics for the org's Instagram, where visual consistency and quick legibility matter more than anything else",
         "Turnout: Helped drive event attendance through design that people actually notice in a crowded feed",
+        "Leadership: Serve as vice president alongside the design work, so the graphics come out of the same head that helped plan the event",
       ], images: [
         { src: "assets/bursa/lunar-bites.jpg", alt: "BURSA Lunar New Year ‘Lunar Bites’ event flyer" },
         { src: "assets/bursa/morning-munchies.jpg", alt: "BURSA ‘Morning Munchies’ event flyer" },
@@ -1210,7 +1235,11 @@ class Component extends DCLogic {
     let canvasHighlights = [];
     let canvasGallery = [];
     const lb = this.state.lightbox;
-    if (kind === "project" && project) { canvasTitle = project.name; canvasBlurb = project.blurb; canvasTags = project.tags; canvasHighlights = project.highlights || []; }
+    if (kind === "project" && project) {
+      canvasTitle = project.name; canvasBlurb = project.blurb; canvasTags = project.tags; canvasHighlights = project.highlights || [];
+      const projImages = project.images || [];
+      canvasGallery = projImages.map((img, i) => ({ ...img, onClick: () => this.openLightbox(projImages, i) }));
+    }
     if (kind === "experience" && exp) {
       canvasTitle = exp.role + " \u2014 " + exp.org; canvasBlurb = exp.blurb; canvasTags = [exp.duration]; canvasHighlights = exp.highlights || [];
       const expImages = exp.images || [];
