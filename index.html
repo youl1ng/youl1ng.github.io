@@ -79,7 +79,7 @@
         <span style="{{ p.style }}"></span>
       </sc-for>
     </div>
-    <div style="text-align:center;padding:24px;position:relative;z-index:2;">
+    <div data-landing-content="" style="text-align:center;padding:24px;position:relative;z-index:2;">
       <p style="font-size:12px;letter-spacing:.2em;color:#8b8d9c;text-transform:uppercase;margin:0 0 16px;">portfolio.pxl</p>
       <h1 style="margin:0 0 20px;line-height:1.4;">
         <div style="{{ titleWrapStyle }}" onMouseEnter="{{ onTitleEnter }}" onMouseLeave="{{ onTitleLeave }}" onClick="{{ onTitleClick }}">
@@ -91,6 +91,9 @@
       <p style="font-size:14px;color:#8b8d9c;margin:0 0 36px;">engineer who designs</p>
       <button type="button" onClick="{{ startNewFile }}" style="font-family:'Press Start 2P',monospace;font-size:13px;color:#14141c;background:#f2b950;border:none;padding:16px 28px;cursor:pointer;box-shadow:inset -4px -4px 0 rgba(0,0,0,.3), inset 4px 4px 0 rgba(255,255,255,.35);transition:transform .1s;" style-hover="transform:scale(1.05);background:#f5c66b;">&#43; NEW FILE</button>
     </div>
+    <sc-if value="{{ landingHintMounted }}">
+      <div style="{{ landingHintStyle }}">click on owen oo</div>
+    </sc-if>
   </div>
 
   <div style="{{ workspaceStyle }}">
@@ -519,6 +522,8 @@ class Component extends DCLogic {
     contact: { name: "", email: "", message: "", submitted: false },
     timelineTab: "experience",
     titleHovered: false,
+    landingHint: null,
+    hintDone: false,
     titleTiltAngle: 0,
     titleClickFX: null,
     bgEffect: "bgeffect1",
@@ -592,6 +597,7 @@ class Component extends DCLogic {
     this._starBurstRAF = null;
     this._starsAnimRAF = null;
     this.setState({ stars: this.genStars(14) });
+    this.scheduleHint(2600);
     this.scheduleStarSpawn();
     this.scheduleStarDespawn();
     this._lagX = null;
@@ -729,6 +735,8 @@ class Component extends DCLogic {
     if (this._starsAnimRAF) cancelAnimationFrame(this._starsAnimRAF);
     if (this._starSpawnTimer) clearTimeout(this._starSpawnTimer);
     if (this._starDespawnTimer) clearTimeout(this._starDespawnTimer);
+    if (this._hintTimer) clearTimeout(this._hintTimer);
+    if (this._hintHideTimer) clearTimeout(this._hintHideTimer);
     this._starTimeouts.forEach((t) => clearTimeout(t));
     if (this._mq) {
       if (this._mq.removeEventListener) this._mq.removeEventListener("change", this._mqHandler);
@@ -1082,6 +1090,43 @@ class Component extends DCLogic {
     this._rippleRAF = requestAnimationFrame(this.tickRipple);
   };
 
+  pickHintPos() {
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const w = 150, h = 28, edge = 20, clear = 32;
+    let box = { l: vw / 2 - 260, t: vh / 2 - 180, r: vw / 2 + 260, b: vh / 2 + 180 };
+    const el = document.querySelector("[data-landing-content]");
+    if (el) {
+      const r = el.getBoundingClientRect();
+      box = { l: r.left, t: r.top, r: r.right, b: r.bottom };
+    }
+    box = { l: box.l - clear, t: box.t - clear, r: box.r + clear, b: box.b + clear };
+    const spanX = vw - w - 2 * edge, spanY = vh - h - 2 * edge;
+    if (spanX <= 0 || spanY <= 0) return null;
+    for (let i = 0; i < 40; i++) {
+      const x = edge + Math.random() * spanX;
+      const y = edge + Math.random() * spanY;
+      if (x + w < box.l || x > box.r || y + h < box.t || y > box.b) return { x, y };
+    }
+    return null;
+  }
+
+  scheduleHint = (delay) => {
+    if (this._prefersReducedMotion) return;
+    const wait = delay === undefined ? 6000 + Math.random() * 6000 : delay;
+    this._hintTimer = setTimeout(() => {
+      if (!this.state.workspaceOpen && !this.state.hintDone) {
+        const pos = this.pickHintPos();
+        if (pos) {
+          this.setState({ landingHint: { x: pos.x, y: pos.y, on: true } });
+          this._hintHideTimer = setTimeout(() => {
+            this.setState((st) => (st.landingHint ? { landingHint: { ...st.landingHint, on: false } } : null));
+          }, 4200);
+        }
+      }
+      this.scheduleHint();
+    }, wait);
+  };
+
   onTitleClick = (e) => {
     e.stopPropagation();
     if (this._prefersReducedMotion) return;
@@ -1107,7 +1152,7 @@ class Component extends DCLogic {
     if (this._starBurstRAF) { cancelAnimationFrame(this._starBurstRAF); this._starBurstRAF = null; }
     this._lastGx = null; this._lastGy = null;
     this._glowLastGx = null; this._glowLastGy = null;
-    this.setState({ titleClickFX: { cx, cy, born: performance.now(), variant: this._titleVariantIdx, particles, lines }, bgEffect: nextBg, landingTrail: [], glow: null, glowTrail: [], ripple: null, starBursts: [], hoveredStarId: null, poppingStars: [] });
+    this.setState({ titleClickFX: { cx, cy, born: performance.now(), variant: this._titleVariantIdx, particles, lines }, bgEffect: nextBg, hintDone: true, landingTrail: [], glow: null, glowTrail: [], ripple: null, starBursts: [], hoveredStarId: null, poppingStars: [] });
     if (!this._titleFXRAF) this._titleFXRAF = requestAnimationFrame(this.tickTitleFX);
   };
 
@@ -1498,6 +1543,10 @@ class Component extends DCLogic {
       onTitleEnter: this.onTitleEnter,
       onTitleLeave: this.onTitleLeave,
       onTitleClick: this.onTitleClick,
+      landingHintMounted: !!this.state.landingHint,
+      landingHintStyle: this.state.landingHint
+        ? "position:fixed;left:" + Math.round(this.state.landingHint.x) + "px;top:" + Math.round(this.state.landingHint.y) + "px;z-index:3;pointer-events:none;user-select:none;font-size:11px;letter-spacing:.08em;color:#8b8d9c;background:rgba(20,20,28,.72);border:1px solid #3a3d4d;padding:5px 9px;white-space:nowrap;transition:opacity .7s ease;opacity:" + (this.state.landingHint.on && !this.state.hintDone ? ".8" : "0") + ";"
+        : "display:none;",
       titleParticlesView: this.state.titleClickFX ? this.state.titleClickFX.particles.map((p) => {
         const anim = this.state.titleClickFX;
         const age = performance.now() - anim.born;
