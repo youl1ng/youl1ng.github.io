@@ -26,6 +26,7 @@
   @keyframes waveLetter { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
   @keyframes glowBreathe { 0%, 100% { transform: scale(0.94); } 50% { transform: scale(1.06); } }
   @keyframes starTwinkle { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.95; } }
+  @keyframes hintBubbleBob { 0%, 100% { transform: translateY(0) rotate(var(--hbtilt, 0deg)); } 50% { transform: translateY(-4px) rotate(var(--hbtilt, 0deg)); } }
   @keyframes canvasRevealA { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0% 0); } }
   @keyframes canvasRevealB { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0% 0); } }
   @keyframes lightboxIn { from { opacity: 0; } to { opacity: 1; } }
@@ -79,10 +80,10 @@
         <span style="{{ p.style }}"></span>
       </sc-for>
     </div>
-    <div data-landing-content="" style="text-align:center;padding:24px;position:relative;z-index:2;">
+    <div style="text-align:center;padding:24px;position:relative;z-index:2;">
       <p style="font-size:12px;letter-spacing:.2em;color:#8b8d9c;text-transform:uppercase;margin:0 0 16px;">portfolio.pxl</p>
       <h1 style="margin:0 0 20px;line-height:1.4;">
-        <div style="{{ titleWrapStyle }}" onMouseEnter="{{ onTitleEnter }}" onMouseLeave="{{ onTitleLeave }}" onClick="{{ onTitleClick }}">
+        <div id="owen-title-wrap" style="{{ titleWrapStyle }}" onMouseEnter="{{ onTitleEnter }}" onMouseLeave="{{ onTitleLeave }}" onClick="{{ onTitleClick }}">
           <sc-for list="{{ titleLetters }}" as="l" hint-placeholder-count="7">
             <span style="{{ l.style }}">{{ l.ch }}</span>
           </sc-for>
@@ -90,9 +91,18 @@
       </h1>
       <p style="font-size:14px;color:#8b8d9c;margin:0 0 36px;">engineer who designs</p>
       <button type="button" onClick="{{ startNewFile }}" style="font-family:'Press Start 2P',monospace;font-size:13px;color:#14141c;background:#f2b950;border:none;padding:16px 28px;cursor:pointer;box-shadow:inset -4px -4px 0 rgba(0,0,0,.3), inset 4px 4px 0 rgba(255,255,255,.35);transition:transform .1s;" style-hover="transform:scale(1.05);background:#f5c66b;">&#43; NEW FILE</button>
+      <div style="margin-top:18px;display:flex;justify-content:center;">
+        <button type="button" onClick="{{ openRecruiter }}" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#8b8d9c;background:transparent;border:2px solid #3a3d4d;padding:10px 16px;cursor:pointer;transition:color .1s,border-color .1s;" style-hover="color:#5ee6c5;border-color:#5ee6c5;">recruiter mode &#8594;</button>
+      </div>
     </div>
-    <sc-if value="{{ landingHintMounted }}">
-      <div style="{{ landingHintStyle }}">click on owen oo</div>
+    <sc-if value="{{ hintBubbleMounted }}" hint-placeholder-val="{{ false }}">
+      <div style="{{ hintBubbleStyle }}">
+        <div style="{{ hintBubbleTailWrapStyle }}">
+          <div style="{{ hintBubbleTailOuterStyle }}"></div>
+          <div style="{{ hintBubbleTailInnerStyle }}"></div>
+        </div>
+        <div style="{{ hintBubbleBoxStyle }}">{{ hintBubblePhrase }}</div>
+      </div>
     </sc-if>
   </div>
 
@@ -305,7 +315,7 @@
         </sc-if>
       </div>
       <sc-if value="{{ paletteContentVisible }}" hint-placeholder-val="{{ true }}">
-      <div style="flex:1;overflow:auto;padding:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+      <div style="{{ paletteGridStyle }}">
         <sc-for list="{{ paletteRows }}" as="sw" hint-placeholder-count="6">
           <button type="button" onClick="{{ sw.onClick }}" style="{{ sw.wrapStyle }}" style-hover="transform:scale(1.08);background:#262837;">
             <span style="{{ sw.fillStyle }}"></span>
@@ -336,10 +346,10 @@
       </div>
       <div style="flex:1;overflow:auto;padding:14px 16px;display:flex;align-items:flex-start;">
         <sc-if value="{{ timelineTabExperience }}" hint-placeholder-val="{{ true }}">
-        <div style="position:relative;width:100%;min-width:560px;display:flex;">
-          <div style="position:absolute;left:76px;right:76px;top:7px;height:3px;background:#3a3d4d;z-index:1;"></div>
+        <div style="{{ tlTrackExpStyle }}">
+          <div style="{{ tlLineStyle }}"></div>
           <sc-for list="{{ frameRows }}" as="fr" hint-placeholder-count="3">
-            <div style="flex:1;min-width:160px;display:flex;flex-direction:column;align-items:center;gap:0;">
+            <div style="{{ tlItemStyle }}">
               <span style="{{ fr.nodeStyle }}" onClick="{{ fr.onClick }}" onMouseEnter="{{ fr.onEnter }}" onMouseLeave="{{ fr.onLeave }}"></span>
               <span style="{{ fr.tickStyle }}"></span>
               <div style="{{ fr.cardStyle }}" onClick="{{ fr.onClick }}" onMouseEnter="{{ fr.onEnter }}" onMouseLeave="{{ fr.onLeave }}">
@@ -352,10 +362,10 @@
         </div>
         </sc-if>
         <sc-if value="{{ timelineTabHobbies }}" hint-placeholder-val="{{ false }}">
-        <div style="position:relative;width:100%;min-width:400px;display:flex;">
-          <div style="position:absolute;left:76px;right:76px;top:7px;height:3px;background:#3a3d4d;z-index:1;"></div>
+        <div style="{{ tlTrackHobStyle }}">
+          <div style="{{ tlLineStyle }}"></div>
           <sc-for list="{{ hobbyRows }}" as="fr" hint-placeholder-count="2">
-            <div style="flex:1;min-width:160px;display:flex;flex-direction:column;align-items:center;gap:0;">
+            <div style="{{ tlItemStyle }}">
               <span style="{{ fr.nodeStyle }}" onClick="{{ fr.onClick }}" onMouseEnter="{{ fr.onEnter }}" onMouseLeave="{{ fr.onLeave }}"></span>
               <span style="{{ fr.tickStyle }}"></span>
               <div style="{{ fr.cardStyle }}" onClick="{{ fr.onClick }}" onMouseEnter="{{ fr.onEnter }}" onMouseLeave="{{ fr.onLeave }}">
@@ -383,6 +393,89 @@
       </span>
     </div>
   </div>
+
+  <sc-if value="{{ showRecruiter }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:9000;overflow:auto;background:#14141c;font-family:'JetBrains Mono',monospace;color:#e8e6e3;">
+      <div style="position:sticky;top:0;z-index:2;background:#1f2029;border-bottom:2px solid #3a3d4d;">
+        <div style="max-width:880px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+          <span style="font-family:'Press Start 2P',monospace;font-size:10px;color:#8b8d9c;letter-spacing:.05em;">RECRUITER MODE</span>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <a href="{{ resumeUrl }}" target="_blank" rel="noopener" style="font-family:'Press Start 2P',monospace;font-size:9px;color:#14141c;background:#f2b950;text-decoration:none;padding:9px 12px;box-shadow:inset -3px -3px 0 rgba(0,0,0,.3), inset 3px 3px 0 rgba(255,255,255,.35);">RESUME PDF &#8595;</a>
+            <button type="button" onClick="{{ exitRecruiter }}" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#8b8d9c;background:transparent;border:2px solid #3a3d4d;padding:6px 12px;cursor:pointer;" style-hover="color:#5ee6c5;border-color:#5ee6c5;">&#8592; pixel mode</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="max-width:880px;margin:0 auto;padding:48px 24px 80px;display:flex;flex-direction:column;gap:48px;">
+        <header style="display:flex;flex-direction:column;gap:14px;">
+          <h1 style="font-family:'Press Start 2P',monospace;font-size:28px;line-height:1.3;margin:0;color:#e8e6e3;">Owen Oo</h1>
+          <p style="margin:0;font-size:15px;color:#5ee6c5;">engineer who designs &middot; CS student, Stony Brook University</p>
+          <p style="margin:0;font-size:14px;line-height:1.75;color:#c9cdd3;max-width:680px;text-wrap:pretty;">{{ aboutBlurb }}</p>
+          <div style="display:flex;gap:18px;flex-wrap:wrap;font-size:13px;">
+            <a href="{{ mailtoHref }}" style="color:#5ee6c5;">{{ contactEmail }}</a>
+            <a href="{{ githubUrl }}" target="_blank" rel="noopener" style="color:#5ee6c5;">github</a>
+            <a href="{{ linkedinUrl }}" target="_blank" rel="noopener" style="color:#5ee6c5;">linkedin</a>
+          </div>
+        </header>
+
+        <section style="display:flex;flex-direction:column;gap:20px;">
+          <h2 style="font-family:'Press Start 2P',monospace;font-size:12px;color:#f2b950;margin:0;padding-bottom:10px;border-bottom:2px solid #3a3d4d;">EXPERIENCE</h2>
+          <sc-for list="{{ recruiterExperience }}" as="x" hint-placeholder-count="2">
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;">
+                <span style="font-size:15px;font-weight:700;color:#e8e6e3;">{{ x.role }} <span style="font-weight:400;color:#8b8d9c;">&middot; {{ x.org }}</span></span>
+                <span style="font-size:12px;color:#8b8d9c;">{{ x.duration }}</span>
+              </div>
+              <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;">
+                <sc-for list="{{ x.points }}" as="p" hint-placeholder-count="3">
+                  <li style="font-size:13px;line-height:1.65;color:#c9cdd3;text-wrap:pretty;"><strong style="color:#e8e6e3;">{{ p.label }}</strong>{{ p.text }}</li>
+                </sc-for>
+              </ul>
+            </div>
+          </sc-for>
+        </section>
+
+        <section style="display:flex;flex-direction:column;gap:20px;">
+          <h2 style="font-family:'Press Start 2P',monospace;font-size:12px;color:#f2b950;margin:0;padding-bottom:10px;border-bottom:2px solid #3a3d4d;">PROJECTS</h2>
+          <sc-for list="{{ recruiterProjects }}" as="x" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;">
+                <span style="font-size:15px;font-weight:700;color:#e8e6e3;">{{ x.name }} <span style="font-weight:400;color:#8b8d9c;">&middot; {{ x.short }}</span></span>
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <sc-for list="{{ x.tags }}" as="t" hint-placeholder-count="3">
+                  <span style="font-size:11px;background:#262837;border:1px solid #3a3d4d;padding:3px 8px;color:#8b8d9c;">{{ t }}</span>
+                </sc-for>
+              </div>
+              <ul style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;">
+                <sc-for list="{{ x.points }}" as="p" hint-placeholder-count="3">
+                  <li style="font-size:13px;line-height:1.65;color:#c9cdd3;text-wrap:pretty;"><strong style="color:#e8e6e3;">{{ p.label }}</strong>{{ p.text }}</li>
+                </sc-for>
+              </ul>
+            </div>
+          </sc-for>
+        </section>
+
+        <section style="display:flex;flex-direction:column;gap:16px;">
+          <h2 style="font-family:'Press Start 2P',monospace;font-size:12px;color:#f2b950;margin:0;padding-bottom:10px;border-bottom:2px solid #3a3d4d;">SKILLS</h2>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <sc-for list="{{ recruiterSkills }}" as="s" hint-placeholder-count="12">
+              <span style="display:flex;align-items:center;gap:8px;font-size:12px;background:#1f2029;border:2px solid #3a3d4d;padding:6px 10px;color:#e8e6e3;"><span style="{{ s.dotStyle }}"></span>{{ s.name }}</span>
+            </sc-for>
+          </div>
+        </section>
+
+        <section style="display:flex;flex-direction:column;gap:16px;">
+          <h2 style="font-family:'Press Start 2P',monospace;font-size:12px;color:#f2b950;margin:0;padding-bottom:10px;border-bottom:2px solid #3a3d4d;">LEADERSHIP</h2>
+          <sc-for list="{{ recruiterActivities }}" as="a" hint-placeholder-count="2">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;">
+              <span style="font-size:14px;font-weight:700;color:#e8e6e3;">{{ a.role }} <span style="font-weight:400;color:#8b8d9c;">&middot; {{ a.org }}</span></span>
+            </div>
+          </sc-for>
+        </section>
+      </div>
+    </div>
+  </sc-if>
 </div>
 
 </x-dc>
@@ -393,10 +486,10 @@ class Component extends DCLogic {
       name: "Owen Oo",
       blurb: "Hi, I'm Owen Oo \u2014 a CS student at Stony Brook who never quite picked a lane between building and designing, so I do both. I write full-stack code and I care way too much about how it looks and feels while I'm at it. Off-screen, I run my school's badminton club and help lead our Burmese student association.",
     },
-    contact: { email: "bonemyatpaing.oo@stonybrook.edu" },
+    contact: { email: "owenleeling@gmail.com" },
     resumeUrl: "assets/Owen-Oo-Resume.pdf",
     githubUrl: "https://github.com/youl1ng",
-    linkedinUrl: "https://www.linkedin.com/in/bone-myat-paing-oo-8b2b28293/",
+    linkedinUrl: "https://www.linkedin.com/in/bone-oo/",
     skills: [
       { name: "React", tag: "react", hex: "#5ee6c5" },
       { name: "Next.js", tag: "next.js", hex: "#e8e6e3" },
@@ -422,14 +515,30 @@ class Component extends DCLogic {
       { name: "Godot", tag: "godot", hex: "#5b9bd5" },
       { name: "OpenAI API", tag: "openai", hex: "#10a37f" },
       { name: "Gemini API", tag: "gemini", hex: "#8e6ff2" },
+      { name: "SQL", tag: "sql", hex: "#e38c3d" },
+      { name: "PHP", tag: "php", hex: "#8892bf" },
+      { name: "SQL Server", tag: "sql server", hex: "#cc2927" },
+      { name: "Linux", tag: "linux", hex: "#f5d547" },
+      { name: "Playwright", tag: "playwright", hex: "#45ba4b" },
+      { name: "Prototyping", tag: "prototyping", hex: "#f2a3c7" },
+      { name: "Wireframing", tag: "wireframing", hex: "#b8bcc6" },
+      { name: "User Flows", tag: "user flows", hex: "#62d2e0" },
+      { name: "Design Systems", tag: "design systems", hex: "#d98ff2" },
+      { name: "Accessible Design", tag: "accessible design", hex: "#9be08a" },
     ],
     projects: [
-      { id: "datpone", name: "DatPone", short: "browser photobooth \u2014 next.js + webrtc", icon: "DP", accentColor: "#d97148", blurb: "DatPone is a browser photobooth built for a real event, not a demo. You pick a template, shoot a strip on a laptop webcam \u2014 or on your phone, which pairs over WebRTC and becomes the booth's lens \u2014 and walk away with it as a PNG, an animated GIF, a QR code, or a printed sheet. Every session makes two things: the still, and a \u201Clive strip\u201D that animates the seconds before the shutter and lands on the photo you were posing for. I designed the identity and built the whole app.", tags: ["typescript", "next.js", "react", "framer motion", "webrtc", "figma"], highlights: [
+      { id: "acctsearch", name: "CS Account Search", short: "internal staff tool — php + sql server", icon: "AS", accentColor: "#8892bf", blurb: "The CS department's system staff use an internal account-search tool to look up accounts and check whether their email is active or expired, by NetID, name, or email, across both staging and master tables. It's a tool people hit dozens of times in a row, so I'm rebuilding it around fast repeat lookups. Along the way I audited the legacy endpoint it runs on.", tags: ["php", "sql", "sql server", "typescript", "iis", "user flows"], highlights: [
+        "Rebuild: Rebuilding the department's internal account-search tool, which staff use to look up accounts and active/expired email status by NetID, name, or email across staging and master tables",
+        "Redesign: A single page built for fast repeat lookups, with fetch-based inline results, format-aware placeholders, inline validation, and proper loading, empty, and error states",
+        "Security audit: Audited the legacy PHP endpoint and identified SQL injection and XSS risks from unvalidated inputs, then proposed whitelisted fields and parameterized queries",
+      ] },
+      { id: "datpone", name: "DatPone", short: "browser photobooth \u2014 next.js + webrtc", icon: "DP", accentColor: "#d97148", blurb: "DatPone is a browser photobooth built for a real event, not a demo. You pick a template, shoot a strip on a laptop webcam \u2014 or on your phone, which pairs over WebRTC and becomes the booth's lens \u2014 and walk away with it as a PNG, an animated GIF, a QR code, or a printed sheet. Every session makes two things: the still, and a \u201Clive strip\u201D that animates the seconds before the shutter and lands on the photo you were posing for. I designed the identity and built the whole app.", tags: ["typescript", "next.js", "react", "framer motion", "webrtc", "figma", "design systems"], highlights: [
         "Live strip: Every session yields a still and a GIF of the run-up to the shutter. Both come out of the same canvas renderer at four different scales, so artwork and geometry can't drift between the screen, the print, and the animation",
         "Phone as camera: Hand-rolled WebRTC signaling over long polling, with short-lived TURN credentials minted server-side so no static relay password ever ships to the browser",
         "Gesture shutter: An OK hand sign held for half a second arms the countdown, tracked with MediaPipe and normalized against palm length so it reads across a room. If the model can't load, the booth falls back to a plain timer",
         "Kiosk mode: An unattended event booth \u2014 one operator setup, one gesture per strip, and a server-side print queue that fills a sheet before anything reaches paper",
         "Design system: A custom palette, a three-typeface pairing, and a squircle generator shared between CSS clip-path and the canvas renderer, so a corner on screen is the same curve as the corner in the downloaded PNG",
+        "Component library: A reusable React component library and motion-driven UI \u2014 an animated login and a 3D photostrip hero \u2014 built from the custom Figma design system",
       ], images: [
         { src: "assets/datpone/02-login.png", alt: "DatPone account card with the booth wordmark and colour bars" },
         { src: "assets/datpone/06-config-template.png", alt: "Session setup: choosing between the five strip templates" },
@@ -438,39 +547,50 @@ class Component extends DCLogic {
         { src: "assets/datpone/17-kiosk-paired.png", alt: "Kiosk setup with a phone paired as the booth camera" },
         { src: "assets/datpone/21-kiosk-attract-strip.png", alt: "Kiosk attract screen holding a finished strip, its QR code, and the print sheet counter" },
       ] },
-      { id: "phreddit", name: "Phreddit", short: "full-stack social platform (MERN)", icon: "PH", blurb: "Phreddit is a Reddit-style social platform. I built it with a partner over one semester, across three versions. The first version used vanilla JavaScript, no framework, to get the data model right: communities, posts, nested comments, sorting. The second version moved to a React SPA. The third became a full MERN app with a real client-server split. I led the frontend across all three versions and worked on the backend too.", tags: ["react", "javascript", "node", "express", "mongodb", "git"], highlights: [
+      { id: "phreddit", name: "Phreddit", short: "full-stack social platform (MERN)", icon: "PH", blurb: "Phreddit is a Reddit-style social platform. I built it with a partner over one semester, across three versions. The first version used vanilla JavaScript, no framework, to get the data model right: communities, posts, nested comments, sorting. The second version moved to a React SPA. The third became a full MERN app with a real client-server split. I led the frontend across all three versions and worked on the backend too.", tags: ["react", "javascript", "node", "express", "mongodb", "git", "playwright"], highlights: [
         "Frontend: Built the component architecture, reusable UI elements, and prop-threading through nested components",
         "Bug fix: Found a stale-state bug where comment replies rendered flat until refresh. The cause was a timing race between a React context update and a data fetch",
         "Backend: Wrote Mongoose schemas, RESTful CRUD routes, session-based auth with bcrypt, and cascading deletes",
         "Workflow: Built with a partner using feature branches and pull requests",
+        "Testing: Validated with unit, integration, and Playwright end-to-end tests, with PR review before anything merged",
       ] },
       { id: "signage", name: "Xibo Digital Signage Directory", short: "dockerized CMS \u2014 CS department", icon: "XB", blurb: "This started as a real problem, not a spec. The CS department's lobby had physical posters for a directory. I got asked to replace them with something live and remotely manageable. I set up a self-hosted Xibo CMS in Docker, paired with a Windows Player driving the lobby display. I built this on Ubuntu first, with a Linux Xibo player. The Linux player lagged too far behind the CMS version to render layouts correctly. I rebuilt the machine on Windows and moved to Docker Desktop with WSL2. That's the version running now.", tags: ["docker", "xibo cms", "windows", "tailscale", "systems"], highlights: [
         "Deployment: Self-hosted Xibo CMS and Windows Player, running on one mini-PC",
         "Migration: Diagnosed a version mismatch between the Linux player and the CMS. Rebuilt the deployment on Windows to fix it",
         "Remote access: Set up Tailscale so the CMS can be managed from a desk, without exposing public ports",
         "Content system: Built a DataSet-driven, CSV-updatable layout to replace a static webpage embed",
+        "Scale: Now runs across 4 department displays, from initial deployment through remote content updates",
       ] },
-      { id: "homeaid", name: "homeAid", short: "UI/UX & product design (hackathon)", icon: "HA", accentColor: "#a78bfa", blurb: "homeAid is a Tinder-style concept for matching aging homeowners with freelance repair workers \u2014 swipe to match, then negotiate the job. I owned design end-to-end, solo, under real hackathon time pressure, thinking through how the product works and how it feels at the same time, not one after the other.", tags: ["figma/wireframing", "miro sidekick", "ui/ux"], highlights: [
+      { id: "homeaid", name: "homeAid", short: "UI/UX & product design (hackathon)", icon: "HA", accentColor: "#a78bfa", blurb: "homeAid is a Tinder-style concept for matching aging homeowners with freelance repair workers \u2014 swipe to match, then negotiate the job. I owned design end-to-end, solo, under real hackathon time pressure, thinking through how the product works and how it feels at the same time, not one after the other.", tags: ["figma/wireframing", "miro sidekick", "ui/ux", "prototyping", "wireframing", "user flows"], highlights: [
         "Designed 18 screens across two user types (homeowners, workers) with distinct flows and shared visual language",
         "Built a budget-negotiation interaction pattern integrated directly into the swipe mechanic",
         "Created Pebble, the brand mascot, and a consistent visual identity system across the app",
         "Used AI-assisted prototyping (Miro Sidekick) to iterate quickly on both UX flows and UI assets under hackathon time constraints",
+        "Delivered all 18 screens in 5 hours, including the in-app budget-negotiation flow, and pitched the product to 6 judges",
       ] },
     ],
     experience: [
-      { id: "moca", role: "Undergraduate Researcher, UX Engineering", org: "MOCA Lab, Stony Brook", blurb: "MOCA Lab builds a home health monitoring platform for older adults \u2014 in-home sensing across radar, video, and wearables, recorded overnight in people's actual houses. I work on the app side: a smartwatch tool that asks participants to label their own daily activities. The hard part isn't the sensing, it's the asking. Every prompt spends someone's attention, and the people the study is built around have the least of it to spare, so the real design problem is balancing data quality against burden.", duration: "Aug 2026 \u2013 Present", highlights: [
+      { id: "moca", role: "Undergraduate Researcher, UI/UX Engineering", org: "MOCA Lab, Stony Brook", blurb: "MOCA Lab builds a home health monitoring platform for older adults \u2014 in-home sensing across radar, video, and wearables, recorded overnight in people's actual houses. I work on the app side: a smartwatch tool that asks participants to label their own daily activities. The hard part isn't the sensing, it's the asking. Every prompt spends someone's attention, and the people the study is built around have the least of it to spare, so the real design problem is balancing data quality against burden.", duration: "Aug 2026 \u2013 Present", highlights: [
         "Timestamp accuracy: Evaluating how the existing Android app captures activity start and end times through virtual button presses, and documenting where that method loses accuracy",
         "Input modalities: Specifying alternatives \u2014 speech, physical buttons, and confirm-don't-recall prompts that replace free time entry with a single yes/no",
         "Research grounding: Reviewing prior smartwatch and experience-sampling deployments with older adults, so each design decision answers a documented failure mode rather than a guess",
         "Design spec: Authoring the interface spec for v1 of the labeling flow, ahead of user trials with older adults in the Stony Brook community",
+        "Codebase: Develop in the Java/Android codebase of the smartwatch/phone app that captures Activities of Daily Living (ADL) labels from older adults in real-home sensing deployments",
+        "Diagnosis: Traced timestamp inaccuracy to phone-based virtual-button capture and recommended moving start/end marking to smartwatch buttons, cutting each mark from 4 steps (lift, read, tap, lower) to a single press",
+        "Accessibility: Designing input paths that reduce motor and memory load, including optional speech input and confirm-don't-recall prompts",
+        "Communication: Present design rationale to the PI and research team weekly",
       ] },
-      { id: "it", role: "System Staff Student Assistant", org: "Stony Brook CS Dept", blurb: "I'm a student assistant for the system staff crew in the CS department, since June 2026. Most of the job is diagnosing what's actually broken before fixing it, whether it's a machine that won't boot, a printer that won't connect, a copier throwing a cryptic error, and then documenting the fix so the next person doesn't have to start from zero.", duration: "June 2026 \u2013 Present", highlights: [
+      { id: "it", role: "System Staff Student Assistant", org: "Stony Brook CS Dept", blurb: "I'm a student assistant for the system staff crew in the CS department, since June 2026. Most of the job is diagnosing what's actually broken before fixing it, whether it's a machine that won't boot, a printer that won't connect, a copier throwing a cryptic error, and then documenting the fix so the next person doesn't have to start from zero.", duration: "Jun 2026 \u2013 Present", highlights: [
         "Reimaging: Reimage lab machines across Windows, Linux, and macOS using FOG PXE deployment and Ventoy bootable USB, including working around older hardware and boot configurations that don't cooperate with standard imaging",
         "Troubleshooting: Diagnose and fix BIOS/UEFI boot failures, and resolve connectivity issues on lab printers and network copiers",
         "Documentation: Write technical documentation for deployment and troubleshooting procedures, so recurring issues have a repeatable fix instead of getting solved from scratch each time",
         "Digital signage: Deployed and maintain the department's Xibo digital signage system (see Xibo project for the full build)",
+        "Scale: Reimaged 40+ lab machines with FOG and Ventoy",
+        "Network: Help deploy Palo Alto PA-410 firewalls to replace failing hardware",
+        "Self-serve docs: Write step-by-step troubleshooting guides that let student staff resolve issues without escalating",
+        "Internal tools: Rebuilding the department's account-search tool (see CS Account Search project)",
       ] },
-      { id: "bursa", role: "Vice President & Graphic Designer", org: "BURSA (Burmese Student Association)", blurb: "I'm vice president of BURSA and the person who designs for it \u2014 a cultural student organization with 600+ Instagram followers. Since 2025 I've directed its visual identity: event branding, flyers, social graphics. The job is part visual design, part knowing what actually gets someone to stop scrolling and show up to an event.", duration: "2025 \u2013 2026", highlights: [
+      { id: "bursa", role: "Vice President & Graphic Designer", org: "BURSA (Burmese Student Association)", blurb: "I'm vice president of BURSA and the person who designs for it \u2014 a cultural student organization with 600+ Instagram followers. Since November 2024 I've directed its visual identity: event branding, flyers, social graphics. The job is part visual design, part knowing what actually gets someone to stop scrolling and show up to an event.", duration: "Nov 2024 \u2013 Present", highlights: [
         "Event branding: Designed cohesive visual identities for BURSA events, from flyers to social posts, so each event feels distinct but recognizably BURSA",
         "Social media graphics: Created graphics for the org's Instagram, where visual consistency and quick legibility matter more than anything else",
         "Turnout: Helped drive event attendance through design that people actually notice in a crowded feed",
@@ -495,7 +615,7 @@ class Component extends DCLogic {
     ],
     hobbies: [
       { id: "pixelart", role: "Pixel Art", org: "Hobby", blurb: "Drawing and animating pixel sprites in tools like Aseprite \u2014 part of what inspired this site's UI.", duration: "ongoing" },
-      { id: "badminton", role: "Badminton", org: "President, SBU Badminton Club", blurb: "I run Stony Brook's badminton club as president, and I compete in collegiate tournaments against schools from across the country. It's the part of my week that has nothing to do with a screen, which is exactly why I keep doing it.", duration: "ongoing", tags: ["sports", "leadership"] },
+      { id: "badminton", role: "Badminton", org: "President, SBU Badminton Club", blurb: "I run Stony Brook's badminton club as president, and I compete in collegiate tournaments against schools from across the country. I've been president since May 2026: the club has 170+ members, and I run practices and lead a 20+ player team at tournaments. It's the part of my week that has nothing to do with a screen, which is exactly why I keep doing it.", duration: "ongoing", tags: ["sports", "leadership"] },
     ],
   };
 
@@ -503,6 +623,7 @@ class Component extends DCLogic {
     workspaceOpen: false,
     landingTrail: [],
     isDesktop: true,
+    device: "desktop",
     windows: {
       canvas: { x: 100, y: 60, w: 460, h: 400, z: 20, hidden: false, minimized: false, maximized: false },
       layers: { x: 1180, y: 56, w: 320, h: 340, z: 15, hidden: false, minimized: false, maximized: false },
@@ -522,10 +643,10 @@ class Component extends DCLogic {
     contact: { name: "", email: "", message: "", submitted: false },
     timelineTab: "experience",
     titleHovered: false,
-    landingHint: null,
-    hintDone: false,
     titleTiltAngle: 0,
     titleClickFX: null,
+    hintBubble: null,
+    hintBubbleVisible: false,
     bgEffect: "bgeffect1",
     glow: null,
     glowTrail: [],
@@ -576,9 +697,12 @@ class Component extends DCLogic {
   }
 
   componentDidMount() {
-    this._mq = window.matchMedia("(min-width: 769px)");
+    this._mq = window.matchMedia("(min-width: 1024px)");
     this._mqHandler = (e) => this.setState({ isDesktop: e.matches });
-    this.setState({ isDesktop: this._mq.matches, frameDockHeight: Math.round(window.innerHeight * 0.26), windows: this.getDefaultWindows() });
+    this._getDevice = () => (window.innerWidth < 640 ? "phone" : window.innerWidth < 1024 ? "tablet" : "desktop");
+    this._onDeviceResize = () => { const d = this._getDevice(); if (d !== this.state.device) this.setState({ device: d }); };
+    window.addEventListener("resize", this._onDeviceResize);
+    this.setState({ device: this._getDevice(), isDesktop: this._mq.matches, frameDockHeight: Math.round(window.innerHeight * 0.26), windows: this.getDefaultWindows() });
     if (this._mq.addEventListener) this._mq.addEventListener("change", this._mqHandler);
     else this._mq.addListener(this._mqHandler);
 
@@ -597,9 +721,14 @@ class Component extends DCLogic {
     this._starBurstRAF = null;
     this._starsAnimRAF = null;
     this.setState({ stars: this.genStars(14) });
-    this.scheduleHint(2600);
     this.scheduleStarSpawn();
     this.scheduleStarDespawn();
+    this._onHbResize = () => requestAnimationFrame(this.followHintBubble);
+    window.addEventListener("resize", this._onHbResize);
+    this._hintBubbleIdCounter = 0;
+    this._hintBubbleTimer = null;
+    this._hintBubbleHideTimer = null;
+    this.scheduleHintBubbleFirstShow();
     this._lagX = null;
     this._lagY = null;
     this._lastGx = null;
@@ -735,13 +864,103 @@ class Component extends DCLogic {
     if (this._starsAnimRAF) cancelAnimationFrame(this._starsAnimRAF);
     if (this._starSpawnTimer) clearTimeout(this._starSpawnTimer);
     if (this._starDespawnTimer) clearTimeout(this._starDespawnTimer);
-    if (this._hintTimer) clearTimeout(this._hintTimer);
-    if (this._hintHideTimer) clearTimeout(this._hintHideTimer);
+    if (this._hintBubbleTimer) clearTimeout(this._hintBubbleTimer);
+    if (this._hintBubbleHideTimer) clearTimeout(this._hintBubbleHideTimer);
     this._starTimeouts.forEach((t) => clearTimeout(t));
     if (this._mq) {
       if (this._mq.removeEventListener) this._mq.removeEventListener("change", this._mqHandler);
       else this._mq.removeListener(this._mqHandler);
     }
+  }
+
+  makeHintBubblePos() {
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const bw = 200, bh = 82, pad = 16, gap = 14, hug = 46, vExpand = 100;
+    const titleEl = document.getElementById("owen-title-wrap");
+    const tRect = titleEl ? titleEl.getBoundingClientRect() : { left: vw / 2 - 140, right: vw / 2 + 140, top: vh / 2 - 40, bottom: vh / 2 + 40 };
+    const tCenterX = (tRect.left + tRect.right) / 2, tCenterY = (tRect.top + tRect.bottom) / 2;
+    const yLo = Math.max(pad, tRect.top - vExpand);
+    const yHi = Math.min(vh - pad - bh, tRect.bottom + vExpand - bh);
+    const candidates = [];
+    const leftZoneRight = tRect.left - gap, leftZoneLeft = Math.max(pad, leftZoneRight - hug - bw);
+    if (leftZoneRight - bw >= leftZoneLeft) candidates.push({ region: "left", x: leftZoneLeft + Math.random() * Math.max(1, (leftZoneRight - bw) - leftZoneLeft), y: yLo + Math.random() * Math.max(1, yHi - yLo) });
+    const rightZoneLeft = tRect.right + gap, rightZoneRight = Math.min(vw - pad, rightZoneLeft + hug + bw);
+    if (rightZoneRight - bw >= rightZoneLeft) candidates.push({ region: "right", x: rightZoneLeft + Math.random() * Math.max(1, rightZoneRight - bw - rightZoneLeft), y: yLo + Math.random() * Math.max(1, yHi - yLo) });
+    const pick = candidates.length ? candidates[Math.floor(Math.random() * candidates.length)] : { region: "left", x: pad, y: yLo };
+    const anchorX = pick.region === "left" ? pick.x + bw : pick.x;
+    const anchorY = pick.y + bh / 2;
+    const tailAngle = Math.atan2(tCenterY - anchorY, tCenterX - anchorX) * 180 / Math.PI;
+    const tailPct = Math.round(Math.min(82, Math.max(18, ((tCenterY - pick.y) / bh) * 100)));
+    return { region: pick.region, x: Math.round(pick.x), y: Math.round(pick.y), tilt: (Math.random() - 0.5) * 10, tailPct, tailAngle, tcx: tCenterX, tcy: tCenterY };
+  }
+
+  followHintBubble = () => {
+    const hb = this.state.hintBubble;
+    const el = document.getElementById("owen-title-wrap");
+    if (!hb || !el || hb.tcx == null) return;
+    const r = el.getBoundingClientRect();
+    const cx = (r.left + r.right) / 2, cy = (r.top + r.bottom) / 2;
+    const dx = cx - hb.tcx, dy = cy - hb.tcy;
+    if (!dx && !dy) return;
+    this.setState({ hintBubble: { ...hb, x: Math.round(hb.x + dx), y: Math.round(hb.y + dy), tcx: cx, tcy: cy } });
+  };
+
+  makeHintBubble() {
+    const phrases = ["click on owen oo", "click owen oo for a different sky", "click owen oo to swap the scene", "owen oo has 3 modes. click him", "click owen oo, there's more than one background", "click owen oo to cycle the scene", "psst… click owen oo", "click owen oo for stars", "tap owen oo to switch it up", "owen oo hides modes. click him"];
+    const phrase = phrases[Math.floor(Math.random() * phrases.length)];
+    return { ...this.makeHintBubblePos(), phrase, id: ++this._hintBubbleIdCounter };
+  }
+
+  scheduleHintBubbleFirstShow() {
+    this._hintBubbleTimer = setTimeout(() => {
+      if (this.state.workspaceOpen) { this.scheduleHintBubbleFirstShow(); return; }
+      this.setState({ hintBubble: this.makeHintBubble(), hintBubbleVisible: true });
+      this.scheduleHintBubbleRespawn();
+    }, 3200 + Math.random() * 1800);
+  }
+
+  scheduleHintBubbleRespawn() {
+    this._hintBubbleTimer = setTimeout(() => {
+      if (this.state.workspaceOpen) { this.scheduleHintBubbleRespawn(); return; }
+      this.respawnHintBubble();
+    }, 7500 + Math.random() * 4500);
+  }
+
+  respawnHintBubble() {
+    if (this._prefersReducedMotion) {
+      this.setState({ hintBubble: this.makeHintBubble(), hintBubbleVisible: true });
+      this.scheduleHintBubbleRespawn();
+      return;
+    }
+    this.setState({ hintBubbleVisible: false });
+    this._hintBubbleHideTimer = setTimeout(() => {
+      this.setState({ hintBubble: this.makeHintBubble(), hintBubbleVisible: true });
+      this.scheduleHintBubbleRespawn();
+    }, 260);
+  }
+
+  getHintBubbleStyle(b) {
+    const reduced = this._prefersReducedMotion;
+    const visible = this.state.hintBubbleVisible;
+    const motionPart = reduced ? "transform:rotate(" + b.tilt.toFixed(1) + "deg);" : "--hbtilt:" + b.tilt.toFixed(1) + "deg;animation:hintBubbleBob 3.6s ease-in-out infinite;";
+    return "position:fixed;left:" + b.x + "px;top:" + b.y + "px;width:200px;z-index:6;" + motionPart + "opacity:" + (visible ? 1 : 0) + ";pointer-events:" + (visible ? "auto" : "none") + ";" + (reduced ? "" : "transition:opacity .3s ease;") + "cursor:default;";
+  }
+
+  getHintBubbleBoxStyle() {
+    return "position:relative;z-index:2;background:#f2b950;color:#14141c;border:3px solid #14141c;box-shadow:5px 5px 0 rgba(0,0,0,.45);padding:10px 12px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11px;line-height:1.5;letter-spacing:.01em;text-align:center;text-wrap:pretty;";
+  }
+
+  getHintBubbleTailWrapStyle(b) {
+    const edge = b.region === "left" ? ("left:100%;top:" + b.tailPct + "%;") : ("left:0%;top:" + b.tailPct + "%;");
+    return "position:absolute;width:22px;height:18px;transform-origin:0% 50%;transform:translateY(-50%) rotate(" + b.tailAngle.toFixed(1) + "deg);z-index:1;pointer-events:none;" + edge;
+  }
+
+  getHintBubbleTailOuterStyle() {
+    return "position:absolute;inset:0;background:#14141c;clip-path:polygon(0 0,100% 50%,0 100%);";
+  }
+
+  getHintBubbleTailInnerStyle() {
+    return "position:absolute;inset:0;background:#f2b950;clip-path:polygon(0 0,100% 50%,0 100%);transform:scale(0.7);transform-origin:33% 50%;";
   }
 
   bringToFront(id) {
@@ -1090,45 +1309,20 @@ class Component extends DCLogic {
     this._rippleRAF = requestAnimationFrame(this.tickRipple);
   };
 
-  pickHintPos() {
-    const vw = window.innerWidth, vh = window.innerHeight;
-    const w = 150, h = 28, edge = 20, clear = 32;
-    let box = { l: vw / 2 - 260, t: vh / 2 - 180, r: vw / 2 + 260, b: vh / 2 + 180 };
-    const el = document.querySelector("[data-landing-content]");
-    if (el) {
-      const r = el.getBoundingClientRect();
-      box = { l: r.left, t: r.top, r: r.right, b: r.bottom };
-    }
-    box = { l: box.l - clear, t: box.t - clear, r: box.r + clear, b: box.b + clear };
-    const spanX = vw - w - 2 * edge, spanY = vh - h - 2 * edge;
-    if (spanX <= 0 || spanY <= 0) return null;
-    for (let i = 0; i < 40; i++) {
-      const x = edge + Math.random() * spanX;
-      const y = edge + Math.random() * spanY;
-      if (x + w < box.l || x > box.r || y + h < box.t || y > box.b) return { x, y };
-    }
-    return null;
+  dismissHintBubble() {
+    if (this._hintBubbleTimer) clearTimeout(this._hintBubbleTimer);
+    if (this._hintBubbleHideTimer) clearTimeout(this._hintBubbleHideTimer);
+    this.setState({ hintBubbleVisible: false });
+    this._hintBubbleTimer = setTimeout(() => {
+      if (this.state.workspaceOpen) { this.scheduleHintBubbleRespawn(); return; }
+      this.setState({ hintBubble: this.makeHintBubble(), hintBubbleVisible: true });
+      this.scheduleHintBubbleRespawn();
+    }, 14000 + Math.random() * 6000);
   }
-
-  scheduleHint = (delay) => {
-    if (this._prefersReducedMotion) return;
-    const wait = delay === undefined ? 6000 + Math.random() * 6000 : delay;
-    this._hintTimer = setTimeout(() => {
-      if (!this.state.workspaceOpen && !this.state.hintDone) {
-        const pos = this.pickHintPos();
-        if (pos) {
-          this.setState({ landingHint: { x: pos.x, y: pos.y, on: true } });
-          this._hintHideTimer = setTimeout(() => {
-            this.setState((st) => (st.landingHint ? { landingHint: { ...st.landingHint, on: false } } : null));
-          }, 4200);
-        }
-      }
-      this.scheduleHint();
-    }, wait);
-  };
 
   onTitleClick = (e) => {
     e.stopPropagation();
+    this.dismissHintBubble();
     if (this._prefersReducedMotion) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
@@ -1152,7 +1346,7 @@ class Component extends DCLogic {
     if (this._starBurstRAF) { cancelAnimationFrame(this._starBurstRAF); this._starBurstRAF = null; }
     this._lastGx = null; this._lastGy = null;
     this._glowLastGx = null; this._glowLastGy = null;
-    this.setState({ titleClickFX: { cx, cy, born: performance.now(), variant: this._titleVariantIdx, particles, lines }, bgEffect: nextBg, hintDone: true, landingTrail: [], glow: null, glowTrail: [], ripple: null, starBursts: [], hoveredStarId: null, poppingStars: [] });
+    this.setState({ titleClickFX: { cx, cy, born: performance.now(), variant: this._titleVariantIdx, particles, lines }, bgEffect: nextBg, landingTrail: [], glow: null, glowTrail: [], ripple: null, starBursts: [], hoveredStarId: null, poppingStars: [] });
     if (!this._titleFXRAF) this._titleFXRAF = requestAnimationFrame(this.tickTitleFX);
   };
 
@@ -1234,14 +1428,19 @@ class Component extends DCLogic {
   };
 
   renderVals() {
+    const splitPt = (h) => { const i = h.indexOf(": "); return i > 0 && i < 30 ? { label: h.slice(0, i + 2), text: h.slice(i + 2) } : { label: "", text: h }; };
     const accent = this.props.accentColor || "#5ee6c5";
     const marqueeOn = this.props.animatedMarquee !== false;
     const isDesktop = this.state.isDesktop;
+    const device = isDesktop ? "desktop" : (this.state.device === "desktop" ? "tablet" : this.state.device);
+    const isPhone = device === "phone";
     const w = this.state.windows;
 
     const baseWinStyle = (win) => {
       if (!isDesktop) {
-        return "position:static;width:100%;height:auto;margin:0 0 16px;box-shadow:none;display:" + (win.hidden ? "none" : "flex") + ";flex-direction:column;background:#1f2029;border:2px solid #3a3d4d;min-width:0;min-height:0;";
+        const span = (win === w.canvas || win === w.frames || isPhone) ? "grid-column-start:1;grid-column-end:-1;" : "";
+        const minH = win === w.canvas && !win.minimized ? (isPhone ? "min-height:440px;" : "min-height:520px;") : "";
+        return "position:relative;width:100%;height:auto;margin:0;box-sizing:border-box;box-shadow:4px 4px 0 rgba(0,0,0,.35);display:" + (win.hidden ? "none" : "flex") + ";flex-direction:column;background:#1f2029;border:2px solid #3a3d4d;min-width:0;min-height:0;" + span + minH;
       }
       return "position:absolute;left:" + win.x + "px;top:" + win.y + "px;width:" + win.w + "px;height:" + win.h + "px;z-index:" + win.z + ";display:" + (win.hidden ? "none" : "flex") + ";flex-direction:column;background:#1f2029;border:2px solid #3a3d4d;box-shadow:6px 6px 0 rgba(0,0,0,.45);min-width:240px;min-height:160px;";
     };
@@ -1357,8 +1556,8 @@ class Component extends DCLogic {
         onEnter: () => this.setState({ hoveredFrameId: x.id }),
         onLeave: () => this.setState((s) => (s.hoveredFrameId === x.id ? { hoveredFrameId: null } : null)),
         nodeStyle: "width:14px;height:14px;flex:none;background:" + (lit ? rowAccent : "#1f2029") + ";border:2px solid " + rowAccent + ";z-index:2;cursor:pointer;",
-        tickStyle: "width:2px;height:12px;background:" + rowAccent + ";flex:none;",
-        cardStyle: "border:2px solid " + (lit ? rowAccent : "#3a3d4d") + ";background:" + (lit ? "#262837" : "#1f2029") + ";padding:6px 8px;min-width:150px;max-width:190px;text-align:center;cursor:pointer;",
+        tickStyle: isPhone ? "width:12px;height:2px;margin-top:6px;background:" + rowAccent + ";flex:none;" : "width:2px;height:12px;background:" + rowAccent + ";flex:none;",
+        cardStyle: "border:2px solid " + (lit ? rowAccent : "#3a3d4d") + ";background:" + (lit ? "#262837" : "#1f2029") + ";cursor:pointer;" + (isPhone ? "flex:1;min-width:0;padding:10px 12px;text-align:left;" : "padding:6px 8px;min-width:150px;max-width:190px;text-align:center;"),
         roleStyle: "font-size:11px;line-height:1.3;color:#e8e6e3;display:block;margin-bottom:2px;",
         orgStyle: "font-size:10px;line-height:1.3;color:" + rowAccent + ";display:block;margin-bottom:2px;",
         durationStyle: "font-size:9px;line-height:1.3;color:#8b8d9c;display:block;letter-spacing:.05em;",
@@ -1531,6 +1730,14 @@ class Component extends DCLogic {
       })(),
       startNewFile: this.startNewFile,
       goToLanding: this.goToLanding,
+      showRecruiter: !!this.state.recruiterMode,
+      openRecruiter: (e) => { if (e) e.stopPropagation(); this.setState({ recruiterMode: true }); },
+      exitRecruiter: () => this.setState({ recruiterMode: false }),
+      aboutBlurb: this.data.about.blurb,
+      recruiterExperience: this.data.experience.map((x) => ({ ...x, points: (x.highlights || []).map(splitPt) })),
+      recruiterProjects: this.data.projects.map((x) => ({ ...x, points: (x.highlights || []).map(splitPt) })),
+      recruiterSkills: this.data.skills.map((s) => ({ name: s.name, dotStyle: "width:8px;height:8px;flex:none;background:" + s.hex + ";" })),
+      recruiterActivities: [{ role: "President", org: "SBU Badminton Club \u2014 170+ members; runs practices and leads a 20+ player team at tournaments against schools nationwide \u00b7 May 2026 \u2013 Present" }],
       titleLetters: "OWEN OO".split("").map((ch, idx) => ({
         ch: ch === " " ? "\u00A0" : ch,
         style: "font-family:'Press Start 2P',monospace;font-size:clamp(28px,6vw,48px);color:#5ee6c5;text-shadow:4px 4px 0 #f2665a;display:inline-block;white-space:pre;animation:waveLetter 1.8s steps(12) infinite;animation-delay:" + (idx * 0.06) + "s;" + (ch === " " ? "width:0.5em;" : ""),
@@ -1543,10 +1750,13 @@ class Component extends DCLogic {
       onTitleEnter: this.onTitleEnter,
       onTitleLeave: this.onTitleLeave,
       onTitleClick: this.onTitleClick,
-      landingHintMounted: !!this.state.landingHint,
-      landingHintStyle: this.state.landingHint
-        ? "position:fixed;left:" + Math.round(this.state.landingHint.x) + "px;top:" + Math.round(this.state.landingHint.y) + "px;z-index:3;pointer-events:none;user-select:none;font-size:11px;letter-spacing:.08em;color:#8b8d9c;background:rgba(20,20,28,.72);border:1px solid #3a3d4d;padding:5px 9px;white-space:nowrap;transition:opacity .7s ease;opacity:" + (this.state.landingHint.on && !this.state.hintDone ? ".8" : "0") + ";"
-        : "display:none;",
+      hintBubbleMounted: !this.state.workspaceOpen && !!this.state.hintBubble && !isPhone,
+      hintBubblePhrase: this.state.hintBubble ? this.state.hintBubble.phrase : "",
+      hintBubbleStyle: this.state.hintBubble ? this.getHintBubbleStyle(this.state.hintBubble) : "",
+      hintBubbleBoxStyle: this.getHintBubbleBoxStyle(),
+      hintBubbleTailWrapStyle: this.state.hintBubble ? this.getHintBubbleTailWrapStyle(this.state.hintBubble) : "",
+      hintBubbleTailOuterStyle: this.getHintBubbleTailOuterStyle(),
+      hintBubbleTailInnerStyle: this.getHintBubbleTailInnerStyle(),
       titleParticlesView: this.state.titleClickFX ? this.state.titleClickFX.particles.map((p) => {
         const anim = this.state.titleClickFX;
         const age = performance.now() - anim.born;
@@ -1568,15 +1778,20 @@ class Component extends DCLogic {
         return { style: "position:fixed;left:" + anim.cx + "px;top:" + (anim.cy - 1.5) + "px;width:" + len + "px;height:3px;background:" + l.color + ";opacity:" + fade + ";transform-origin:0 50%;transform:rotate(" + l.angle + "deg) translateX(34px);" };
       }) : [],
 
+      tlLineStyle: isPhone ? "position:absolute;left:6px;top:7px;bottom:20px;width:3px;background:#3a3d4d;z-index:1;" : "position:absolute;left:76px;right:76px;top:7px;height:3px;background:#3a3d4d;z-index:1;",
+      tlItemStyle: isPhone ? "display:flex;flex-direction:row;align-items:flex-start;gap:0;margin-bottom:12px;" : "flex:1;min-width:160px;display:flex;flex-direction:column;align-items:center;gap:0;",
+      tlTrackExpStyle: isPhone ? "position:relative;width:100%;display:flex;flex-direction:column;" : "position:relative;width:100%;min-width:560px;display:flex;",
+      tlTrackHobStyle: isPhone ? "position:relative;width:100%;display:flex;flex-direction:column;" : "position:relative;width:100%;min-width:400px;display:flex;",
+      paletteGridStyle: isDesktop ? "flex:1;overflow:auto;padding:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;" : "flex:1;overflow:auto;padding:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(" + (isPhone ? "64px" : "72px") + ",1fr));gap:10px;",
       rootStyle: "min-height:100vh;background:#14141c;font-family:'JetBrains Mono',monospace;color:#e8e6e3;position:relative;" + (isDesktop ? "height:100vh;overflow:hidden;" : "height:auto;overflow:visible;"),
       workspaceStyle: isDesktop
         ? "position:relative;width:100%;height:100vh;background-image:linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);background-size:32px 32px;"
-        : "position:relative;width:100%;height:auto;min-height:100vh;background:#14141c;padding-bottom:60px;",
+        : "position:relative;width:100%;height:auto;min-height:100vh;box-sizing:border-box;background:#14141c;display:grid;align-items:start;gap:16px;" + (isPhone ? "grid-template-columns:minmax(0,1fr);padding:16px 12px calc(96px + env(safe-area-inset-bottom));" : "grid-template-columns:repeat(2,minmax(0,1fr));padding:20px 20px calc(96px + env(safe-area-inset-bottom));"),
 
       toolbarStyle: isDesktop
         ? "position:absolute;left:0;top:0;bottom:28px;width:64px;background:#1f2029;border-right:2px solid #3a3d4d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:900;"
-        : "position:relative;width:100%;height:auto;background:#1f2029;border-bottom:2px solid #3a3d4d;display:flex;flex-direction:row;justify-content:center;flex-wrap:wrap;padding:10px;gap:10px;z-index:900;",
-      toolBtnStyle: "width:52px;height:52px;background:#262837;border:2px solid #3a3d4d;color:#8b8d9c;font-size:8px;letter-spacing:.05em;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-family:'JetBrains Mono',monospace;transition:transform .1s;",
+        : "position:fixed;left:0;right:0;bottom:0;background:#1f2029;border-top:2px solid #3a3d4d;display:flex;flex-direction:row;justify-content:space-around;padding:8px 8px calc(8px + env(safe-area-inset-bottom));gap:6px;z-index:900;",
+      toolBtnStyle: (isDesktop ? "width:52px;height:52px;font-size:8px;" : "flex:1;max-width:76px;height:56px;font-size:9px;") + "background:#262837;border:2px solid #3a3d4d;color:#8b8d9c;letter-spacing:.05em;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-family:'JetBrains Mono',monospace;transition:transform .1s;",
       openProjects: this.openProjectsTool,
       openAbout: this.openAboutTool,
       openResume: this.openResumeTool,
@@ -1719,14 +1934,15 @@ class Component extends DCLogic {
       toggleCanvasEraser: this.toggleCanvasEraser,
       canvasEraserBtnStyle: "font-family:'Press Start 2P',monospace;font-size:8px;color:" + (this.state.canvasEraseActive ? "#14141c" : "#8b8d9c") + ";background:" + (this.state.canvasEraseActive ? "#f2665a" : "#262837") + ";border:2px solid #3a3d4d;padding:5px 8px;cursor:pointer;box-shadow:inset -2px -2px 0 rgba(0,0,0,.3), inset 2px 2px 0 rgba(255,255,255,.2);",
       canvasWrapperStyle: (kind === "project" || kind === "resume")
-        ? "position:relative;z-index:2;height:100%;overflow:auto;padding:16px;box-sizing:border-box;display:flex;flex-direction:column;pointer-events:none;"
-        : "position:relative;z-index:2;height:100%;overflow:auto;padding:16px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;pointer-events:none;",
+        ? "position:relative;z-index:2;height:100%;overflow:auto;padding:16px;box-sizing:border-box;pointer-events:none;" + (isDesktop ? "" : "padding-top:44px;")
+        : "position:relative;z-index:2;height:100%;overflow:auto;padding:16px;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;pointer-events:none;" + (isDesktop ? "" : "padding-top:44px;"),
       canvasCardStyle: (() => {
         const sig = kind + ":" + (this.state.canvasView.id || "");
         if (sig !== this.lastViewSig) { this.lastViewSig = sig; this.revealParity = this.revealParity ? 0 : 1; }
         const animName = this.revealParity ? "canvasRevealB" : "canvasRevealA";
-        const maxW = kind === "resume" ? "75%" : kind === "project" ? "560px" : "420px";
-        return "pointer-events:auto;box-sizing:border-box;margin:auto;background:#14141c;border:2px solid #3a3d4d;padding:16px;max-width:" + maxW + ";width:100%;animation:" + animName + " .4s steps(10) both;";
+        const maxW = !isDesktop ? "100%" : kind === "resume" ? "75%" : kind === "project" ? "560px" : "420px";
+        const margin = (kind === "project" || kind === "resume") ? "margin:0 auto;" : "margin:auto;";
+        return "pointer-events:auto;box-sizing:border-box;" + margin + "background:#14141c;border:2px solid #3a3d4d;padding:16px;max-width:" + maxW + ";width:100%;animation:" + animName + " .4s steps(10) both;";
       })(),
 
       canvasProjectSlotId: project ? "proj-" + project.id : "proj-none",
@@ -1764,7 +1980,7 @@ class Component extends DCLogic {
 
       statusBarStyle: isDesktop
         ? "position:absolute;left:0;right:0;bottom:0;height:28px;background:#1f2029;border-top:2px solid #3a3d4d;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:11px;color:#8b8d9c;z-index:900;"
-        : "position:fixed;left:0;right:0;bottom:0;height:28px;background:#1f2029;border-top:2px solid #3a3d4d;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:11px;color:#8b8d9c;z-index:900;",
+        : "display:none;",
     };
   }
 }
