@@ -55,9 +55,7 @@
   #pop .bubble { width: max-content; max-width: 290px; padding: 16px 20px; background: var(--c); border: 3px solid #14141c; box-shadow: 5px 5px 0 rgba(0,0,0,.45); font-family: 'Press Start 2P', monospace; font-size: 14px; line-height: 1.6; color: #14141c; text-align: center; text-wrap: balance; }
   #pop .tail { width: 14px; height: 14px; margin-top: -3px; background: var(--c); border: 3px solid #14141c; border-top: 0; box-sizing: border-box; }
 
-  .px { position: absolute; left: 50%; top: 50%; opacity: 0; }
-  .px.s { width: 8px; height: 8px; margin: -4px 0 0 -4px; }
-  .px.t { width: 10px; height: 10px; margin: -5px 0 0 -5px; }
+  #fx { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 3; pointer-events: none; }
 
   #hud { position: fixed; left: 14px; top: calc(14px + env(safe-area-inset-top)); z-index: 4; pointer-events: none; display: flex; flex-direction: column; gap: 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.4; color: #c9cdd3; text-shadow: 1px 1px 0 #000; }
   #hud .sub { color: #8b8d9c; }
@@ -108,6 +106,7 @@
   </div>
 </div>
 
+<canvas id="fx"></canvas>
 <div id="hud"><span id="hud-title">User Perspective</span><span class="sub">(1) Scene | <span id="hud-sel">Collection</span></span></div>
 <div id="compass"></div>
 
@@ -123,6 +122,8 @@
 <script>
 (() => {
   const SPIN_FPS = 14, SPIN_STEP = 4, PERSPECTIVE = 520;
+  // Approx. on-screen half-height of a tilted cube, as a fraction of its edge; gap above it for the bubble.
+  const CUBE_HALF = 0.6, BUBBLE_GAP = 10;
 
   const links = [
     { id: 'badminton', size: 72, file: 'badminton.lnk', msg: 'I play badminton for my school!', label: 'CLUB', handle: 'SBU Badminton Club', url: '', color: '#c9cdd3', glyph: 'BD', icon: 'icons/badminton.png', pos: [130, -340, -880], phase: 0.8, speed: 30 },
@@ -173,8 +174,8 @@
   });
 
   // ---- particles ----
-  const splashPool = Array.from({ length: 80 }, () => ({ el: mk('px s', world), life: 0, max: 0.6, x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, sz: 1, color: '#fff' }));
-  const trailPool = Array.from({ length: 44 }, () => ({ el: mk('px t', world), life: 0, x: 0, y: 0, z: 0, color: '#5ee6c5' }));
+  const splashPool = Array.from({ length: 80 }, () => ({ life: 0, max: 0.6, x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, sz: 1, color: '#fff' }));
+  const trailPool = Array.from({ length: 44 }, () => ({ life: 0, x: 0, y: 0, z: 0, color: '#5ee6c5' }));
   let splashNext = 0, trailNext = 0, trailU = 0, trailAcc = 0, trailSeg = -1;
   function spawnSplash(pt, color, size) {
     const f = size / 105, n = Math.round(10 + 14 * f), sp = 60 + 110 * f, rad = size * 0.6;
@@ -315,10 +316,12 @@
       if (t > 2.2) { bootDone = true; surfs.forEach(e => { e.style.opacity = 1; }); hudTitle.textContent = 'User Perspective'; }
     }
 
-    // Selected cube sits at screen center, nudged up only if it would run into the link window.
+    // Selected cube is centered in the space between the bubble and the link window, and shrinks
+    // when that space is too small for it (e.g. the GD window with its gallery).
     const selPf = PERSPECTIVE / (PERSPECTIVE - 140);
-    const selScreenY = Math.min(H / 2, H - 20 - card.offsetHeight - 16 - 125);
-    const selY = (selScreenY - H / 2) / selPf;
+    const selTop = 64 + popWrap.offsetHeight + BUBBLE_GAP, selBottom = H - 20 - card.offsetHeight - 16;
+    const selFit = Math.min(1, (selBottom - selTop) / (2 * CUBE_HALF * 105 * 1.15 * selPf));
+    const selY = ((selTop + selBottom) / 2 - H / 2) / selPf;
 
     links.forEach((l, idx) => {
       const c = cur[l.id], el = els[l.id], sh = shadows[l.id];
@@ -326,7 +329,7 @@
       if (!isSel && motion) c.spin += l.speed * dt;
       const bob = motion ? Math.round(Math.sin(t * 1.1 + l.phase) * 10 / 3) * 3 : 0;
       const T = isSel
-        ? { x: 0, y: selY + bob * 0.5, z: 140, rx: -14 + ly * 8, ry: Math.round(c.spin / 90) * 90 + 28 - lx * 14, s: 1.15 * 105 / c.size, o: 1 }
+        ? { x: 0, y: selY + bob * 0.5, z: 140, rx: -14 + ly * 8, ry: Math.round(c.spin / 90) * 90 + 28 - lx * 14, s: 1.15 * 105 / c.size * selFit, o: 1 }
         : { x: l.pos[0] * k, y: l.pos[1] * ky + bob, z: Math.max(-950, l.pos[2] - (sel ? 240 : 0)), rx: 18 + (motion ? Math.sin(t * 0.7 + l.phase) * 14 : 0) + ly * 10, ry: c.spin - lx * 18, s: 1, o: sel ? 0.3 : 1 };
       if (!c.landed) {
         const p = Math.max(0, Math.min(1, (t - 1.0 - idx * 0.14) / 0.8));
@@ -389,13 +392,13 @@
     }
     if (!sel && P.d <= 0) P.id = null;
     const c = cur[P.id || last];
-    // Pull the bubble in front of the cube and gizmo (keeping its on-screen anchor), cancel the
-    // perspective blow-up so it shows at its designed size, and keep its top below the HUD.
+    // Pull the bubble in front of the cube and gizmo, sit its tail just above the cube's on-screen
+    // top, cancel the perspective blow-up so it shows at its designed size, and keep it below the HUD.
     const k = c.s * c.size / 105, H = innerHeight;
-    const pf0 = PERSPECTIVE / (PERSPECTIVE - (c.z + 20));
+    const pfc = PERSPECTIVE / (PERSPECTIVE - c.z);
+    const cubeTop = H / 2 + c.dy * pfc - CUBE_HALF * c.size * c.s * pfc;
     const z = c.z + 112 * k, pf = PERSPECTIVE / (PERSPECTIVE - z);
-    const minY = (64 + popWrap.offsetHeight - H / 2) / pf;
-    const y = Math.max((c.dy - 104 * k) * pf0 / pf, minY);
+    const y = (Math.max(cubeTop - BUBBLE_GAP, 64 + popWrap.offsetHeight) - H / 2) / pf;
     const sc = Math.max(0, P.d) / pf;
     const sx = sc * (1 + 0.22 * P.sq), sy = sc * (1 - 0.3 * P.sq);
     popEl.style.opacity = sc > 0.02 ? 1 : 0;
@@ -428,27 +431,55 @@
       }
     }
     const dim = sel ? 0.25 : 1;
+    const quads = [];
     splashPool.forEach(p => {
-      const el = p.el;
-      if (p.life <= 0) { el.style.opacity = 0; return; }
+      if (p.life <= 0) return;
       p.life -= dt;
       p.vy += 260 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
       const f = Math.max(0, p.life / p.max);
       const sc = p.sz * Math.max(0.25, Math.ceil(f * 4) / 4);
-      el.style.background = p.color;
-      el.style.opacity = (Math.min(1, f * 1.6) * dim).toFixed(3);
-      el.style.transform = `translate3d(${Math.round(p.x / 4) * 4}px,${Math.round(p.y / 4) * 4}px,${p.z.toFixed(1)}px) scale(${sc.toFixed(2)})`;
+      quads.push([Math.round(p.x / 4) * 4, Math.round(p.y / 4) * 4, p.z, 8 * sc, p.color, Math.min(1, f * 1.6) * dim]);
     });
     trailPool.forEach(p => {
-      const el = p.el;
-      if (p.life <= 0) { el.style.opacity = 0; return; }
+      if (p.life <= 0) return;
       p.life -= dt;
       const f = Math.max(0, p.life / LIFE);
       const sc = Math.max(0.2, Math.ceil(f * 4) / 4) * 1.1;
-      el.style.background = p.color;
-      el.style.opacity = (Math.min(1, f * 1.4) * dim).toFixed(3);
-      el.style.transform = `translate3d(${p.x}px,${p.y + (1 - f) * 14}px,${p.z}px) scale(${sc})`;
+      quads.push([p.x, p.y + (1 - f) * 14, p.z, 10 * sc, p.color, Math.min(1, f * 1.4) * dim]);
     });
+    drawFx(quads);
+  }
+
+  // Trail + splash pixels are drawn on one 2D canvas over the scene, projected with the same
+  // perspective as the CSS 3D world. (As 124 separate 3D-transformed divs they didn't show on phones.)
+  const fx = document.getElementById('fx'), fxc = fx.getContext('2d');
+  let fxW = 0, fxH = 0, fxDpr = 1;
+  function drawFx(quads) {
+    const W = innerWidth, H = innerHeight, dpr = Math.min(2, devicePixelRatio || 1);
+    if (W !== fxW || H !== fxH || dpr !== fxDpr) {
+      fxW = W; fxH = H; fxDpr = dpr;
+      fx.width = Math.round(W * dpr); fx.height = Math.round(H * dpr);
+    }
+    fxc.setTransform(dpr, 0, 0, dpr, 0, 0);
+    fxc.clearRect(0, 0, W, H);
+    const ox = W * (50 - look.x * 32) / 100, oy = H * (50 - look.y * 26) / 100;
+    // The canvas sits over the whole scene, so leave a hole where the selected cube is.
+    let hole = null;
+    if (sel) {
+      const c = cur[sel], pf = PERSPECTIVE / (PERSPECTIVE - c.z);
+      hole = [ox + (W / 2 + c.x - ox) * pf, oy + (H / 2 + c.dy - oy) * pf, 0.75 * c.size * c.s * pf];
+    }
+    quads.sort((a, b) => a[2] - b[2]);
+    for (const [x, y, z, size, color, alpha] of quads) {
+      if (z >= PERSPECTIVE - 1 || alpha <= 0) continue;
+      const pf = PERSPECTIVE / (PERSPECTIVE - z), s = Math.max(1, Math.round(size * pf));
+      const sx = ox + (W / 2 + x - ox) * pf, sy = oy + (H / 2 + y - oy) * pf;
+      if (hole && Math.hypot(sx - hole[0], sy - hole[1]) < hole[2]) continue;
+      fxc.globalAlpha = alpha;
+      fxc.fillStyle = color;
+      fxc.fillRect(Math.round(sx - s / 2), Math.round(sy - s / 2), s, s);
+    }
+    fxc.globalAlpha = 1;
   }
 
   requestAnimationFrame(tick);
