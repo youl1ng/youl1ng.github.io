@@ -19,24 +19,7 @@
   #scene { position: fixed; inset: 0; overflow: hidden; background: #14141c; perspective: 520px; perspective-origin: 50% 50%; touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; }
   #world { position: absolute; inset: 0; transform-style: preserve-3d; pointer-events: none; }
 
-  .surf, .wire { position: absolute; opacity: 0; }
-  .wire { box-sizing: border-box; border: 2px solid rgba(139,141,156,.32); }
-  .back { inset: 0; transform: translateZ(-1000px); background: #262837; }
-  .ceil { left: 0; right: 0; top: 0; height: 1000px; transform-origin: 50% 0; transform: rotateX(-90deg); background: #1c1d26; }
-  .wall-l { left: 0; top: 0; bottom: 0; width: 1000px; transform-origin: 0 50%; transform: rotateY(90deg); background: #1f2029; }
-  .wall-r { right: 0; top: 0; bottom: 0; width: 1000px; transform-origin: 100% 50%; transform: rotateY(-90deg); background: #1f2029; }
-  .floor { left: 0; right: 0; bottom: 0; height: 1000px; transform-origin: 50% 100%; transform: rotateX(90deg);
-    background:
-      linear-gradient(rgba(139,141,156,.30) 6px, transparent 6px) calc(50vw - 1px) 17px/200px 200px,
-      linear-gradient(90deg, rgba(139,141,156,.30) 2px, transparent 2px) calc(50vw - 1px) 17px/200px 200px,
-      linear-gradient(rgba(139,141,156,.13) 3px, transparent 3px) calc(50vw - 0.5px) 18.5px/40px 40px,
-      linear-gradient(90deg, rgba(139,141,156,.13) 1px, transparent 1px) calc(50vw - 0.5px) 18.5px/40px 40px,
-      #23252f; }
-  .axis-x { position: absolute; left: 0; right: 0; top: 613px; height: 14px; background: #f2665a; opacity: .85; }
-  .axis-z { position: absolute; top: 0; bottom: 0; left: calc(50% - 1.5px); width: 3px; background: #4caf6e; opacity: .85; }
-  .wire-back { inset: 0; transform: translateZ(-999px); }
-  .wire-floor { left: 0; right: 0; bottom: 1px; height: 1000px; transform-origin: 50% 100%; transform: rotateX(90deg); }
-  .wire-ceil { left: 0; right: 0; top: 1px; height: 1000px; transform-origin: 50% 0; transform: rotateX(-90deg); }
+  #room { position: absolute; left: 0; top: 0; image-rendering: pixelated; image-rendering: crisp-edges; pointer-events: none; }
 
   .shadow { position: absolute; left: 50%; top: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.6), rgba(0,0,0,0)); opacity: var(--dim,1); transform: translate3d(0,400px,-1400px) rotateX(90deg); }
   .cube { position: absolute; left: 50%; top: 50%; transform-style: preserve-3d; transform: translate3d(0,0,-1400px); cursor: pointer; pointer-events: auto; }
@@ -76,7 +59,7 @@
   #card .gallery img { flex: 0 0 160px; width: 160px; height: 160px; object-fit: cover; scroll-snap-align: start; border: 2px solid #3a3d4d; box-sizing: border-box; background: #262837; }
   #card .meta { display: flex; flex-direction: column; gap: 4px; }
   #card .label { font-size: 9px; color: #8b8d9c; letter-spacing: .14em; }
-  #card .handle { font-size: 15px; color: #e8e6e3; font-weight: 700; word-break: break-all; }
+  #card .handle { font-size: 15px; color: #e8e6e3; font-weight: 700; overflow-wrap: anywhere; }
   #card .open { display: flex; align-items: center; justify-content: center; min-height: 48px; background: #f2b950; color: #14141c; text-decoration: none; font-family: 'Press Start 2P', monospace; font-size: 11px; box-shadow: inset -4px -4px 0 rgba(0,0,0,.3), inset 4px 4px 0 rgba(255,255,255,.35); }
   #card .open:active { background: #f5c66b; }
   [hidden] { display: none !important; }
@@ -84,15 +67,8 @@
 </head>
 <body>
 <div id="scene">
+  <canvas id="room"></canvas>
   <div id="world">
-    <div class="surf back"></div>
-    <div class="surf ceil"></div>
-    <div class="surf wall-l"></div>
-    <div class="surf wall-r"></div>
-    <div class="surf floor"><div class="axis-x"></div><div class="axis-z"></div></div>
-    <div class="wire wire-back"></div>
-    <div class="wire wire-floor"></div>
-    <div class="wire wire-ceil"></div>
     <div id="gizmo">
       <div class="shaft" style="background:#f2665a;"></div>
       <div class="head" style="left:92px;top:-6px;background:#f2665a;"></div>
@@ -133,7 +109,7 @@
     { id: 'portfolio', file: 'ooniverse.lnk', msg: 'work in progress but check it out! (better on laptop)', handle: 'ooniverse.me', url: 'https://ooniverse.me', color: '#f2b950', glyph: 'OO', icon: '', pos: [-88, 10, -420], phase: 3.1, speed: 38 },
     { id: 'instagram', file: 'instagram.lnk', msg: 'follow me!', handle: '@owen_youling', url: 'https://instagram.com/owen_youling', color: '#f2665a', glyph: 'IG', icon: 'icons/ig.png', pos: [90, 150, -300], phase: 4.4, speed: -32 },
     { id: 'email', file: 'mail.lnk', msg: 'any inquiries?', handle: 'bonemyatpaing.oo@stonybrook.edu', url: 'mailto:bonemyatpaing.oo@stonybrook.edu', color: '#4caf6e', glyph: '@', icon: 'icons/gmail.png', pos: [-70, 285, -230], phase: 5.6, speed: 30 },
-    { id: 'gd', size: 72, file: 'gd_work.lnk', msg: 'check out my gd work!', label: 'WORK', handle: 'graphic design', url: '', color: '#f2b950', glyph: 'GD', icon: 'icons/gd.png', pos: [140, 360, -450], phase: 6.1, speed: 36,
+    { id: 'gd', size: 72, file: 'gd_work.lnk', msg: 'check out my gd work!', label: 'WORK', handle: 'graphic design for my cultural club on campus', url: '', color: '#f2b950', glyph: 'GD', icon: 'icons/gd.png', pos: [140, 360, -450], phase: 6.1, speed: 36,
       gallery: ['tea-house', 'lunar-bites', 'thingyan', 'school-night'].map(n => '../assets/bursa/' + n + '.jpg') },
   ];
 
@@ -280,9 +256,8 @@
 
   // ---- boot ----
   const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const surfs = [...document.querySelectorAll('.surf')], wires = [...document.querySelectorAll('.wire')];
-  let bootDone = reduced;
-  if (bootDone) { surfs.concat(wires).forEach(e => { e.style.opacity = 1; }); links.forEach(l => { cur[l.id].landed = true; }); }
+  let bootDone = reduced, surfO = 0, wireO = 0;
+  if (bootDone) { surfO = wireO = 1; links.forEach(l => { cur[l.id].landed = true; }); }
 
   // ---- loop ----
   let t = 0, lastT = 0, stepAcc = 0;
@@ -308,12 +283,10 @@
 
     if (!bootDone) {
       const step = v => Math.floor(Math.max(0, Math.min(1, v)) * 4) / 4;
-      const wireO = t < 0.5 ? (Math.floor(t / 0.07) % 2 ? step(t / 0.5) : step(t / 0.5) * 0.4) : 1;
-      wires.forEach(e => { e.style.opacity = wireO; });
-      const surfO = step((t - 0.5) / 0.5);
-      surfs.forEach(e => { e.style.opacity = surfO; });
+      wireO = t < 0.5 ? (Math.floor(t / 0.07) % 2 ? step(t / 0.5) : step(t / 0.5) * 0.4) : 1;
+      surfO = step((t - 0.5) / 0.5);
       hudTitle.textContent = t < 1.9 ? 'Rendering… ' + Math.min(100, Math.floor(t / 1.8 * 25) * 4) + '%' : 'User Perspective';
-      if (t > 2.2) { bootDone = true; surfs.forEach(e => { e.style.opacity = 1; }); hudTitle.textContent = 'User Perspective'; }
+      if (t > 2.2) { bootDone = true; surfO = wireO = 1; hudTitle.textContent = 'User Perspective'; }
     }
 
     // Selected cube is centered in the space between the bubble and the link window, and shrinks
@@ -356,6 +329,7 @@
       sh.style.setProperty('--dim', (c.o * Math.max(0.2, 0.8 - h / H)).toFixed(3));
     });
 
+    drawRoom();
     tickTrail(dt, motion);
     tickGizmo(a);
     tickPop(dt, stepNow);
@@ -448,6 +422,66 @@
       quads.push([p.x, p.y + (1 - f) * 14, p.z, 10 * sc, p.color, Math.min(1, f * 1.4) * dim]);
     });
     drawFx(quads);
+  }
+
+  // The room is drawn at 1/ROOM_PIXEL resolution and upscaled with nearest-neighbour, so the grid
+  // and edges come out as chunky pixels with stepped anti-aliasing. Coordinates are screen px with
+  // z into the screen (negative), projected with the same perspective as the CSS 3D world.
+  const ROOM_PIXEL = 2, DEPTH = 1000;
+  const room = document.getElementById('room'), rc = room.getContext('2d');
+  let roomW = 0, roomH = 0;
+  function drawRoom() {
+    const W = innerWidth, H = innerHeight;
+    if (W !== roomW || H !== roomH) {
+      roomW = W; roomH = H;
+      room.width = Math.ceil(W / ROOM_PIXEL); room.height = Math.ceil(H / ROOM_PIXEL);
+      room.style.width = room.width * ROOM_PIXEL + 'px'; room.style.height = room.height * ROOM_PIXEL + 'px';
+    }
+    rc.setTransform(1 / ROOM_PIXEL, 0, 0, 1 / ROOM_PIXEL, 0, 0);
+    rc.clearRect(0, 0, W, H);
+    const ox = W * (50 - look.x * 32) / 100, oy = H * (50 - look.y * 26) / 100;
+    const quad = (pts, color, alpha) => {
+      rc.globalAlpha = alpha; rc.fillStyle = color; rc.beginPath();
+      pts.forEach(([x, y, z], i) => {
+        const pf = PERSPECTIVE / (PERSPECTIVE - z), sx = ox + (x - ox) * pf, sy = oy + (y - oy) * pf;
+        i ? rc.lineTo(sx, sy) : rc.moveTo(sx, sy);
+      });
+      rc.fill();
+    };
+    // Plane helpers: (u, v) are the plane's own px coords, like the CSS planes they replace.
+    const floorPt = y => (u, v) => [u, y, v - DEPTH];     // v = DEPTH is the front edge
+    const ceilPt = y => (u, v) => [u, y, -v];             // v = 0 is the front edge
+    const backPt = z => (u, v) => [u, v, z];
+    const rect = (pt, u0, v0, u1, v1, color, alpha) => quad([pt(u0, v0), pt(u1, v0), pt(u1, v1), pt(u0, v1)], color, alpha);
+    const border = (pt, w, h, color, alpha) => {
+      rect(pt, 0, 0, w, 2, color, alpha); rect(pt, 0, h - 2, w, h, color, alpha);
+      rect(pt, 0, 2, 2, h - 2, color, alpha); rect(pt, w - 2, 2, w, h - 2, color, alpha);
+    };
+
+    if (surfO > 0) {
+      const a = surfO, floor = floorPt(H);
+      rect(backPt(-DEPTH), 0, 0, W, H, '#262837', a);
+      rect(ceilPt(0), 0, 0, W, DEPTH, '#1c1d26', a);
+      quad([[0, 0, 0], [0, H, 0], [0, H, -DEPTH], [0, 0, -DEPTH]], '#1f2029', a);
+      quad([[W, 0, 0], [W, H, 0], [W, H, -DEPTH], [W, 0, -DEPTH]], '#1f2029', a);
+      rect(floor, 0, 0, W, DEPTH, '#23252f', a);
+      // Same tiling as the original CSS gradients: lines every `step` px starting at (uOff, vOff).
+      const grid = (step, uOff, vOff, tu, tv, color) => {
+        for (let v = vOff % step; v < DEPTH; v += step) rect(floor, 0, v, W, Math.min(DEPTH, v + tv), color, a);
+        for (let u = (uOff % step) - step; u < W; u += step) rect(floor, u, 0, u + tu, DEPTH, color, a);
+      };
+      grid(40, W / 2 - 0.5, 18.5, 1, 3, 'rgba(139,141,156,.13)');
+      grid(200, W / 2 - 1, 17, 2, 6, 'rgba(139,141,156,.30)');
+      rect(floor, 0, 613, W, 627, '#f2665a', 0.85 * a);
+      rect(floor, W / 2 - 1.5, 0, W / 2 + 1.5, DEPTH, '#4caf6e', 0.85 * a);
+    }
+    if (wireO > 0) {
+      const edge = 'rgba(139,141,156,.32)';
+      border(backPt(-DEPTH + 1), W, H, edge, wireO);
+      border(floorPt(H - 1), W, DEPTH, edge, wireO);
+      border(ceilPt(1), W, DEPTH, edge, wireO);
+    }
+    rc.globalAlpha = 1;
   }
 
   // Trail + splash pixels are drawn on one 2D canvas over the scene, projected with the same
