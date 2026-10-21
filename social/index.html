@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Owen Oo — Social</title>
+<meta name="description" content="Owen Oo's socials: LinkedIn, GitHub, Instagram, email and more.">
+<meta property="og:title" content="Owen Oo — Social">
+<meta property="og:description" content="Tap a cube to find me around the internet.">
+<meta property="og:image" content="https://ooniverse.me/assets/pixel-art.png">
+<meta name="theme-color" content="#14141c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #14141c; overscroll-behavior: none; }
+  * { -webkit-tap-highlight-color: transparent; }
+
+  #scene { position: fixed; inset: 0; overflow: hidden; background: #14141c; perspective: 520px; perspective-origin: 50% 50%; touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; }
+  #world { position: absolute; inset: 0; transform-style: preserve-3d; pointer-events: none; }
+
+  .surf, .wire { position: absolute; opacity: 0; }
+  .wire { box-sizing: border-box; border: 2px solid rgba(139,141,156,.32); }
+  .back { inset: 0; transform: translateZ(-1000px); background: #262837; }
+  .ceil { left: 0; right: 0; top: 0; height: 1000px; transform-origin: 50% 0; transform: rotateX(-90deg); background: #1c1d26; }
+  .wall-l { left: 0; top: 0; bottom: 0; width: 1000px; transform-origin: 0 50%; transform: rotateY(90deg); background: #1f2029; }
+  .wall-r { right: 0; top: 0; bottom: 0; width: 1000px; transform-origin: 100% 50%; transform: rotateY(-90deg); background: #1f2029; }
+  .floor { left: 0; right: 0; bottom: 0; height: 1000px; transform-origin: 50% 100%; transform: rotateX(90deg);
+    background:
+      linear-gradient(rgba(139,141,156,.30) 6px, transparent 6px) calc(50vw - 1px) 17px/200px 200px,
+      linear-gradient(90deg, rgba(139,141,156,.30) 2px, transparent 2px) calc(50vw - 1px) 17px/200px 200px,
+      linear-gradient(rgba(139,141,156,.13) 3px, transparent 3px) calc(50vw - 0.5px) 18.5px/40px 40px,
+      linear-gradient(90deg, rgba(139,141,156,.13) 1px, transparent 1px) calc(50vw - 0.5px) 18.5px/40px 40px,
+      #23252f; }
+  .axis-x { position: absolute; left: 0; right: 0; top: 613px; height: 14px; background: #f2665a; opacity: .85; }
+  .axis-z { position: absolute; top: 0; bottom: 0; left: calc(50% - 1.5px); width: 3px; background: #4caf6e; opacity: .85; }
+  .wire-back { inset: 0; transform: translateZ(-999px); }
+  .wire-floor { left: 0; right: 0; bottom: 1px; height: 1000px; transform-origin: 50% 100%; transform: rotateX(90deg); }
+  .wire-ceil { left: 0; right: 0; top: 1px; height: 1000px; transform-origin: 50% 0; transform: rotateX(-90deg); }
+
+  .shadow { position: absolute; left: 50%; top: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.6), rgba(0,0,0,0)); opacity: var(--dim,1); transform: translate3d(0,400px,-1400px) rotateX(90deg); }
+  .cube { position: absolute; left: 50%; top: 50%; transform-style: preserve-3d; transform: translate3d(0,0,-1400px); cursor: pointer; pointer-events: auto; }
+  .face { position: absolute; inset: 0; box-sizing: border-box; border-radius: 10px; background: #1f2029; border: 3px solid var(--c); box-shadow: inset -5px -5px 0 rgba(0,0,0,.35), inset 5px 5px 0 rgba(255,255,255,.1); display: flex; align-items: center; justify-content: center; opacity: var(--dim,1); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .cube.sel .face { border-color: #f2b950; }
+  .face .icon { width: 100%; height: 100%; border-radius: 7px; background: center/cover no-repeat; image-rendering: pixelated; pointer-events: none; }
+  .face .glyph { font-family: 'Press Start 2P', monospace; font-size: 22px; color: var(--c); pointer-events: none; }
+
+  #gizmo { position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d; opacity: 0; }
+  #gizmo div { position: absolute; }
+  .shaft { left: 0; top: -1.5px; width: 96px; height: 3px; transform-origin: 0 50%; }
+  .head { width: 12px; height: 12px; }
+
+  #pop { position: absolute; left: 50%; top: 50%; width: 0; height: 0; opacity: 0; }
+  #pop .wrap { position: absolute; left: 0; bottom: 0; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
+  #pop .bubble { width: max-content; max-width: 290px; padding: 16px 20px; background: var(--c); border: 3px solid #14141c; box-shadow: 5px 5px 0 rgba(0,0,0,.45); font-family: 'Press Start 2P', monospace; font-size: 14px; line-height: 1.6; color: #14141c; text-align: center; text-wrap: balance; }
+  #pop .tail { width: 14px; height: 14px; margin-top: -3px; background: var(--c); border: 3px solid #14141c; border-top: 0; box-sizing: border-box; }
+
+  .px { position: absolute; left: 50%; top: 50%; opacity: 0; }
+  .px.s { width: 8px; height: 8px; margin: -4px 0 0 -4px; }
+  .px.t { width: 10px; height: 10px; margin: -5px 0 0 -5px; }
+
+  #hud { position: fixed; left: 14px; top: calc(14px + env(safe-area-inset-top)); z-index: 4; pointer-events: none; display: flex; flex-direction: column; gap: 3px; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.4; color: #c9cdd3; text-shadow: 1px 1px 0 #000; }
+  #hud .sub { color: #8b8d9c; }
+
+  #compass { position: fixed; right: 14px; top: calc(10px + env(safe-area-inset-top)); width: 76px; height: 76px; z-index: 4; pointer-events: none; border-radius: 50%; background: rgba(20,20,28,.35); }
+  #compass .ln { position: absolute; left: 38px; top: 37px; height: 2px; width: 0; transform-origin: 0 50%; }
+  #compass .pos { position: absolute; left: 30px; top: 30px; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; color: #14141c; }
+  #compass .neg { position: absolute; left: 32px; top: 32px; width: 12px; height: 12px; border-radius: 50%; box-sizing: border-box; border: 2px solid; background: rgba(20,20,28,.6); opacity: .7; }
+
+  #card { position: fixed; left: 16px; right: 16px; bottom: calc(20px + env(safe-area-inset-bottom)); z-index: 5; background: #1f2029; border: 2px solid #3a3d4d; box-shadow: 6px 6px 0 rgba(0,0,0,.45); font-family: 'JetBrains Mono', monospace; transform: translateY(calc(100% + 40px)); opacity: 0; pointer-events: none; transition: transform .35s cubic-bezier(.2,.9,.3,1.15), opacity .2s; }
+  #card.on { transform: translateY(0); opacity: 1; pointer-events: auto; }
+  #card .bar { height: 30px; display: flex; align-items: center; justify-content: space-between; padding: 0 2px 0 10px; background: var(--c); color: #14141c; font-size: 11px; font-weight: 700; letter-spacing: .06em; }
+  #card .close { width: 30px; height: 30px; padding: 0; border: 0; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  #card .close span { width: 14px; height: 14px; box-sizing: content-box; background: #f2665a; border: 2px solid #14141c; display: flex; align-items: center; justify-content: center; font-size: 10px; line-height: 1; color: #14141c; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+  #card .body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 12px; }
+  #card .gallery { display: flex; gap: 8px; overflow-x: auto; margin: 0 -14px; padding: 0 14px 4px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  #card .gallery::-webkit-scrollbar { display: none; }
+  #card .gallery img { flex: 0 0 160px; width: 160px; height: 160px; object-fit: cover; scroll-snap-align: start; border: 2px solid #3a3d4d; box-sizing: border-box; background: #262837; }
+  #card .meta { display: flex; flex-direction: column; gap: 4px; }
+  #card .label { font-size: 9px; color: #8b8d9c; letter-spacing: .14em; }
+  #card .handle { font-size: 15px; color: #e8e6e3; font-weight: 700; word-break: break-all; }
+  #card .open { display: flex; align-items: center; justify-content: center; min-height: 48px; background: #f2b950; color: #14141c; text-decoration: none; font-family: 'Press Start 2P', monospace; font-size: 11px; box-shadow: inset -4px -4px 0 rgba(0,0,0,.3), inset 4px 4px 0 rgba(255,255,255,.35); }
+  #card .open:active { background: #f5c66b; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div id="scene">
+  <div id="world">
+    <div class="surf back"></div>
+    <div class="surf ceil"></div>
+    <div class="surf wall-l"></div>
+    <div class="surf wall-r"></div>
+    <div class="surf floor"><div class="axis-x"></div><div class="axis-z"></div></div>
+    <div class="wire wire-back"></div>
+    <div class="wire wire-floor"></div>
+    <div class="wire wire-ceil"></div>
+    <div id="gizmo">
+      <div class="shaft" style="background:#f2665a;"></div>
+      <div class="head" style="left:92px;top:-6px;background:#f2665a;"></div>
+      <div class="shaft" style="transform:rotateZ(-90deg);background:#4caf6e;"></div>
+      <div class="head" style="left:-6px;top:-104px;background:#4caf6e;"></div>
+      <div class="shaft" style="transform:rotateY(-90deg);background:#5ee6c5;"></div>
+      <div class="head" style="left:-6px;top:-6px;transform:translateZ(98px);background:#5ee6c5;"></div>
+      <div style="left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;background:#f2b950;border:2px solid #14141c;box-sizing:border-box;"></div>
+    </div>
+    <div id="pop"><div class="wrap"><div class="bubble"></div><div class="tail"></div></div></div>
+  </div>
+</div>
+
+<div id="hud"><span id="hud-title">User Perspective</span><span class="sub">(1) Scene | <span id="hud-sel">Collection</span></span></div>
+<div id="compass"></div>
+
+<div id="card" aria-live="polite">
+  <div class="bar"><span class="file"></span><button class="close" aria-label="close"><span>×</span></button></div>
+  <div class="body">
+    <div class="gallery" hidden></div>
+    <div class="meta"><span class="label"></span><span class="handle"></span></div>
+    <a class="open" rel="noopener">OPEN ↗</a>
+  </div>
+</div>
+
+<script>
+(() => {
+  const SPIN_FPS = 14, SPIN_STEP = 4, PERSPECTIVE = 520;
+
+  const links = [
+    { id: 'badminton', size: 72, file: 'badminton.lnk', msg: 'I play badminton for my school!', label: 'CLUB', handle: 'SBU Badminton Club', url: '', color: '#c9cdd3', glyph: 'BD', icon: 'icons/badminton.png', pos: [130, -340, -880], phase: 0.8, speed: 30 },
+    { id: 'linkedin', file: 'linkedin.lnk', msg: 'Connect with me!', handle: 'in/bone-oo', url: 'https://www.linkedin.com/in/bone-oo/', color: '#5ee6c5', glyph: 'in', icon: 'icons/linkedin.png', pos: [-92, -270, -300], phase: 0, speed: 34 },
+    { id: 'github', file: 'github.lnk', msg: 'Check out my code!', handle: '@youl1ng', url: 'https://github.com/youl1ng', color: '#e8e6e3', glyph: 'GH', icon: 'icons/github.png', pos: [98, -130, -500], phase: 1.7, speed: -28 },
+    { id: 'strava', size: 72, file: 'strava.lnk', msg: 'i also run!', label: 'STRAVA', handle: 'profile link coming soon', url: '', color: '#f28c50', glyph: 'ST', icon: 'icons/strava.png', pos: [-144, -110, -540], phase: 2.4, speed: -34 },
+    { id: 'portfolio', file: 'ooniverse.lnk', msg: 'work in progress but check it out! (better on laptop)', handle: 'ooniverse.me', url: 'https://ooniverse.me', color: '#f2b950', glyph: 'OO', icon: '', pos: [-88, 10, -420], phase: 3.1, speed: 38 },
+    { id: 'instagram', file: 'instagram.lnk', msg: 'follow me!', handle: '@owen_youling', url: 'https://instagram.com/owen_youling', color: '#f2665a', glyph: 'IG', icon: 'icons/ig.png', pos: [90, 150, -300], phase: 4.4, speed: -32 },
+    { id: 'email', file: 'mail.lnk', msg: 'any inquiries?', handle: 'bonemyatpaing.oo@stonybrook.edu', url: 'mailto:bonemyatpaing.oo@stonybrook.edu', color: '#4caf6e', glyph: '@', icon: 'icons/gmail.png', pos: [-70, 285, -230], phase: 5.6, speed: 30 },
+    { id: 'gd', size: 72, file: 'gd_work.lnk', msg: 'check out my gd work!', label: 'WORK', handle: 'graphic design', url: '', color: '#f2b950', glyph: 'GD', icon: 'icons/gd.png', pos: [140, 360, -450], phase: 6.1, speed: 36,
+      gallery: ['tea-house', 'lunar-bites', 'thingyan', 'school-night'].map(n => '../assets/bursa/' + n + '.jpg') },
+  ];
+
+  const $ = s => document.querySelector(s);
+  const scene = $('#scene'), world = $('#world'), gizmoEl = $('#gizmo'), popEl = $('#pop');
+  const hudTitle = $('#hud-title'), hudSel = $('#hud-sel'), card = $('#card');
+  const clamp = (v, a = 1) => Math.max(-a, Math.min(a, v));
+  const mk = (cls, parent) => { const e = document.createElement('div'); e.className = cls; parent.appendChild(e); return e; };
+  const bounceOut = p => { const n = 7.5625, d = 2.75; if (p < 1 / d) return n * p * p; if (p < 2 / d) return n * (p -= 1.5 / d) * p + 0.75; if (p < 2.5 / d) return n * (p -= 2.25 / d) * p + 0.9375; return n * (p -= 2.625 / d) * p + 0.984375; };
+
+  // ---- build cubes + shadows ----
+  const rot = ['rotateY(0deg)', 'rotateY(180deg)', 'rotateY(90deg)', 'rotateY(-90deg)', 'rotateX(90deg)', 'rotateX(-90deg)'];
+  const cur = {}, els = {}, shadows = {};
+  links.forEach(l => {
+    const size = l.size || 105, m = -size / 2 + 'px';
+    const sh = document.createElement('div');
+    sh.className = 'shadow';
+    Object.assign(sh.style, { width: size + 'px', height: size + 'px', marginLeft: m, marginTop: m });
+    world.insertBefore(sh, gizmoEl);
+    shadows[l.id] = sh;
+  });
+  links.forEach(l => {
+    const size = l.size || 105, m = -size / 2 + 'px';
+    const el = document.createElement('div');
+    el.className = 'cube';
+    el.dataset.cube = l.id;
+    el.style.setProperty('--c', l.color);
+    Object.assign(el.style, { width: size + 'px', height: size + 'px', marginLeft: m, marginTop: m });
+    rot.forEach(r => {
+      const f = mk('face', el);
+      f.style.transform = r + ' translateZ(' + size / 2 + 'px)';
+      if (l.icon) mk('icon', f).style.backgroundImage = 'url(' + l.icon + ')';
+      else { const g = document.createElement('span'); g.className = 'glyph'; g.textContent = l.glyph; f.appendChild(g); }
+    });
+    world.insertBefore(el, gizmoEl);
+    els[l.id] = el;
+    cur[l.id] = { x: l.pos[0], y: l.pos[1], z: l.pos[2], size, rx: 0, sqT: null, dsq: 0, landed: false, ry: l.phase * 40, s: 1, o: 1, spin: l.phase * 40 };
+  });
+
+  // ---- particles ----
+  const splashPool = Array.from({ length: 80 }, () => ({ el: mk('px s', world), life: 0, max: 0.6, x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, sz: 1, color: '#fff' }));
+  const trailPool = Array.from({ length: 44 }, () => ({ el: mk('px t', world), life: 0, x: 0, y: 0, z: 0, color: '#5ee6c5' }));
+  let splashNext = 0, trailNext = 0, trailU = 0, trailAcc = 0, trailSeg = -1;
+  function spawnSplash(pt, color, size) {
+    const f = size / 105, n = Math.round(10 + 14 * f), sp = 60 + 110 * f, rad = size * 0.6;
+    for (let k = 0; k < n; k++) {
+      const p = splashPool[splashNext]; splashNext = (splashNext + 1) % splashPool.length;
+      const yv = 1 - 2 * (k + 0.5) / n, rr = Math.sqrt(1 - yv * yv), th = k * 2.39996 + Math.random() * 0.3;
+      const dx = Math.cos(th) * rr, dy = yv, dz = Math.sin(th) * rr;
+      const v = sp * (0.6 + Math.random() * 0.6);
+      p.x = pt[0] + dx * rad; p.y = pt[1] + dy * rad; p.z = pt[2] + dz * rad;
+      p.vx = dx * v; p.vy = dy * v - 40; p.vz = dz * v;
+      p.max = 0.5 + 0.3 * f + Math.random() * 0.2; p.life = p.max; p.sz = 0.7 + 0.8 * f; p.color = color;
+    }
+  }
+
+  // ---- compass ----
+  const compass = $('#compass');
+  const axes = [['X', '#f2665a', [1, 0, 0]], ['Y', '#4caf6e', [0, -1, 0]], ['Z', '#5ee6c5', [0, 0, 1]]].map(([label, color, v]) => ({ v, line: mk('ln', compass), color, label }));
+  axes.forEach(ax => {
+    ax.line.style.background = ax.color;
+    ax.pos = mk('pos', compass); ax.pos.style.background = ax.color; ax.pos.textContent = ax.label;
+    ax.neg = mk('neg', compass); ax.neg.style.borderColor = ax.color;
+  });
+
+  // ---- selection state + card ----
+  let sel = null, last = 'linkedin';
+  const cardFile = card.querySelector('.file'), cardLabel = card.querySelector('.label'), cardHandle = card.querySelector('.handle');
+  const cardOpen = card.querySelector('.open'), cardGallery = card.querySelector('.gallery'), bubble = popEl.querySelector('.bubble'), popWrap = popEl.querySelector('.wrap');
+  function setSel(id) {
+    if (sel) els[sel].classList.remove('sel');
+    sel = id;
+    if (id) { last = id; els[id].classList.add('sel'); }
+    const l = links.find(x => x.id === last);
+    hudSel.textContent = sel ? l.id : 'Collection';
+    card.classList.toggle('on', !!sel);
+    if (!sel) return;
+    card.style.setProperty('--c', l.color);
+    popEl.style.setProperty('--c', l.color);
+    bubble.textContent = l.msg;
+    cardFile.textContent = l.file;
+    cardLabel.textContent = l.label || 'LINK';
+    cardHandle.textContent = l.handle;
+    cardOpen.hidden = !l.url;
+    if (l.url) { cardOpen.href = l.url; cardOpen.target = l.url.startsWith('mailto:') ? '_self' : '_blank'; }
+    cardGallery.hidden = !l.gallery;
+    if (l.gallery && !cardGallery.childElementCount) l.gallery.forEach((src, i) => {
+      const img = document.createElement('img'); img.src = src; img.alt = 'Graphic design piece ' + (i + 1); img.loading = 'lazy'; cardGallery.appendChild(img);
+    });
+  }
+  card.querySelector('.close').addEventListener('click', () => setSel(null));
+
+  // ---- input ----
+  const look = { x: 0, y: 0 }, gyro = { x: 0, y: 0 }, drag = { x: 0, y: 0 }, hover = { x: 0, y: 0 };
+  let down = null, base = null, askedGyro = false;
+  window.addEventListener('deviceorientation', e => {
+    if (e.gamma == null || e.beta == null) return;
+    if (!base) base = { g: e.gamma, b: e.beta };
+    base.g += (e.gamma - base.g) * 0.004;
+    base.b += (e.beta - base.b) * 0.004;
+    gyro.x = clamp((e.gamma - base.g) / 22);
+    gyro.y = clamp((e.beta - base.b) / 22);
+  });
+  function askGyro() {
+    if (askedGyro) return;
+    askedGyro = true;
+    const D = window.DeviceOrientationEvent;
+    if (D && typeof D.requestPermission === 'function') D.requestPermission().catch(() => {});
+  }
+  scene.addEventListener('pointerdown', e => {
+    const hit = e.target.closest && e.target.closest('[data-cube]');
+    down = { x: e.clientX, y: e.clientY, sx: drag.x, sy: drag.y, cube: hit ? hit.dataset.cube : null, moved: false };
+  });
+  window.addEventListener('pointermove', e => {
+    const W = innerWidth, H = innerHeight;
+    if (down) {
+      const dx = e.clientX - down.x, dy = e.clientY - down.y;
+      if (!down.moved && Math.hypot(dx, dy) > 8) down.moved = true;
+      if (down.moved) {
+        drag.x = clamp(down.sx - (dx / W) * 2.4, 1.4);
+        drag.y = clamp(down.sy - (dy / H) * 2.4, 1.4);
+      }
+    } else if (e.pointerType === 'mouse') {
+      hover.x = clamp((W / 2 - e.clientX) / (W / 2)) * 0.6;
+      hover.y = clamp((H / 2 - e.clientY) / (H / 2)) * 0.6;
+    }
+  });
+  const onUp = () => {
+    const d = down; down = null;
+    if (!d) return;
+    askGyro();
+    if (d.moved) return;
+    if (d.cube) {
+      cur[d.cube].sqT = 0;
+      if (sel === d.cube) {
+        const l = links.find(x => x.id === d.cube);
+        if (!l.url) return;
+        if (l.url.startsWith('mailto:')) location.href = l.url; else window.open(l.url, '_blank', 'noopener');
+      } else setSel(d.cube);
+    } else if (sel) setSel(null);
+  };
+  window.addEventListener('pointerup', onUp);
+  window.addEventListener('pointercancel', onUp);
+
+  // ---- boot ----
+  const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const surfs = [...document.querySelectorAll('.surf')], wires = [...document.querySelectorAll('.wire')];
+  let bootDone = reduced;
+  if (bootDone) { surfs.concat(wires).forEach(e => { e.style.opacity = 1; }); links.forEach(l => { cur[l.id].landed = true; }); }
+
+  // ---- loop ----
+  let t = 0, lastT = 0, stepAcc = 0;
+  const gz = { o: 0, last: null };
+  const pop = { t: 0, on: false, d: 0, sq: 0, id: null };
+  scene.style.perspective = PERSPECTIVE + 'px';
+
+  function tick(now) {
+    const dt = Math.min(0.05, (now - (lastT || now)) / 1000); lastT = now; t += dt;
+    const W = innerWidth, H = innerHeight, k = Math.min(1.3, W / 390), ky = H / 844;
+    const motion = !reduced;
+    if (!down || !down.moved) { const f = Math.pow(0.08, dt); drag.x *= f; drag.y *= f; }
+    const tx = clamp(gyro.x + drag.x + hover.x, 1.4), ty = clamp(gyro.y + drag.y + hover.y, 1.4);
+    const la = 1 - Math.pow(0.002, dt);
+    look.x += (tx - look.x) * la; look.y += (ty - look.y) * la;
+    scene.style.perspectiveOrigin = (50 - look.x * 32) + '% ' + (50 - look.y * 26) + '%';
+
+    const a = 1 - Math.pow(0.003, dt), lx = look.x, ly = look.y;
+    stepAcc += dt;
+    const stepNow = stepAcc >= 1 / SPIN_FPS;
+    if (stepNow) stepAcc %= 1 / SPIN_FPS;
+
+    if (!bootDone) {
+      const step = v => Math.floor(Math.max(0, Math.min(1, v)) * 4) / 4;
+      const wireO = t < 0.5 ? (Math.floor(t / 0.07) % 2 ? step(t / 0.5) : step(t / 0.5) * 0.4) : 1;
+      wires.forEach(e => { e.style.opacity = wireO; });
+      const surfO = step((t - 0.5) / 0.5);
+      surfs.forEach(e => { e.style.opacity = surfO; });
+      hudTitle.textContent = t < 1.9 ? 'Rendering… ' + Math.min(100, Math.floor(t / 1.8 * 25) * 4) + '%' : 'User Perspective';
+      if (t > 2.2) { bootDone = true; surfs.forEach(e => { e.style.opacity = 1; }); hudTitle.textContent = 'User Perspective'; }
+    }
+
+    links.forEach((l, idx) => {
+      const c = cur[l.id], el = els[l.id], sh = shadows[l.id];
+      const isSel = sel === l.id;
+      if (!isSel && motion) c.spin += l.speed * dt;
+      const bob = motion ? Math.round(Math.sin(t * 1.1 + l.phase) * 10 / 3) * 3 : 0;
+      const T = isSel
+        ? { x: 0, y: -120 * ky + bob * 0.5, z: 140, rx: -14 + ly * 8, ry: Math.round(c.spin / 90) * 90 + 28 - lx * 14, s: 1.15 * 105 / c.size, o: 1 }
+        : { x: l.pos[0] * k, y: l.pos[1] * ky + bob, z: Math.max(-950, l.pos[2] - (sel ? 240 : 0)), rx: 18 + (motion ? Math.sin(t * 0.7 + l.phase) * 14 : 0) + ly * 10, ry: c.spin - lx * 18, s: 1, o: sel ? 0.3 : 1 };
+      if (!c.landed) {
+        const p = Math.max(0, Math.min(1, (t - 1.0 - idx * 0.14) / 0.8));
+        c.x = T.x; c.z = T.z; c.rx = T.rx; c.ry = T.ry; c.s = 1;
+        c.y = T.y - (1 - bounceOut(p)) * (H * 0.9 + 120);
+        c.o = p > 0 ? 1 : 0;
+        if (p > 0.364 && c.sqT == null && !c.hit1) { c.sqT = 0; c.hit1 = true; }
+        if (p >= 1) c.landed = true;
+      } else {
+        for (const key of ['x', 'y', 'z', 'rx', 'ry', 's', 'o']) c[key] += (T[key] - c[key]) * a;
+      }
+      if (c.sqT != null) { c.sqT += dt; if (c.sqT > 0.7) c.sqT = null; }
+      if (stepNow || c.drx == null) {
+        c.drx = Math.round(c.rx / SPIN_STEP) * SPIN_STEP; c.dry = Math.round(c.ry / SPIN_STEP) * SPIN_STEP; c.dy = Math.round(c.y / 3) * 3;
+        c.dsq = c.sqT != null ? Math.exp(-c.sqT * 6) * Math.cos(c.sqT * 20) : 0;
+      }
+      if (!c.landed) c.dy = Math.round(c.y / 3) * 3;
+      c.sx = c.s * (1 + 0.22 * c.dsq); c.sy = c.s * (1 - 0.3 * c.dsq);
+      el.style.transform = `translate3d(${c.x}px,${c.dy}px,${c.z}px) scale3d(${c.sx},${c.sy},${c.sx}) rotateX(${c.drx}deg) rotateY(${c.dry}deg)`;
+      el.style.setProperty('--dim', c.o.toFixed(3));
+      const h = Math.max(0, H / 2 - c.y);
+      const ss = c.s * Math.max(0.5, 1.25 - h / H);
+      sh.style.transform = `translate3d(${c.x}px,${H / 2 - 2}px,${c.z}px) rotateX(90deg) scale(${ss})`;
+      sh.style.setProperty('--dim', (c.o * Math.max(0.2, 0.8 - h / H)).toFixed(3));
+    });
+
+    tickTrail(dt, motion);
+    tickGizmo(a);
+    tickPop(dt, stepNow);
+    requestAnimationFrame(tick);
+  }
+
+  function tickGizmo(a) {
+    gz.o += ((sel ? 1 : 0) - gz.o) * a;
+    const c = sel ? cur[sel] : gz.last;
+    if (sel) gz.last = c;
+    if (c) { const s = c.s * c.size / 105; gizmoEl.style.transform = `translate3d(${c.x}px,${c.dy}px,${c.z}px) scale3d(${s},${s},${s}) rotateX(-18deg) rotateY(-32deg)`; }
+    gizmoEl.style.opacity = gz.o.toFixed(3);
+
+    const yaw = (-look.x * 28 - 32) * Math.PI / 180, pitch = (look.y * 22 + 18) * Math.PI / 180, R = 26;
+    axes.forEach(ax => {
+      const [x, y, z] = ax.v;
+      const x1 = x * Math.cos(yaw) + z * Math.sin(yaw), z1 = -x * Math.sin(yaw) + z * Math.cos(yaw);
+      const py = (y * Math.cos(pitch) - z1 * Math.sin(pitch)) * R, pz = y * Math.sin(pitch) + z1 * Math.cos(pitch), px = x1 * R;
+      ax.line.style.width = Math.hypot(px, py).toFixed(1) + 'px'; ax.line.style.transform = `rotate(${Math.atan2(py, px)}rad)`; ax.line.style.zIndex = pz > 0 ? 2 : 0;
+      ax.pos.style.transform = `translate(${px.toFixed(1)}px,${py.toFixed(1)}px)`; ax.pos.style.zIndex = pz > 0 ? 3 : 1;
+      ax.neg.style.transform = `translate(${(-px).toFixed(1)}px,${(-py).toFixed(1)}px)`; ax.neg.style.zIndex = pz > 0 ? 1 : 3;
+    });
+  }
+
+  function tickPop(dt, stepNow) {
+    const P = pop;
+    if (sel && P.id !== sel) { P.id = sel; P.on = true; P.t = 0; }
+    if (!sel && P.on) { P.on = false; P.t = 0; }
+    P.t += dt;
+    if (stepNow) {
+      const tt = Math.max(0, P.t - (P.on ? 0.12 : 0));
+      P.d = P.on ? (tt <= 0 ? 0 : 1 - Math.exp(-tt * 6) * Math.cos(tt * 16)) : Math.max(0, 1 - tt * 5);
+      P.sq = P.on && tt > 0 ? Math.exp(-tt * 6) * Math.cos(tt * 16) : 0;
+    }
+    if (!sel && P.d <= 0) P.id = null;
+    const c = cur[P.id || last];
+    // Pull the bubble in front of the cube and gizmo (keeping its on-screen anchor), cancel the
+    // perspective blow-up so it shows at its designed size, and keep its top below the HUD.
+    const k = c.s * c.size / 105, H = innerHeight;
+    const pf0 = PERSPECTIVE / (PERSPECTIVE - (c.z + 20));
+    const z = c.z + 112 * k, pf = PERSPECTIVE / (PERSPECTIVE - z);
+    const minY = (64 + popWrap.offsetHeight - H / 2) / pf;
+    const y = Math.max((c.dy - 104 * k) * pf0 / pf, minY);
+    const sc = Math.max(0, P.d) / pf;
+    const sx = sc * (1 + 0.22 * P.sq), sy = sc * (1 - 0.3 * P.sq);
+    popEl.style.opacity = sc > 0.02 ? 1 : 0;
+    popEl.style.transform = `translate3d(${c.x}px,${y}px,${z}px) scale3d(${sx.toFixed(3)},${sy.toFixed(3)},1)`;
+  }
+
+  function tickTrail(dt, motion) {
+    if (!bootDone) return;
+    const n = links.length;
+    const wp = links.map(l => { const c = cur[l.id]; return [c.x, c.y - 72 * c.s * c.size / 105, c.z + 10]; });
+    if (motion) trailU = (trailU + dt / 1.5) % n;
+    const i = Math.floor(trailU), u = trailU - i;
+    if (motion && i !== trailSeg) {
+      if (trailSeg !== -1) { const l = links[i % n], c = cur[l.id]; spawnSplash([c.x, c.y, c.z], l.color, c.size * c.s); }
+      trailSeg = i;
+    }
+    const P = q => wp[((q % n) + n) % n];
+    const p0 = P(i - 1), p1 = P(i), p2 = P(i + 1), p3 = P(i + 2);
+    const cr = (a, b, c, d) => 0.5 * (2 * b + (-a + c) * u + (2 * a - 5 * b + 4 * c - d) * u * u + (-a + 3 * b - 3 * c + d) * u * u * u);
+    const head = [0, 1, 2].map(q => cr(p0[q], p1[q], p2[q], p3[q]));
+    head[1] -= Math.sin(u * Math.PI) * 50;
+    const color = (u < 0.5 ? links[i % n] : links[(i + 1) % n]).color;
+    const LIFE = 0.9;
+    if (motion) {
+      trailAcc += dt;
+      while (trailAcc > 0.028) {
+        trailAcc -= 0.028;
+        const p = trailPool[trailNext]; trailNext = (trailNext + 1) % trailPool.length;
+        p.life = LIFE; p.x = Math.round(head[0] / 4) * 4; p.y = Math.round(head[1] / 4) * 4; p.z = head[2]; p.color = color;
+      }
+    }
+    const dim = sel ? 0.25 : 1;
+    splashPool.forEach(p => {
+      const el = p.el;
+      if (p.life <= 0) { el.style.opacity = 0; return; }
+      p.life -= dt;
+      p.vy += 260 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
+      const f = Math.max(0, p.life / p.max);
+      const sc = p.sz * Math.max(0.25, Math.ceil(f * 4) / 4);
+      el.style.background = p.color;
+      el.style.opacity = (Math.min(1, f * 1.6) * dim).toFixed(3);
+      el.style.transform = `translate3d(${Math.round(p.x / 4) * 4}px,${Math.round(p.y / 4) * 4}px,${p.z.toFixed(1)}px) scale(${sc.toFixed(2)})`;
+    });
+    trailPool.forEach(p => {
+      const el = p.el;
+      if (p.life <= 0) { el.style.opacity = 0; return; }
+      p.life -= dt;
+      const f = Math.max(0, p.life / LIFE);
+      const sc = Math.max(0.2, Math.ceil(f * 4) / 4) * 1.1;
+      el.style.background = p.color;
+      el.style.opacity = (Math.min(1, f * 1.4) * dim).toFixed(3);
+      el.style.transform = `translate3d(${p.x}px,${p.y + (1 - f) * 14}px,${p.z}px) scale(${sc})`;
+    });
+  }
+
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
