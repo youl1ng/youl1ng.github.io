@@ -119,6 +119,10 @@
   const SPIN_FPS = 14, SPIN_STEP = 4, PERSPECTIVE = 520;
   // Approx. on-screen half-height of a tilted cube, as a fraction of its edge; gap above it for the bubble.
   const CUBE_HALF = 0.6, BUBBLE_GAP = 10;
+  // A tapped cube flies in (and back out) along a fixed eased curve with a small overshoot. Like the
+  // spin, what's shown only updates on the SPIN_FPS beat, so the flight reads as deliberate keyframes.
+  const FLIGHT = 0.5;
+  const easeOutBack = p => { const c1 = 1.2, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); };
 
   const links = [
     { id: 'badminton', size: 72, file: 'badminton.lnk', msg: 'I play badminton for my school!', label: 'CLUB', handle: 'SBU Badminton Club', url: '', color: '#c9cdd3', glyph: 'BD', icon: 'icons/badminton.png', pos: [130, -340, -880], phase: 0.8, speed: 30 },
@@ -172,7 +176,8 @@
   const splashPool = Array.from({ length: 80 }, () => ({ life: 0, max: 0.6, x: 0, y: 0, z: 0, vx: 0, vy: 0, vz: 0, sz: 1, color: '#fff' }));
   const trailPool = Array.from({ length: 44 }, () => ({ life: 0, x: 0, y: 0, z: 0, color: '#5ee6c5' }));
   let splashNext = 0, trailNext = 0, trailU = 0, trailAcc = 0, trailSeg = -1;
-  function spawnSplash(pt, color, size) {
+  // `loud` splashes (from tapping a cube) stay full brightness while a cube is selected.
+  function spawnSplash(pt, color, size, loud = false) {
     const f = size / 105, n = Math.round(10 + 14 * f), sp = 60 + 110 * f, rad = size * 0.6;
     for (let k = 0; k < n; k++) {
       const p = splashPool[splashNext]; splashNext = (splashNext + 1) % splashPool.length;
@@ -181,7 +186,7 @@
       const v = sp * (0.6 + Math.random() * 0.6);
       p.x = pt[0] + dx * rad; p.y = pt[1] + dy * rad; p.z = pt[2] + dz * rad;
       p.vx = dx * v; p.vy = dy * v - 40; p.vz = dz * v;
-      p.max = 0.5 + 0.3 * f + Math.random() * 0.2; p.life = p.max; p.sz = 0.7 + 0.8 * f; p.color = color;
+      p.max = 0.5 + 0.3 * f + Math.random() * 0.2; p.life = p.max; p.sz = 0.7 + 0.8 * f; p.color = color; p.loud = loud;
     }
   }
 
@@ -198,8 +203,10 @@
   let sel = null, last = 'linkedin';
   const cardFile = card.querySelector('.file'), cardLabel = card.querySelector('.label'), cardHandle = card.querySelector('.handle');
   const cardOpen = card.querySelector('.open'), cardGallery = card.querySelector('.gallery'), bubble = popEl.querySelector('.bubble'), popWrap = popEl.querySelector('.wrap');
+  const startFlight = id => { const c = cur[id]; c.tw = { t: 0, from: { x: c.x, y: c.y, z: c.z, s: c.s, rx: c.rx, ry: c.ry } }; };
   function setSel(id) {
-    if (sel) els[sel].classList.remove('sel');
+    if (sel) { els[sel].classList.remove('sel'); startFlight(sel); }
+    if (id) startFlight(id);
     sel = id;
     if (id) { last = id; els[id].classList.add('sel'); }
     const l = links.find(x => x.id === last);
@@ -274,7 +281,9 @@
     askGyro();
     if (d.moved) return;
     if (d.cube) {
-      cur[d.cube].sqT = 0;
+      const c = cur[d.cube];
+      c.sqT = 0;
+      if (c.dx != null) spawnSplash([c.dx, c.dy, c.dz], links.find(x => x.id === d.cube).color, c.size * c.ds, true);
       if (sel === d.cube) {
         const l = links.find(x => x.id === d.cube);
         if (!l.url) return;
@@ -338,31 +347,40 @@
         : { x: l.pos[0] * k, y: l.pos[1] * ky + bob, z: Math.max(-950, l.pos[2] - (sel ? 240 : 0)), rx: 18 + (motion ? Math.sin(t * 0.7 + l.phase) * 14 : 0) + ly * 10, ry: c.spin - lx * 18, s: 1, o: sel ? 0.3 : 1 };
       if (!c.landed) {
         const p = Math.max(0, Math.min(1, (t - 1.0 - idx * 0.14) / 0.8));
-        c.x = T.x; c.z = T.z; c.rx = T.rx; c.ry = T.ry; c.s = 1;
+        c.x = T.x; c.z = T.z; c.rx = T.rx; c.ry = T.ry; c.s = 1; c.tw = null;
         c.y = T.y - (1 - bounceOut(p)) * (H * 0.9 + 120);
         c.o = p > 0 ? 1 : 0;
         if (p > 0.364 && c.sqT == null && !c.hit1) { c.sqT = 0; c.hit1 = true; }
         if (p >= 1) c.landed = true;
+      } else if (c.tw) {
+        c.tw.t += dt;
+        const e = easeOutBack(Math.min(1, c.tw.t / FLIGHT)), f = c.tw.from;
+        for (const key of ['x', 'y', 'z', 's', 'rx', 'ry']) c[key] = f[key] + (T[key] - f[key]) * e;
+        c.o += (T.o - c.o) * a;
+        if (c.tw.t >= FLIGHT) c.tw = null;
       } else {
         for (const key of ['x', 'y', 'z', 'rx', 'ry', 's', 'o']) c[key] += (T[key] - c[key]) * a;
       }
       if (c.sqT != null) { c.sqT += dt; if (c.sqT > 0.7) c.sqT = null; }
-      if (stepNow || c.drx == null) {
-        c.drx = Math.round(c.rx / SPIN_STEP) * SPIN_STEP; c.dry = Math.round(c.ry / SPIN_STEP) * SPIN_STEP; c.dy = Math.round(c.y / 3) * 3;
+      // Everything shown (position, scale, rotation, squash) is sampled on the same beat.
+      if (stepNow || c.drx == null || !c.landed) {
+        c.drx = Math.round(c.rx / SPIN_STEP) * SPIN_STEP; c.dry = Math.round(c.ry / SPIN_STEP) * SPIN_STEP;
+        c.dx = c.x; c.dy = Math.round(c.y / 3) * 3; c.dz = c.z; c.ds = c.s;
         c.dsq = c.sqT != null ? Math.exp(-c.sqT * 6) * Math.cos(c.sqT * 20) : 0;
       }
-      if (!c.landed) c.dy = Math.round(c.y / 3) * 3;
-      c.sx = c.s * (1 + 0.22 * c.dsq); c.sy = c.s * (1 - 0.3 * c.dsq);
-      el.style.transform = `translate3d(${c.x}px,${c.dy}px,${c.z}px) scale3d(${c.sx},${c.sy},${c.sx}) rotateX(${c.drx}deg) rotateY(${c.dry}deg)`;
+      c.sx = c.ds * (1 + 0.22 * c.dsq); c.sy = c.ds * (1 - 0.3 * c.dsq);
+      el.style.transform = `translate3d(${c.dx}px,${c.dy}px,${c.dz}px) scale3d(${c.sx},${c.sy},${c.sx}) rotateX(${c.drx}deg) rotateY(${c.dry}deg)`;
       el.style.setProperty('--dim', c.o.toFixed(3));
-      const h = Math.max(0, H / 2 - c.y);
-      const ss = c.s * Math.max(0.5, 1.25 - h / H);
-      sh.style.transform = `translate3d(${c.x}px,${H / 2 - 2}px,${c.z}px) rotateX(90deg) scale(${ss})`;
+      const h = Math.max(0, H / 2 - c.dy);
+      const ss = c.ds * Math.max(0.5, 1.25 - h / H);
+      sh.style.transform = `translate3d(${c.dx}px,${H / 2 - 2}px,${c.dz}px) rotateX(90deg) scale(${ss})`;
       sh.style.setProperty('--dim', (c.o * Math.max(0.2, 0.8 - h / H)).toFixed(3));
     });
 
     drawRoom();
-    tickTrail(dt, motion);
+    // The trail is small and doesn't move the view, so it runs even with Reduce Motion on (which still
+    // turns off the spin, bob and boot animation).
+    tickTrail(dt, true);
     tickGizmo(a);
     tickPop(dt, stepNow);
     requestAnimationFrame(tick);
@@ -372,7 +390,7 @@
     gz.o += ((sel ? 1 : 0) - gz.o) * a;
     const c = sel ? cur[sel] : gz.last;
     if (sel) gz.last = c;
-    if (c) { const s = c.s * c.size / 105; gizmoEl.style.transform = `translate3d(${c.x}px,${c.dy}px,${c.z}px) scale3d(${s},${s},${s}) rotateX(-18deg) rotateY(-32deg)`; }
+    if (c && c.dx != null) { const s = c.ds * c.size / 105; gizmoEl.style.transform = `translate3d(${c.dx}px,${c.dy}px,${c.dz}px) scale3d(${s},${s},${s}) rotateX(-18deg) rotateY(-32deg)`; }
     gizmoEl.style.opacity = gz.o.toFixed(3);
 
     const yaw = (-look.x * 28 - 32) * Math.PI / 180, pitch = (look.y * 22 + 18) * Math.PI / 180, R = 26;
@@ -400,15 +418,16 @@
     const c = cur[P.id || last];
     // Pull the bubble in front of the cube and gizmo, sit its tail just above the cube's on-screen
     // top, cancel the perspective blow-up so it shows at its designed size, and keep it below the HUD.
-    const k = c.s * c.size / 105, H = innerHeight;
-    const pfc = PERSPECTIVE / (PERSPECTIVE - c.z);
-    const cubeTop = H / 2 + c.dy * pfc - CUBE_HALF * c.size * c.s * pfc;
-    const z = c.z + 112 * k, pf = PERSPECTIVE / (PERSPECTIVE - z);
+    if (c.dx == null) return;
+    const k = c.ds * c.size / 105, H = innerHeight;
+    const pfc = PERSPECTIVE / (PERSPECTIVE - c.dz);
+    const cubeTop = H / 2 + c.dy * pfc - CUBE_HALF * c.size * c.ds * pfc;
+    const z = c.dz + 112 * k, pf = PERSPECTIVE / (PERSPECTIVE - z);
     const y = (Math.max(cubeTop - BUBBLE_GAP, 64 + popWrap.offsetHeight) - H / 2) / pf;
     const sc = Math.max(0, P.d) / pf;
     const sx = sc * (1 + 0.22 * P.sq), sy = sc * (1 - 0.3 * P.sq);
     popEl.style.opacity = sc > 0.02 ? 1 : 0;
-    popEl.style.transform = `translate3d(${c.x}px,${y}px,${z}px) scale3d(${sx.toFixed(3)},${sy.toFixed(3)},1)`;
+    popEl.style.transform = `translate3d(${c.dx}px,${y}px,${z}px) scale3d(${sx.toFixed(3)},${sy.toFixed(3)},1)`;
   }
 
   function tickTrail(dt, motion) {
@@ -444,7 +463,7 @@
       p.vy += 260 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt;
       const f = Math.max(0, p.life / p.max);
       const sc = p.sz * Math.max(0.25, Math.ceil(f * 4) / 4);
-      quads.push([Math.round(p.x / 4) * 4, Math.round(p.y / 4) * 4, p.z, 8 * sc, p.color, Math.min(1, f * 1.6) * dim]);
+      quads.push([Math.round(p.x / 4) * 4, Math.round(p.y / 4) * 4, p.z, 8 * sc, p.color, Math.min(1, f * 1.6) * (p.loud ? 1 : dim)]);
     });
     trailPool.forEach(p => {
       if (p.life <= 0) return;
@@ -500,7 +519,7 @@
       // Same tiling as the original CSS gradients: lines every `step` px starting at (uOff, vOff).
       const grid = (step, uOff, vOff, tu, tv, color) => {
         for (let v = vOff % step; v < DEPTH; v += step) rect(floor, 0, v, W, Math.min(DEPTH, v + tv), color, a);
-        for (let u = (uOff % step) - step; u < W; u += step) rect(floor, u, 0, u + tu, DEPTH, color, a);
+        for (let u = uOff % step; u < W; u += step) rect(floor, u, 0, Math.min(W, u + tu), DEPTH, color, a);
       };
       grid(40, W / 2 - 0.5, 18.5, 1, 3, 'rgba(139,141,156,.13)');
       grid(200, W / 2 - 1, 17, 2, 6, 'rgba(139,141,156,.30)');
@@ -529,18 +548,18 @@
     fxc.setTransform(dpr, 0, 0, dpr, 0, 0);
     fxc.clearRect(0, 0, W, H);
     const ox = W * (50 - look.x * 32) / 100, oy = H * (50 - look.y * 26) / 100;
-    // The canvas sits over the whole scene, so leave a hole where the selected cube is.
+    // The canvas sits over the whole scene, so hide pixels behind the selected cube.
     let hole = null;
-    if (sel) {
-      const c = cur[sel], pf = PERSPECTIVE / (PERSPECTIVE - c.z);
-      hole = [ox + (W / 2 + c.x - ox) * pf, oy + (H / 2 + c.dy - oy) * pf, 0.75 * c.size * c.s * pf];
+    if (sel && cur[sel].dx != null) {
+      const c = cur[sel], pf = PERSPECTIVE / (PERSPECTIVE - c.dz);
+      hole = [ox + (W / 2 + c.dx - ox) * pf, oy + (H / 2 + c.dy - oy) * pf, 0.75 * c.size * c.ds * pf, c.dz];
     }
     quads.sort((a, b) => a[2] - b[2]);
     for (const [x, y, z, size, color, alpha] of quads) {
       if (z >= PERSPECTIVE - 1 || alpha <= 0) continue;
       const pf = PERSPECTIVE / (PERSPECTIVE - z), s = Math.max(1, Math.round(size * pf));
       const sx = ox + (W / 2 + x - ox) * pf, sy = oy + (H / 2 + y - oy) * pf;
-      if (hole && Math.hypot(sx - hole[0], sy - hole[1]) < hole[2]) continue;
+      if (hole && z < hole[3] && Math.hypot(sx - hole[0], sy - hole[1]) < hole[2]) continue;
       fxc.globalAlpha = alpha;
       fxc.fillStyle = color;
       fxc.fillRect(Math.round(sx - s / 2), Math.round(sy - s / 2), s, s);
