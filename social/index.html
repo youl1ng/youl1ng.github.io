@@ -62,6 +62,14 @@
   #card .handle { font-size: 15px; color: #e8e6e3; font-weight: 700; overflow-wrap: anywhere; }
   #card .open { display: flex; align-items: center; justify-content: center; min-height: 48px; background: #f2b950; color: #14141c; text-decoration: none; font-family: 'Press Start 2P', monospace; font-size: 11px; box-shadow: inset -4px -4px 0 rgba(0,0,0,.3), inset 4px 4px 0 rgba(255,255,255,.35); }
   #card .open:active { background: #f5c66b; }
+  #gate { position: fixed; inset: 0; z-index: 6; display: flex; align-items: center; justify-content: center; background: rgba(20,20,28,.7); font-family: 'JetBrains Mono', monospace; }
+  #gate .win { width: min(320px, calc(100% - 32px)); background: #1f2029; border: 2px solid #3a3d4d; box-shadow: 6px 6px 0 rgba(0,0,0,.45); }
+  #gate .bar { height: 30px; display: flex; align-items: center; padding: 0 10px; background: #5ee6c5; color: #14141c; font-size: 11px; font-weight: 700; letter-spacing: .06em; }
+  #gate .body { padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+  #gate p { margin: 0; font-size: 13px; line-height: 1.5; color: #c9cdd3; }
+  #gate .go { min-height: 48px; border: 0; background: #f2b950; color: #14141c; font-family: 'Press Start 2P', monospace; font-size: 11px; box-shadow: inset -4px -4px 0 rgba(0,0,0,.3), inset 4px 4px 0 rgba(255,255,255,.35); cursor: pointer; }
+  #gate .go:active { background: #f5c66b; }
+  #gate .skip { min-height: 32px; border: 0; background: transparent; color: #8b8d9c; font-family: inherit; font-size: 11px; text-decoration: underline; cursor: pointer; }
   [hidden] { display: none !important; }
 </style>
 </head>
@@ -85,6 +93,17 @@
 <canvas id="fx"></canvas>
 <div id="hud"><span id="hud-title">User Perspective</span><span class="sub">(1) Scene | <span id="hud-sel">Collection</span></span></div>
 <div id="compass"></div>
+
+<div id="gate" hidden>
+  <div class="win" role="dialog" aria-label="Enable motion">
+    <div class="bar">motion.sys</div>
+    <div class="body">
+      <p>this room moves when you tilt your phone. allow motion access to look around!</p>
+      <button class="go">ENABLE MOTION</button>
+      <button class="skip">no thanks</button>
+    </div>
+  </div>
+</div>
 
 <div id="card" aria-live="polite">
   <div class="bar"><span class="file"></span><button class="close" aria-label="close"><span>×</span></button></div>
@@ -207,18 +226,30 @@
   let down = null, base = null, askedGyro = false;
   window.addEventListener('deviceorientation', e => {
     if (e.gamma == null || e.beta == null) return;
+    if (gateOpen) closeGate(); // events only arrive once motion access is already granted
     if (!base) base = { g: e.gamma, b: e.beta };
     base.g += (e.gamma - base.g) * 0.004;
     base.b += (e.beta - base.b) * 0.004;
     gyro.x = clamp((e.gamma - base.g) / 22);
     gyro.y = clamp((e.beta - base.b) / 22);
   });
+  const OrientEvent = window.DeviceOrientationEvent;
+  const needsMotionPermission = !!OrientEvent && typeof OrientEvent.requestPermission === 'function';
   function askGyro() {
     if (askedGyro) return;
     askedGyro = true;
-    const D = window.DeviceOrientationEvent;
-    if (D && typeof D.requestPermission === 'function') D.requestPermission().catch(() => {});
+    if (needsMotionPermission) OrientEvent.requestPermission().catch(() => {});
   }
+
+  // iOS only shows its motion prompt from a tap, so on entry we show a small window whose button
+  // is that tap. The scene waits behind it so the boot animation isn't missed. Phones that already
+  // send motion data (Android, or iOS with access granted) close it before it ever appears.
+  const gate = document.getElementById('gate');
+  let gateOpen = needsMotionPermission && matchMedia('(pointer: coarse)').matches;
+  if (gateOpen) setTimeout(() => { if (gateOpen) gate.hidden = false; }, 400);
+  function closeGate() { gateOpen = false; gate.hidden = true; }
+  gate.querySelector('.go').addEventListener('click', () => { askGyro(); closeGate(); });
+  gate.querySelector('.skip').addEventListener('click', () => { askedGyro = true; closeGate(); });
   scene.addEventListener('pointerdown', e => {
     const hit = e.target.closest && e.target.closest('[data-cube]');
     down = { x: e.clientX, y: e.clientY, sx: drag.x, sy: drag.y, cube: hit ? hit.dataset.cube : null, moved: false };
@@ -266,6 +297,7 @@
   scene.style.perspective = PERSPECTIVE + 'px';
 
   function tick(now) {
+    if (gateOpen) { lastT = now; tickGizmo(0); requestAnimationFrame(tick); return; }
     const dt = Math.min(0.05, (now - (lastT || now)) / 1000); lastT = now; t += dt;
     const W = innerWidth, H = innerHeight, k = Math.min(1.3, W / 390), ky = H / 844;
     const motion = !reduced;
