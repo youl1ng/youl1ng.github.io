@@ -143,7 +143,7 @@ export const goals: {
   items: [
     // date can carry a start time (with its UTC offset) to count down to the start gun, not midnight
     { title: 'Run the NYC Half', detail: '', status: 'upcoming', date: '2027-03-21T07:30:00-04:00' },
-    { title: 'Break 20:00 in the 5K', detail: 'current: [my PR]', status: 'upcoming' }, // TODO: real PR
+    { title: 'Break 20:00 in the 5K', detail: 'current: 22:19', status: 'upcoming' },
     { title: 'Finishing this personal website', detail: 'in progress', status: 'in progress' },
     { title: '1Up development', detail: '', status: 'in progress' },
     { title: 'Shipped DatPone', detail: '320+ users', status: 'done' },
