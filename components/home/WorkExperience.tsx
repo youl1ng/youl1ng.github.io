@@ -176,7 +176,7 @@ export default function WorkExperience() {
                   {role.now && (
                     <span className={styles.now}>
                       <span className={styles.nowDot} aria-hidden="true" />
-                      Now
+                      Ongoing
                     </span>
                   )}
                 </div>

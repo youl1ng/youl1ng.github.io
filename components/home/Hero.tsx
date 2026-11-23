@@ -22,7 +22,6 @@ export default function Hero() {
   const [i, setI] = useState(-1);
   const [hits, setHits] = useState(0); // since the last reset
   const [cycled, setCycled] = useState(false); // the word has changed at least once (new words pop in)
-  const [hover, setHover] = useState(false);
   const [announce, setAnnounce] = useState('');
   const textRef = useRef<HTMLHeadingElement>(null);
   const chipRef = useRef<HTMLSpanElement>(null);
@@ -47,7 +46,6 @@ export default function Hero() {
         WordPile.create(layer, {
           // the pile has to stay under the sentence
           ceiling: () => textRef.current!.getBoundingClientRect().bottom - layer.getBoundingClientRect().top - 4,
-          leavingClass: styles.leaving,
           onEmpty: reset,
         }),
       );
@@ -135,16 +133,17 @@ export default function Hero() {
           type="button"
           className={styles.word}
           onClick={hit}
-          onPointerEnter={() => {
-            setHover(true);
-            getPile(); // warm up: no load delay on the first hit
-          }}
-          onPointerLeave={() => setHover(false)}
+          onPointerEnter={() => getPile()} // warm up: no load delay on the first hit
           aria-describedby="hero-hit-hint"
           data-cursor-mode="hammer" // the custom cursor turns into a hammer here
         >
-          {/* the guide: a small circle over the word, until the first hit (it hides once you're there) */}
-          {first && <span className={styles.hint} data-gone={hover || undefined} aria-hidden="true" />}
+          {/* the guide: a small circle over the word, until the first hit (it hides once you're there:
+              CSS :hover, not pointer events, which get lost when the word under the pointer is swapped) */}
+          {first && (
+            <span className={styles.hint} aria-hidden="true">
+              <span className={styles.bob} />
+            </span>
+          )}
           <span
             key={i}
             ref={chipRef}
