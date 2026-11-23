@@ -26,7 +26,7 @@ export const caseStudy = {
   tldr: [
     { label: 'Problem', text: "My friend and I race each other on every run, but his Coros and my Garmin don't talk to each other." },
     { label: 'What I did', text: 'Designed and built a 4-tab app that reads raw watch files and puts both runners on one screen.' },
-    { label: 'Result', text: 'A working demo that compares real runs from both watches. [result]' },
+    { label: 'Result', text: 'A working app demo that compares real runs from both runner\'s watches.' },
   ],
 
   problem: {
