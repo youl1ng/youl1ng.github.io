@@ -1,0 +1,298 @@
+/* Flow slot. Once measured (desktop), the card becomes a bottom-anchored overlay inside it. */
+.wrap {
+  position: relative;
+  flex: 0 0 auto;
+  min-height: 0;
+  transition: height 520ms var(--ease-out-expo);
+}
+
+.card {
+  position: relative;
+  z-index: 1;
+  padding: 20px 16px 9px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: height 520ms var(--ease-out-expo), box-shadow 400ms ease-out;
+}
+
+.measured .card {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* open: the stronger shadow wins over the card's light one */
+.card.open {
+  z-index: 5;
+  box-shadow: var(--shadow-open);
+}
+
+/* ── Header: title + plus toggle ── */
+.head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.plus {
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line-btn);
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 360ms var(--ease-out-expo);
+}
+
+.open .plus {
+  transform: rotate(45deg);
+}
+
+/* everything already fits: nothing to expand */
+.plus[hidden] {
+  display: none;
+}
+
+.plus:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* ── Roles ── */
+.body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.role {
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-inner);
+  padding: 10px;
+}
+
+.roleRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.icon {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  border: 1px solid var(--line-icon);
+  background: var(--surface);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 1px;
+}
+
+.roleName {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.sub {
+  font-size: var(--fs-sm);
+  line-height: 1.3;
+  color: var(--text-3);
+}
+
+.now {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--seafoam);
+  color: var(--seafoam-ink);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.nowDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--seafoam-ink);
+}
+
+/* ── Details (grid-rows collapse; fade in after the space opens, fade out first on close) ── */
+.details {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 360ms var(--ease-out-expo), opacity 140ms ease-out;
+}
+
+.open .details {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition: grid-template-rows 480ms var(--ease-out-expo) 60ms, opacity 320ms ease-out 220ms;
+}
+
+/* Collapsed: one general bullet about the role. Opening swaps it for the full list: the summary
+   fades out first and folds away while the details open (same timings as the details, mirrored). */
+.summary {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition: grid-template-rows 480ms var(--ease-out-expo) 60ms, opacity 320ms ease-out 220ms;
+}
+
+.open .summary {
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 360ms var(--ease-out-expo), opacity 140ms ease-out;
+}
+
+/* on a window too short even for the summaries, the cut-off edge fades into the card instead of a hard crop */
+.clipped .body {
+  position: relative;
+}
+
+.clipped .body::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, var(--card-bg));
+  pointer-events: none;
+}
+
+/* Open, on a window too short for everything even at full column height (e.g. 1100×640): the
+   body scrolls as a last resort, so no bullet is ever cut off and unreachable */
+.scrolls .body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.detailsInner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.tree {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0 0 0 16px;
+  position: relative;
+}
+
+.tree::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 2px;
+  bottom: 10px;
+  width: 1px;
+  background: var(--line-tree);
+}
+
+.tree li {
+  position: relative;
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+  color: var(--text-2);
+  padding: 3px 0;
+}
+
+.tree li::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: calc(3px + 0.7em);
+  width: 8px;
+  height: 1px;
+  background: var(--line-tree);
+}
+
+/* last item masks the vertical line below its tick, so the tree ends in "└" */
+.tree li:last-child::after {
+  content: '';
+  position: absolute;
+  left: -13px;
+  top: calc(4px + 0.7em);
+  bottom: 0;
+  width: 3px;
+  background: var(--surface);
+}
+
+.stack {
+  margin: 8px 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  color: var(--text-mono);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wrap,
+  .card,
+  .plus,
+  .details,
+  .open .details,
+  .summary,
+  .open .summary {
+    transition: none;
+  }
+}
+
+/* ≤1099px: static, natural height, inline expand, no shadow, nothing clipped */
+@media (max-width: 1099px) {
+  .wrap {
+    height: auto !important;
+  }
+
+  .card {
+    position: static !important;
+    height: auto !important;
+    box-shadow: none !important;
+  }
+
+  .body {
+    overflow: visible;
+  }
+}
+
+@media (max-width: 860px) {
+  .card {
+    min-height: 220px;
+  }
+}

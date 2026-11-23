@@ -1,0 +1,72 @@
+/* Exact CSS from SOCIALS_HANDOFF.md §6 (plus the shared Card styles). */
+.card { flex: 0 0 auto; padding: 8px 8px 12px; }
+.row  { display: flex; align-items: center; justify-content: center; gap: 6px; }
+
+/* ── copy-email chip ── */
+.chip {
+  position: relative; flex: 1 1 auto; min-width: 0; height: 46px; box-sizing: border-box; /* matches the square keys */
+  display: flex; align-items: center; justify-content: space-between; gap: 6px;
+  padding: 0 8px 0 10px; border: 0; border-radius: 12px; background: #FFFFFF;
+  box-shadow: 0 0 0 1px #E6E6E6, 0 4px 0 #E6E6E6;        /* 1px border + keycap edge */
+  cursor: pointer; font: inherit; color: var(--ink);
+  container-type: inline-size;                            /* lets the text shrink on narrow cards */
+  transition: transform 80ms ease-out, box-shadow 80ms ease-out;
+}
+@media (hover: hover) { /* touch: no hover lift, the press still works */
+  .chip:hover { transform: translateY(-1px); box-shadow: 0 0 0 1px #E6E6E6, 0 5px 0 #E6E6E6; }
+}
+.chip:active { transform: translateY(4px);  box-shadow: 0 0 0 1px #E6E6E6, 0 0 0 #E6E6E6; }
+.chip:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+.addr { font-family: var(--font-mono); font-size: 11px; letter-spacing: .01em;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; user-select: all; }
+.dom  { font-size: 8px; letter-spacing: 0; color: var(--text-3); }   /* @gmail.com, smaller + grey */
+
+.act { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center;
+       width: 20px; height: 20px; border-radius: 999px; background: #F1F1F1; color: var(--ink); }
+
+/* narrow cards (desktop windows ~1100–1180px): hide the copy circle, nudge text down */
+@container (max-width: 150px) {
+  .act { display: none; }
+  .usr { font-size: 10.5px; }
+  .dom { font-size: 7.5px; }
+}
+
+/* COPIED ✓ rubber stamp */
+.stamp {
+  position: absolute; right: 8px; top: 50%; display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 8px; border-radius: 7px; background: var(--seafoam); color: var(--seafoam-ink);
+  font-family: var(--font-condensed); font-weight: 700; font-size: 12px; line-height: 1;
+  letter-spacing: .05em; text-transform: uppercase;
+  transform: translateY(-50%) rotate(-6deg) scale(0); pointer-events: none;
+}
+.isCopied .stamp { animation: stamp 260ms steps(3) forwards; }
+.isCopied .act   { visibility: hidden; }
+@keyframes stamp {
+  0%   { transform: translateY(-50%) rotate(-6deg) scale(1.6); }
+  100% { transform: translateY(-50%) rotate(-6deg) scale(1); }
+}
+
+/* ── GitHub / LinkedIn keys ── */
+.key {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  width: 46px; height: 46px; flex: 0 0 46px; box-sizing: border-box; border-radius: 12px; /* square face */
+  background: var(--f); color: #FFFFFF; box-shadow: 0 4px 0 var(--s);
+  transition: transform 80ms ease-out, box-shadow 80ms ease-out;
+}
+.key::before, .key::after {                              /* corner dots, same motif as tags/stickers */
+  content: ""; position: absolute; width: 3px; height: 3px; border-radius: 999px;
+  background: currentColor; opacity: .45;
+}
+.key::before { top: 5px; left: 5px; }
+.key::after  { bottom: 5px; right: 5px; }
+.key:hover  { color: #FFFFFF; }
+@media (hover: hover) {
+  .key:hover { transform: translateY(-1px); box-shadow: 0 5px 0 var(--s); }
+}
+.key:active { transform: translateY(4px);  box-shadow: 0 0 0 var(--s); }
+.key:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .isCopied .stamp { animation: none; transform: translateY(-50%) rotate(-6deg) scale(1); }
+}

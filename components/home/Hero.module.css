@@ -1,0 +1,181 @@
+.hero {
+  position: relative; /* the word pile is laid over the card */
+  flex: 0.6 1 0;
+  padding: 26px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* once words start piling up, the sentence sits at the top of the card (the pile gets the rest) */
+.piled {
+  justify-content: flex-start;
+}
+
+.text {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--fs-hero);
+  line-height: 1.45;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+/* ── The hammerable word ("things", then the cycle) ──
+   A real button inside the sentence, styled as plain text, so the line wraps around it like any word:
+   a longer word pushes the rest of the sentence along / down. */
+.word {
+  position: relative;
+  appearance: none;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  color: inherit;
+  white-space: nowrap; /* "web pages" never splits across lines */
+  cursor: pointer;
+}
+
+.word:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* the word itself. "things" is plain text; the cycle words are colour chips (palette pairs, like the tags) */
+.chip {
+  display: inline-block;
+  line-height: 1.2;
+  transform-origin: 50% 100%;
+}
+
+.chip[data-c] {
+  padding: 0 0.2em;
+  border-radius: 0.2em;
+  background: var(--c);
+  color: var(--c-ink);
+}
+
+/* a new word lands in the gap: pops in from a little above */
+.chip[data-new] {
+  animation: word-in 420ms var(--ease-spring) both;
+}
+
+@keyframes word-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5em) scale(0.6);
+  }
+}
+
+/* The guide: a small accent circle over the word, bobbing, with a ring that pulses out of it.
+   It fades once the pointer is there. The element itself is an invisible hit area (part of the
+   button, so reaching it already gives the hammer); only its ::before/::after fade. */
+.hint {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  width: 28px;
+  height: 26px;
+  margin-left: -14px;
+}
+
+.hint::before,
+.hint::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 999px;
+  animation: hint-bob 1600ms ease-in-out infinite;
+  transition: opacity 120ms ease-out;
+}
+
+.hint::before {
+  background: var(--accent-ink);
+}
+
+.hint::after {
+  border: 2px solid var(--accent-ink);
+  animation: hint-bob 1600ms ease-in-out infinite, hint-ring 1600ms ease-out infinite;
+}
+
+.hint[data-gone]::before {
+  opacity: 0;
+}
+
+.hint[data-gone]::after {
+  animation: none; /* the ring's keyframes animate opacity, which would win over opacity: 0 */
+  opacity: 0;
+}
+
+@keyframes hint-bob {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -4px; }
+}
+
+@keyframes hint-ring {
+  from { scale: 1; opacity: 0.7; }
+  to { scale: 2.6; opacity: 0; }
+}
+
+/* ── The pile: words knocked off the line, as physics bodies (wordPile.ts) ── */
+.pile {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  font-family: var(--font-sans);
+  font-size: var(--fs-hero);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.fallen {
+  position: absolute;
+  left: 0;
+  top: 0;
+  box-sizing: border-box;
+  white-space: nowrap;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  pointer-events: auto; /* grab it (the layer itself lets clicks through) */
+  touch-action: none; /* dragging on touch screens moves the word, not the page */
+  user-select: none;
+  transition: opacity 260ms ease-out, scale 260ms var(--ease-out-expo);
+}
+
+/* thrown out of the card: just passing over the page now */
+.fallen[data-flying] {
+  pointer-events: none;
+}
+
+/* the pile got too tall: the oldest word shrinks away (wordPile.ts removes it after 260ms) */
+.leaving {
+  opacity: 0;
+  scale: 0.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hint::before,
+  .hint::after,
+  .chip[data-new] {
+    animation: none;
+  }
+}
+
+@media (max-width: 1099px) {
+  .hero { min-height: 180px; }
+}
+
+@media (max-width: 860px) {
+  .hero { min-height: 220px; }
+}

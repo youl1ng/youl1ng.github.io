@@ -1,0 +1,109 @@
+.card {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+/* Golden-ratio pixel name card */
+.golden {
+  flex: 0 0 auto;
+  width: 100%;
+  aspect-ratio: 1.618034 / 1;
+}
+
+.blue {
+  height: 100%;
+  background: var(--accent);
+  transition: background-color 240ms ease-out;
+  padding: 12px 14px 9px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.canvasWrap {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+}
+
+.caption {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: var(--accent-caption);
+}
+
+.caption > span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.divider {
+  flex: 0 0 auto;
+  height: 0;
+  border-top: 1px solid var(--card-border);
+}
+
+/* "what's MY thing?" */
+.thing {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px 0 22px;
+}
+
+.heading {
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.05;
+}
+
+.italic {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-variation-settings: 'opsz' 72, 'SOFT' 100;
+  font-size: var(--fs-lg);
+  letter-spacing: -0.01em;
+}
+
+.plain {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: var(--fs-lg);
+  letter-spacing: -0.03em;
+}
+
+.bold {
+  font-weight: 600;
+}
+
+@media (max-width: 860px) {
+  .card {
+    width: 100%;
+    max-width: 360px;
+    justify-self: center;
+  }
+}

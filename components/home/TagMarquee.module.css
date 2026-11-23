@@ -1,0 +1,155 @@
+.marquee {
+  display: contents;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.row {
+  overflow: hidden;
+  width: 100%;
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.left {
+  animation: mq-l 26s linear infinite;
+}
+
+.right {
+  animation: mq-r 30s linear infinite;
+}
+
+/* Pause while hovered, or while a tag has keyboard focus. Not :focus-within: a mouse click also
+   focuses the tag, which kept the row frozen after the pointer had left until you clicked elsewhere. */
+.row:hover .track,
+.row:has(:focus-visible) .track,
+.marquee[data-paused] .track {
+  animation-play-state: paused;
+}
+
+@keyframes mq-l {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes mq-r {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+.list {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex: 0 0 auto;
+}
+
+.item {
+  flex: 0 0 auto;
+  margin-right: 10px;
+}
+
+/* Each tag is a swatch button (click = swap its colour with the site accent) */
+.tag {
+  position: relative;
+  display: block;
+  appearance: none;
+  border: 0;
+  margin: 0;
+  cursor: pointer;
+  padding: 6px 13px;
+  transition: background-color 240ms ease-out, color 240ms ease-out, transform 90ms ease-out;
+  border-radius: var(--radius-tag);
+  font-family: var(--font-condensed);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  line-height: 1;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tag::before,
+.tag::after {
+  content: '';
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+.tag::before { top: 4px; left: 4px; }
+.tag::after { bottom: 4px; right: 4px; }
+
+.tag:active { transform: translateY(1px) scale(0.96); }
+
+.tag:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tag { transition: none; }
+}
+
+/* PROPOSED pause/play affordance: 11px mono text button, right side, centred on the "MY thing?" line
+   (section top padding 20px + one heading line + half a line, minus half the button's 13px line) */
+.toggle {
+  position: absolute;
+  top: calc(20px + var(--fs-lg) * 1.05 * 1.5 - 6.5px);
+  right: 16px;
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0 2px;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  line-height: 13px;
+  letter-spacing: 0.02em;
+  color: var(--text-mono);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 160ms ease-out;
+}
+
+/* .marquee is display:contents, so the hover area is the parent "thing" block */
+:global(*):hover > .marquee .toggle,
+.toggle:focus-visible,
+.marquee[data-paused] .toggle {
+  opacity: 1;
+}
+
+.toggle:hover {
+  color: var(--ink);
+}
+
+.toggle:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .left,
+  .right {
+    animation: none;
+    transform: none;
+  }
+
+  .toggle {
+    display: none;
+  }
+
+}

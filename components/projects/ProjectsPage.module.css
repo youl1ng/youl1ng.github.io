@@ -1,0 +1,290 @@
+/* Projects page (/projects), from PROJECTS_PAGE_HANDOFF.md (board P4). Existing tokens only.
+   Content starts at the same x, y and width as Home's bento grid and the case-study hero:
+   nav (62px) + 14px gap, then a 1240px wrapper with 24px side padding (x 124, y 76 at 1440 wide). */
+
+.page {
+  min-height: 100vh;
+  background: var(--paper);
+  color: var(--ink);
+  /* flex column so a bottom footer (UnderConstructionFooter) can sit at the bottom of the window */
+  display: flex;
+  flex-direction: column;
+}
+
+.navGap {
+  height: 14px;
+}
+
+.wrap {
+  max-width: 1240px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 24px;
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Heading ── */
+.heading {
+  margin: 0;
+  font-size: 48px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--ink);
+}
+
+/* same mix as "what's MY thing?" on Home */
+.em {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-variation-settings: 'opsz' 72, 'SOFT' 100;
+  letter-spacing: -0.01em;
+}
+
+/* ── Filter keys (keycaps; the selected one is pressed down in its colour) ── */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 28px;
+}
+
+.key {
+  position: relative;
+  appearance: none;
+  border: 0;
+  margin: 0;
+  cursor: pointer;
+  padding: 7px 12px 7px 13px;
+  border-radius: var(--radius-tag);
+  background: var(--surface);
+  color: var(--text-3);
+  box-shadow: 0 0 0 1px var(--card-border), 0 3px 0 var(--card-border);
+  font-family: var(--font-condensed);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  line-height: 1;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: transform 80ms ease-out, box-shadow 80ms ease-out;
+}
+
+@media (hover: hover) {
+  .key:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.key[aria-pressed='true'] {
+  background: var(--f);
+  color: var(--i);
+  box-shadow: 0 0 0 1px var(--f);
+  transform: translateY(3px);
+}
+
+/* corner dots on the selected key, like the marquee tags */
+.key[aria-pressed='true']::before,
+.key[aria-pressed='true']::after {
+  content: '';
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+.key[aria-pressed='true']::before { top: 3px; left: 3px; }
+.key[aria-pressed='true']::after { bottom: 3px; right: 3px; }
+
+.key:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* ── Project grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gap);
+  margin-top: 20px;
+}
+
+.empty {
+  grid-column: 1 / -1;
+  font-size: var(--fs-md);
+  color: var(--text-mono);
+}
+
+.card {
+  display: block;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  color: var(--ink);
+  text-decoration: none;
+  transition: transform 200ms var(--ease-out-expo), box-shadow 200ms var(--ease-out-expo);
+}
+
+.card:hover {
+  color: var(--ink);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(36, 36, 36, 0.05), 0 10px 24px rgba(36, 36, 36, 0.07);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 4 / 3;
+  padding: 0 16px;
+  background: var(--ph-bg);
+  color: var(--ph-ink);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+.coverImg {
+  padding: 0;
+  background: none; /* the picture is the cover: no grey placeholder behind it */
+  overflow: hidden;
+}
+
+.coverImg img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  -webkit-user-drag: none;
+  user-select: none;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px 16px;
+}
+
+.name {
+  margin: 0;
+  font-size: var(--cs-fs-body);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.outcome {
+  margin-top: 6px;
+  font-size: var(--cs-fs-cap);
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+/* same as Home's Selected Projects tags line (the site accent, Ink Blue by default) */
+.tags {
+  margin-top: 8px;
+  font-size: var(--fs-xs);
+  color: var(--accent-ink);
+}
+
+.arrow {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line-btn);
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 200ms var(--ease-out-expo);
+}
+
+.card:hover .arrow {
+  transform: translate(2px, -2px);
+}
+
+/* no case study yet: the custom cursor shows the "Coming soon" pill; the arrow doesn't promise a page */
+.soon {
+  cursor: default;
+}
+
+.soon:hover .arrow {
+  transform: none;
+}
+
+/* ── Footer ── */
+.foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 100px;
+  padding: 28px 0 48px;
+  border-top: 1px solid var(--card-border);
+}
+
+.site {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-mono);
+}
+
+.back {
+  font-size: var(--cs-fs-tldr);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.back:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .key,
+  .card,
+  .arrow {
+    transition: none;
+  }
+
+  .card:hover,
+  .card:hover .arrow {
+    transform: none;
+  }
+}
+
+/* ── Responsive ── */
+@media (max-width: 1099px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .wrap {
+    padding: 0 16px;
+  }
+
+  .heading {
+    font-size: 34px;
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

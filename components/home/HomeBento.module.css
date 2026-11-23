@@ -1,0 +1,86 @@
+/* ───────── Desktop (≥1100px): one viewport, no scroll ───────── */
+.root {
+  height: 100vh;
+  min-height: 640px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Gap between the nav row and the bento grid (Home v2: header = 22 + 40 + 14 = 76px) */
+.spacer {
+  flex: 0 0 auto;
+  height: 14px;
+}
+
+.grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--gap);
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  min-height: 0;
+}
+
+/* ───────── Tablet (861–1099px), PROPOSED: two scrolling columns ─────────
+   Col 1: name card, W&E, playground. Col 2: hero, projects, goals, socials. */
+@media (max-width: 1099px) {
+  .root {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    grid-template-areas:
+      'a b'
+      'a c';
+    align-items: start;
+  }
+
+  .colA { grid-area: a; }
+  .colB { grid-area: b; }
+  .colC { grid-area: c; }
+
+  /* cards take their natural height once the page scrolls */
+  .grid .col > * {
+    flex: 0 0 auto;
+  }
+}
+
+/* ───────── Mobile (≤860px): single column ───────── */
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: none;
+    padding: 0 16px 16px;
+  }
+
+  /* columns dissolve so cards can be re-ordered; DOM order stays the desktop reading order */
+  .col {
+    display: contents;
+  }
+
+  /* PROPOSED mobile order: identity → what he does → proof → the rest */
+  .grid [data-area='name'] { order: 1; }
+  .grid [data-area='hero'] { order: 2; }
+  .grid [data-area='projects'] { order: 3; }
+  .grid [data-area='work'] { order: 4; }
+  .grid [data-area='goals'] { order: 5; }
+  .grid [data-area='playground'] { order: 6; }
+  .grid [data-area='socials'] { order: 7; }
+}

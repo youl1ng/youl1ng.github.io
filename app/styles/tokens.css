@@ -1,0 +1,184 @@
+/* Ooniverse design tokens — from the Claude Design canvas (Home + Palette artboards). */
+:root {
+  /* Neutrals & surfaces */
+  --paper: #F7FAFB;
+  --ink: #242424;
+  --ink-strong: #000000;
+  --text-2: #3A3A3A;
+  --text-3: #5E5E5E;
+  --text-mono: #6B6B6B;
+  --card-bg: #ECECEC;      /* Home v2 (was #F1F1F1) */
+  --card-border: #DFDFDF;  /* Home v2 (was #D4D4D4): 1px card outline + name card divider */
+  --line-icon: #D4D4D4;    /* W&E role icon tiles (kept at the old card border; insides don't change) */
+  --pill-bg: #FFFFFF;
+  --surface: #FFFFFF;
+  --line-soft: #E6E6E6;
+  --line-btn: #E2E2E2;
+  --line-tree: #CFCFCF;
+  --line-strong: #B5B5B5;  /* case-study section dividers */
+
+  /* Brand */
+  --ink-blue: #4243D0;
+  --ink-blue-caption: #CDCDF3;
+  --ink-blue-tint: #E4E5F7;
+  --ink-blue-ink: #FFFFFF; /* text on an Ink Blue fill (for an Ink Blue marquee tag after a swap) */
+
+  /* Site accent. Ink Blue by default; clicking a marquee tag swaps it (see the [data-accent] blocks
+     at the end of this file). Components use these, never --ink-blue directly. */
+  --accent: var(--ink-blue);               /* accent surfaces: name card, FINISH bar, selection */
+  --accent-ink: var(--ink-blue);           /* accent-coloured text/marks on light surfaces */
+  --accent-on: #FFFFFF;                    /* text drawn on an --accent surface */
+  --accent-caption: var(--ink-blue-caption); /* secondary text on an --accent surface */
+  --accent-tint: var(--ink-blue-tint);     /* pale accent background (project previews) */
+  --accent-checker: rgba(255, 255, 255, 0.4); /* checker squares on the FINISH bar */
+
+  /* Marquee set — always use fill + ink together (all ≥4.6:1) */
+  --lemon: #F9E567;    --lemon-ink: #736405;
+  --seafoam: #9FE6AE;  --seafoam-ink: #1B692C;
+  --sky: #8AD7FC;      --sky-ink: #035B85;
+  --lavender: #C8AAFD; --lavender-ink: #5005D3;
+  --orchid: #F489DA;   --orchid-ink: #7A0B5F;
+  --cheek: #FB807D;    --cheek-ink: #780604;
+  --apricot: #FCB87D;  --apricot-ink: #823E03;
+
+  /* Status semantics */
+  --status-now: var(--seafoam);      --status-now-ink: var(--seafoam-ink);
+  --status-next: var(--sky);         --status-next-ink: var(--sky-ink);
+  --status-done: var(--lemon);       --status-done-ink: var(--lemon-ink);
+
+  /* Brand keys (Socials): the only non-palette fills on the page, on purpose */
+  --github: #24292F;   --github-edge: #0B0D10;
+  --linkedin: #0A66C2; --linkedin-edge: #064A8C;
+
+  /* Goals track (decorative) */
+  --track-lane: rgba(36, 36, 36, 0.13);
+  --track-marker: color-mix(in srgb, var(--accent-ink) 70%, transparent);
+  --icon-star: #E8C21F;
+  --icon-footprint: #4CB866;
+  --icon-bolt: #9C7CF0;
+  --icon-water: #3BA9E0;
+  --icon-heart: #E46DC6;
+  --icon-fire: #F2795F;
+  --icon-sprint: #F29C4C;
+  --icon-flag: var(--accent-ink);
+
+  /* Type — next/font variables come first */
+  --font-sans: var(--font-plex-sans, 'IBM Plex Sans'), 'Helvetica Neue', Arial, sans-serif;
+  --font-condensed: var(--font-plex-condensed, 'IBM Plex Sans Condensed'), 'IBM Plex Sans', sans-serif;
+  --font-mono: var(--font-plex-mono, 'IBM Plex Mono'), ui-monospace, monospace;
+  --font-display: var(--font-fraunces, 'Fraunces'), serif;
+  --font-pixel-src: Georgia, serif; /* system font, pixelated on canvas */
+
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-md: 14px;
+  --fs-lg: 22px;
+  --fs-hero: clamp(22px, 2.2vw, 32px);
+
+  /* Case study pages (scrolling long-form, from the 1Up wireframe) */
+  --cs-fs-title: 64px;
+  --cs-fs-stat: 48px;
+  --cs-fs-h2: 32px;
+  --cs-fs-h3: 22px;
+  --cs-fs-body: 16px;
+  --cs-fs-tldr: 15px;
+  --cs-fs-cap: 13px;
+  --cs-section-gap: 120px;
+  --ph-bg: #E4E4E4;  /* image/video placeholder fill */
+  --ph-ink: #8A8A8A; /* placeholder label + contents numbers (decorative) */
+
+  /* Spacing & radius */
+  --gap: 12px;
+  --card-radius: 6px;     /* Home v2 (was 14px): bento cards only */
+  --radius-sticker: 14px; /* goal stickers (unchanged) */
+  --radius-inner: 12px;
+  --radius-row: 10px;
+  --radius-tag: 7px;
+  --radius-pill: 3px;
+  --card-pad-x: 16px;
+  --card-pad-top: 20px;
+
+  /* Elevation */
+  --shadow-card: 0 1px 2px rgba(36, 36, 36, 0.04), 0 3px 10px rgba(36, 36, 36, 0.035); /* Home v2: light lift */
+  --shadow-open: 0 14px 36px rgba(0, 0, 0, 0.10);
+  --shadow-sticker: 0 8px 20px rgba(36, 36, 36, 0.07);
+  --shadow-sticker-hover: 0 12px 26px rgba(36, 36, 36, 0.11);
+  --shadow-frame: 0 8px 24px rgba(0, 0, 0, 0.10);
+  --shadow-keycap: 0 2px 0 #E6E6E6;
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.3, 1.4, 0.5, 1);
+
+  /* Custom cursor: dark translucent circle (ink at 35%). Over text it becomes an Ink Blue bar; over
+     clickables an Ink Blue overlay (or the target's data-cursor-color) with a small Ink Blue pointer dot */
+  --cursor-size: 26px;
+  --cursor-fill: rgba(36, 36, 36, 0.35);
+  --cursor-tint-mix: 16%;
+  --cursor-accent: var(--accent-ink); /* text bar, overlay tint, pointer dot, "View project" dot + text */
+  --cursor-dot-size: 8px; /* pointer dot shown over clickables */
+  --cursor-label-blur: 12px; /* how hard cursor labels blur what they overlap (the "spotlight") */
+
+  /* Open decision — inactive project rows fail AA at 0.55 (see HANDOFF §8) */
+  --pj-inactive-opacity: 0.55;
+}
+
+/* ───────── Accent swaps ─────────
+   Light palette fills can't carry white text, so on a swapped accent the paired ink does every
+   text job (all pairs are ≥ 4.6:1 on their fill). */
+:root[data-accent='lemon'] {
+  --accent: var(--lemon);
+  --accent-ink: var(--lemon-ink);
+  --accent-on: var(--lemon-ink);
+  --accent-caption: var(--lemon-ink);
+  --accent-tint: color-mix(in srgb, var(--lemon) 32%, #FFFFFF);
+  --accent-checker: color-mix(in srgb, var(--lemon-ink) 26%, transparent);
+}
+:root[data-accent='seafoam'] {
+  --accent: var(--seafoam);
+  --accent-ink: var(--seafoam-ink);
+  --accent-on: var(--seafoam-ink);
+  --accent-caption: var(--seafoam-ink);
+  --accent-tint: color-mix(in srgb, var(--seafoam) 32%, #FFFFFF);
+  --accent-checker: color-mix(in srgb, var(--seafoam-ink) 26%, transparent);
+}
+:root[data-accent='sky'] {
+  --accent: var(--sky);
+  --accent-ink: var(--sky-ink);
+  --accent-on: var(--sky-ink);
+  --accent-caption: var(--sky-ink);
+  --accent-tint: color-mix(in srgb, var(--sky) 32%, #FFFFFF);
+  --accent-checker: color-mix(in srgb, var(--sky-ink) 26%, transparent);
+}
+:root[data-accent='lavender'] {
+  --accent: var(--lavender);
+  --accent-ink: var(--lavender-ink);
+  --accent-on: var(--lavender-ink);
+  --accent-caption: var(--lavender-ink);
+  --accent-tint: color-mix(in srgb, var(--lavender) 32%, #FFFFFF);
+  --accent-checker: color-mix(in srgb, var(--lavender-ink) 26%, transparent);
+}
+:root[data-accent='orchid'] {
+  --accent: var(--orchid);
+  --accent-ink: var(--orchid-ink);
+  --accent-on: var(--orchid-ink);
+  --accent-caption: var(--orchid-ink);
+  --accent-tint: color-mix(in srgb, var(--orchid) 32%, #FFFFFF);
+  --accent-checker: color-mix(in srgb, var(--orchid-ink) 26%, transparent);
+}
+:root[data-accent='cheek'] {
+  --accent: var(--cheek);
+  --accent-ink: var(--cheek-ink);
+  --accent-on: var(--cheek-ink);
+  --accent-caption: var(--cheek-ink);
+  --accent-tint: color-mix(in srgb, var(--cheek) 32%, #FFFFFF);
+  --accent-checker: color-mix(in srgb, var(--cheek-ink) 26%, transparent);
+}
+:root[data-accent='apricot'] {
+  --accent: var(--apricot);
+  --accent-ink: var(--apricot-ink);
+  --accent-on: var(--apricot-ink);
+  --accent-caption: var(--apricot-ink);
+  --accent-tint: color-mix(in srgb, var(--apricot) 32%, #FFFFFF);
+  --accent-checker: color-mix(in srgb, var(--apricot-ink) 26%, transparent);
+}

@@ -1,0 +1,32 @@
+.pill {
+  display: inline-block;
+  margin: 0;
+  padding: 0 4px;
+  border-radius: var(--radius-pill);
+  background: var(--pill-bg);
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  line-height: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* Same look as the pill, for links ("See all work") */
+.link {
+  composes: pill;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+}
+
+.link:hover {
+  background: var(--pill-bg);
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
