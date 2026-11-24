@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { Hammer, Hand, HandGrab } from 'lucide-react';
+import { Hammer, Hand, HandGrab, TrafficCone } from 'lucide-react';
 import styles from './CustomCursor.module.css';
 
 // Anything you can click, plus anything marked data-cursor (e.g. goal stickers): the overlay morphs to cover it.
@@ -92,8 +92,8 @@ class Spring {
  *    (except inside data-cursor-select islands, which act like plain selectable text)
  *  - a clickable with data-cursor-label (e.g. the GitHub key) gets the overlay, the dot and the label
  *  - the label sits right of the pointer, or left of it near the right edge of the window
- *  - data-cursor-mode="hammer" | "grab" (the hero's word / its fallen words): the cursor simply becomes
- *    that icon (lucide). The hammer strikes while pressed; the open hand closes while pressed.
+ *  - data-cursor-mode="hammer" | "grab" | "cone" (the hero's word / its fallen words / the "under
+ *    construction" footer): the cursor simply becomes that icon (lucide). The hammer strikes while pressed; the open hand closes while pressed.
  */
 export default function CustomCursor() {
   const elRef = useRef<HTMLDivElement>(null);
@@ -265,7 +265,7 @@ export default function CustomCursor() {
       // data-cursor-mode="dot" (e.g. nav links, whose own underline is the hover feedback: no overlay)
       const dotOnly = t?.getAttribute('data-cursor-mode') === 'dot';
       const mode = t?.getAttribute('data-cursor-mode');
-      const iconMode = mode === 'hammer' || mode === 'grab' ? mode : null;
+      const iconMode = mode === 'hammer' || mode === 'grab' || mode === 'cone' ? mode : null;
       const zone = !!t && (dotOnly || !!iconMode || (!!text && !t.matches(LINK_SELECTOR)));
       const wasZone = isLabel;
       delete el.dataset.morph;
@@ -328,12 +328,14 @@ export default function CustomCursor() {
       if (!('visible' in el.dataset)) el.dataset.visible = '';
       // nearest of: a clickable / data-cursor element (overlay), a data-cursor-label zone (dot + label),
       // or a data-cursor-select island (plain selectable text inside a label zone: behaves like free space)
-      const hit = (e.target as Element | null)?.closest?.(`${LINK_SELECTOR}, [data-cursor-label], [data-cursor-select]`);
+      const hit = (e.target as Element | null)?.closest?.(`${LINK_SELECTOR}, [data-cursor-label], [data-cursor-select], [data-cursor-mode="cone"]`);
       // (hidden targets, e.g. the copy icon on narrow cards, don't count)
       const visible = hit && hit.getBoundingClientRect().width > 0;
       // data-cursor-mode="none" (e.g. nav links, whose underline is the hover feedback): plain circle
       const plain = !!hit && hit.getAttribute('data-cursor-mode') === 'none';
-      setTarget(visible && !plain && !hit.hasAttribute('data-cursor-select') ? hit : null);
+      // the cone zone (footer) gives way to the text-cursor bar while the pointer is over its text
+      const coneOverText = !!hit && hit.getAttribute('data-cursor-mode') === 'cone' && textLineAt(px, py) > 0;
+      setTarget(visible && !plain && !coneOverText && !hit.hasAttribute('data-cursor-select') ? hit : null);
       // over text (and nothing clickable): become a text-cursor bar
       lineH = target || plain ? 0 : textLineAt(px, py);
       if (lineH) el.dataset.text = '';
@@ -390,11 +392,12 @@ export default function CustomCursor() {
       <div ref={labelRef} className={styles.label} aria-hidden="true">
         <span className={styles.text} />
       </div>
-      {/* icon cursors (data-cursor-mode="hammer" | "grab"); CSS shows the one matching data-icon */}
+      {/* icon cursors (data-cursor-mode="hammer" | "grab" | "cone"); CSS shows the one matching data-icon */}
       <div ref={iconRef} className={styles.icon} aria-hidden="true">
         <Hammer className={styles.hammer} size={28} strokeWidth={2.25} />
         <Hand className={styles.hand} size={26} strokeWidth={2.25} />
         <HandGrab className={styles.grab} size={26} strokeWidth={2.25} />
+        <TrafficCone className={styles.cone} size={28} strokeWidth={2.25} />
       </div>
     </>
   );

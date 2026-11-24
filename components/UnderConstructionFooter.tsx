@@ -128,7 +128,7 @@ export default function UnderConstructionFooter() {
   return (
     <>
     <div className={s.push} aria-hidden="true" />
-    <footer ref={footerRef} className={s.footer} aria-label={uc.label}>
+    <footer ref={footerRef} className={s.footer} aria-label={uc.label} data-cursor-mode="cone">
       <div className={s.inner}>
         <div className={s.cols}>
           <div>
