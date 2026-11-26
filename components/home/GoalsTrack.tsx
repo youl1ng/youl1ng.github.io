@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Card from './Card';
-import { ArrowNE, CheckSmall } from '@/components/icons/Glyphs';
+import { CheckSmall } from '@/components/icons/Glyphs';
 import { renderPixelText, prefersReducedMotion } from '@/lib/pixelText';
 import { ACCENT_EVENT, cssVar } from '@/lib/accent';
 import { goals, trackItems, nameCard, type GoalStatus } from '@/content/home';
@@ -560,11 +560,6 @@ export default function GoalsTrack() {
                 {done && (
                   <span className={styles.footIcon} role="img" aria-label="Done">
                     <CheckSmall />
-                  </span>
-                )}
-                {!done && !now && (
-                  <span className={styles.footIcon} aria-hidden="true">
-                    <ArrowNE size={10} strokeWidth={2.2} />
                   </span>
                 )}
               </span>

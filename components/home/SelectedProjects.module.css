@@ -51,37 +51,40 @@
   position: relative;
   width: 100%;
   height: 100%;
+  container-type: size;
+  /* tile width: as big as the height allows (a 16:10 screen, two rows plus a small gap), but never wide enough
+     that the two bottom tiles touch the sides of the preview. Nothing overlaps. */
+  --w: min(75cqh, 47cqw);
+  --h: calc(var(--w) / 1.6);
+  /* the stack is centred vertically; the bottom row starts 1.05 tile heights below the top one */
+  --top: calc((100cqh - var(--h) * 2.05) / 2);
 }
 
-/* Triangle stack: tile height is a share of the preview height, width follows the 16:10 screenshot shape */
 .triTile {
   position: absolute;
-  height: 52%;
-  aspect-ratio: 16 / 10;
+  width: var(--w);
+  height: var(--h);
   border-radius: 6px;
   border: 1px solid var(--line-tree);
   -webkit-user-drag: none;
   user-select: none;
 }
 
-.tri0 { /* top, behind the other two */
-  top: 2%;
-  left: 50%;
-  transform: translateX(-50%);
+.tri0 { /* top */
+  top: var(--top);
+  left: calc(50% - var(--w) / 2);
   z-index: 1;
 }
 
 .tri1 { /* bottom left */
-  top: 46%;
-  left: 50%;
-  transform: translateX(-104%);
+  top: calc(var(--top) + var(--h) * 1.05);
+  left: calc(50% - var(--w) - 1cqw);
   z-index: 2;
 }
 
 .tri2 { /* bottom right */
-  top: 46%;
-  left: 50%;
-  transform: translateX(4%);
+  top: calc(var(--top) + var(--h) * 1.05);
+  left: calc(50% + 1cqw);
   z-index: 3;
 }
 
@@ -121,7 +124,7 @@
 
 .row {
   display: grid;
-  grid-template-columns: minmax(0, 190px) minmax(0, 1fr) 20px;
+  grid-template-columns: minmax(0, 208px) minmax(0, 1fr) 20px; /* just wide enough for the longest tag line (1Up) */
   align-items: center;
   gap: 14px;
   padding: 9px 10px;
@@ -156,9 +159,6 @@
   font-weight: 400;
   line-height: 1.3;
   color: var(--accent-ink);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .outcome {
@@ -166,10 +166,7 @@
   font-size: var(--fs-sm);
   line-height: 1.4;
   color: var(--text-2);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  /* the whole sentence always shows (no clamp / ellipsis): the row grows to fit it */
 }
 
 .arrow {

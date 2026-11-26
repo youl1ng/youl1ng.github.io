@@ -28,20 +28,18 @@
 /* ── Heading ── */
 .heading {
   margin: 0;
+  /* same type as the Home hero sentence ("I design and build things…"): Plex Sans, regular weight */
+  font-family: var(--font-sans);
   font-size: 48px;
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
   color: var(--ink);
 }
 
-/* same mix as "what's MY thing?" on Home */
+/* the emphasised word now matches the rest of the heading (it used to be Fraunces italic) */
 .em {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 300;
-  font-variation-settings: 'opsz' 72, 'SOFT' 100;
-  letter-spacing: -0.01em;
+  font-style: normal;
 }
 
 /* ── Filter keys (keycaps; the selected one is pressed down in its colour) ── */

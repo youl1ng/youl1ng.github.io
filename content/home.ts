@@ -59,27 +59,25 @@ export const work = {
   title: 'Work & Experience',
   roles: [
     {
-      id: 'we-moca', name: 'MOCA Lab', subtitle: 'Wearable & mobile dev, UI/UX', icon: 'watch', now: true,
+      id: 'we-moca', name: 'MOCA Lab', subtitle: 'Mobile & wearable dev, UI/UX', icon: 'watch', now: true,
       // collapsed card: one general line about the role (expanding swaps it for the bullets below)
-      summary: 'Building a Fitbit watch app that helps older adults label their daily activities',
+      summary: 'Designing and building an Android + Fitbit watch app that helps older adults log their daily activities',
       bullets: [
-        'Built a Fitbit watch app that syncs labels to Android over Bluetooth, with on-watch backup',
-        'Moved labeling to a physical button for older adults',
-        "Designing accessible input: speech, confirm-don't-recall",
-        'Writing the v1 interaction spec before user trials',
+        'Designing and building an Android + Fitbit watch app that helps older adults log their daily activities',
+        "Building MOCA Lab's full-stack dataset website so researchers can browse the lab's in-home sensing data and request access",
+        "Cut timing error in the app's activity labels from 23% to 8% of each activity's length in an early pilot",
       ],
-      stack: ['Java', 'Android', 'Bluetooth', 'Figma'],
+      stack: ['Java', 'Android', 'Fitbit', 'UI/UX'],
     },
     {
-      id: 'we-staff', name: 'System Staff, CS Dept', subtitle: 'Operations student assistant', icon: 'server', now: true,
-      summary: "Keeping the CS department's labs, displays and network running day to day",
+      id: 'we-staff', name: 'System Staff, CS Dept', subtitle: 'Operations Student Assistant', icon: 'server', now: true,
+      summary: "Keep the CS department's labs, displays and network running",
       bullets: [
-        'Run self-hosted Xibo signage across 4 displays',
-        'Reimaged 40+ lab machines with FOG and Ventoy',
-        'Helping deploy Palo Alto PA-410 firewalls',
-        'Write troubleshooting docs so staff fix issues without escalating',
+        "Keep the CS department's labs, displays and network running",
+        "Rebuilding the CS department's account lookup tool in TypeScript after flagging SQL injection and XSS risks in its API",
+        'Resolved 86+ IT support tickets, reimaged 40+ lab machines with FOG and Ventoy, and helped deploy 20+ Palo Alto firewalls',
       ],
-      stack: ['Docker', 'WSL2', 'Tailscale', 'Linux'],
+      stack: ['Docker', 'Linux', 'TypeScript', 'Tailscale'],
     },
   ],
 };
@@ -120,15 +118,15 @@ export const projects = {
   items: [
     {
       name: '1Up', slot: '1up-screenshot', image: '/projects/1up/hero.png', fit: 'contain', icon: 'footprints', href: '/projects/1up',
-      outcome: 'A head-to-head running app that turns every run into a race against a friend.',
-      tags: ['Product design', 'React Native', 'Garmin FIT SDK'],
+      outcome: "A head-to-head running app that compares your run stats with a friend's, even on different watches.",
+      tags: ['Product design', 'React', 'Data visualization'],
     },
     {
       name: 'DatPone', slot: 'datpone-screenshot', image: '/projects/datpone/hero.webp', fit: 'contain',
       // three screens stacked as a triangle in the preview: top, bottom-left, bottom-right
-      triangle: ['/projects/datpone/home-landing.webp', '/projects/datpone/home-login.webp', '/projects/datpone/home-setup.webp'], icon: 'camera', href: '/projects/datpone',
-      outcome: 'A photobooth where any phone becomes the camera. Used by 320+ people across 5 events.',
-      tags: ['Design system', 'WebRTC', 'Next.js'],
+      triangle: ['/projects/datpone/home-login.webp', '/projects/datpone/home-landing.webp', '/projects/datpone/home-setup.webp'], icon: 'camera', href: '/projects/datpone',
+      outcome: 'A browser photobooth that turns any phone into a wireless camera. Used by 320+ people across 5 live events.',
+      tags: ['Next.js', 'WebRTC', 'Full stack'],
     },
   ],
 };
@@ -142,7 +140,7 @@ export const goals: {
   title: 'Currently Working Towards',
   items: [
     // date can carry a start time (with its UTC offset) to count down to the start gun, not midnight
-    { title: 'Run the NYC Half', detail: '', status: 'upcoming', date: '2027-03-21T07:30:00-04:00' },
+    { title: 'Run the NYC Half Marathon', detail: '', status: 'upcoming', date: '2027-03-21T07:30:00-04:00' },
     { title: 'Break 20:00 in the 5K', detail: 'current: 22:19', status: 'upcoming' },
     { title: 'Finishing this personal website', detail: 'in progress', status: 'in progress' },
     { title: '1Up development', detail: '', status: 'in progress' },

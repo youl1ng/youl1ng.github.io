@@ -31,12 +31,12 @@ export const projectsPage = {
 export const projects = [
   { slug: '1up', name: '1Up', page: true,
     cover: { src: '/projects/1up/hero.png', fit: 'contain' }, // transparent PNG: sits on the card, no backdrop
-    outcome: 'A tiny rivalry app that lets a Garmin runner and a Coros runner compare every run, side by side.',
-    tags: ['Mobile', 'React Native', 'Data viz'], categories: ['Design', 'Code', 'Mobile'] },
+    outcome: "A head-to-head running app that compares your run stats with a friend's, even on different watches.",
+    tags: ['Product design', 'React', 'Data visualization'], categories: ['Design', 'Code', 'Mobile'] },
   { slug: 'datpone', name: 'DatPone', page: true,
     cover: { src: '/projects/datpone/home-login.webp', fit: 'cover' }, // just the sign-in screen
-    outcome: 'A photobooth where any phone becomes the camera. Used by 320+ people across 5 events.',
-    tags: ['Design system', 'WebRTC', 'Next.js'], categories: ['Design', 'Code'] },
+    outcome: 'A browser photobooth that turns any phone into a wireless camera. Used by 320+ people across 5 live events.',
+    tags: ['Next.js', 'WebRTC', 'Full stack'], categories: ['Design', 'Code'] },
   { slug: 'moca', name: 'MOCA Lab: Watch labeling', page: false,
     outcome: 'Cut activity labeling from 4 steps to 1 press for older adults.',
     tags: ['Wearables', 'Accessibility', 'Android'], categories: ['Design', 'Code', 'Wearables', 'Research'] },

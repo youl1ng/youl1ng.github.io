@@ -61,6 +61,8 @@ export default function Socials() {
             <a
               key={l.label}
               href={l.href}
+              target="_blank" // external profiles open in a new tab
+              rel="noopener noreferrer"
               className={s.key}
               aria-label={l.label}
               title={l.label}
