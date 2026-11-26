@@ -12,10 +12,7 @@ export const caseStudy = {
   hero: { alt: '1Up app screens: compare, weekly mileage, pace duel, splits, heart rate and route replay', src: '/projects/1up/hero.png', aspect: '1403 / 809', scale: 0.5 } as Media,
   // A link with no href is "coming soon": not clickable, and the cursor shows the under-construction pill.
   // Add the href when it's ready and it becomes a normal link.
-  links: [
-    { label: 'Try the demo →', href: '' }, // TODO: demo URL
-    { label: 'GitHub →', href: '' }, // TODO: repo URL
-  ],
+  links: [], // none for now; add { label, href } entries here and they appear under the tagline
   comingSoon: 'Coming soon',
   meta: [
     { term: 'Role', value: 'Product designer + developer (solo)' },

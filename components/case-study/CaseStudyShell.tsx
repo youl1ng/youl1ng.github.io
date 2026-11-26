@@ -54,6 +54,7 @@ export default function CaseStudyShell({ cs, toc, children }: { cs: CaseStudyBas
               <Eyebrow>{cs.eyebrow}</Eyebrow>
               <h1 className={s.title}>{cs.title}</h1>
               <p className={s.tagline}>{cs.tagline}</p>
+              {cs.links.length > 0 && (
               <div className={s.links}>
                 {cs.links.map((l) =>
                   l.href ? (
@@ -77,6 +78,7 @@ export default function CaseStudyShell({ cs, toc, children }: { cs: CaseStudyBas
                   ),
                 )}
               </div>
+              )}
             </div>
             <dl className={s.meta}>
               {cs.meta.map((m) => (

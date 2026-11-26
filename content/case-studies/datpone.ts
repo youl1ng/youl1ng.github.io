@@ -14,9 +14,7 @@ export const datpone = {
     src: '/projects/datpone/hero.webp',
     aspect: '2400 / 830',
   } as Media,
-  links: [
-    { label: 'Try it →', href: '#' }, // TODO: [live link]
-  ],
+  links: [], // none for now; add { label, href } entries here and they appear under the tagline
   comingSoon: 'Coming soon',
   meta: [
     { term: 'Role', value: 'Product designer + developer (solo)' },
